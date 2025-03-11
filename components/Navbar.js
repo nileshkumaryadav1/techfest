@@ -3,27 +3,70 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, User, Menu, X } from "lucide-react";
+import { Home, Calendar, User, Menu, X, Presentation } from "lucide-react";
+// import { useSession } from "next-auth/react";
 
 const Navbar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  // const { data: session } = useSession();
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-gray-900 py-3 shadow-md z-50">
-      <div className="flex justify-between items-center max-w-5xl mx-auto px-6">
+      <div className="flex justify-between items-center mx-auto md:px-20 px-5">
         {/* Logo */}
-        <div className="text-xl font-bold text-gray-100">TechFest&apos;25</div>
+        <div className="text-xl font-bold text-gray-100">
+          <Link href="/">TechFest&apos;25</Link>
+        </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden sm:flex space-x-6">
-          <NavItem href="/" icon={<Home size={24} />} label="Home" active={pathname === "/"} />
-          <NavItem href="/events" icon={<Calendar size={24} />} label="Events" active={pathname === "/event"} />
-          <NavItem href="/profile" icon={<User size={24} />} label="Profile" active={pathname === "/profile"} />
+        <div className="hidden sm:flex space-x-2">
+          <NavItem
+            href="/"
+            icon={<Home size={24} />}
+            label="Home"
+            active={pathname === "/"}
+          />
+          <NavItem
+            href="/events"
+            icon={<Calendar size={24} />}
+            label="Events"
+            active={pathname === "/events"}
+          />
+          <NavItem
+            href="/registered-event"
+            icon={<Presentation size={24} />}
+            label="Enrolled"
+            active={pathname === "/registered-event"}
+          />
+          <NavItem
+            href="/dashboard"
+            icon={<User size={24} />}
+            label="Dashboard"
+            active={pathname === "/dashboard"}
+          />
+          {/* {session ? (
+              <NavItem
+              href="/dashboard"
+              icon={<User size={24} />}
+              label="Dashboard"
+              active={pathname === "/dashboard"}
+            />
+          ) : (
+            <NavItem
+            href="/login"
+            icon={<User size={24} />}
+            label="Login"
+            active={pathname === "/login"}
+          />
+          )} */}
         </div>
 
         {/* Mobile Hamburger Icon */}
-        <button onClick={() => setIsOpen(!isOpen)} className="sm:hidden text-white">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="sm:hidden text-white"
+        >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
@@ -40,10 +83,46 @@ const Navbar = () => {
           </button>
         </div>
 
-        <div className="flex flex-col space-y-4 px-6">
-          <NavItemMobile href="/" icon={<Home size={24} />} label="Home" active={pathname === "/"} />
-          <NavItemMobile href="/events" icon={<Calendar size={24} />} label="Events" active={pathname === "/event"} />
-          <NavItemMobile href="/profile" icon={<User size={24} />} label="Profile" active={pathname === "/profile"} />
+        <div className="flex flex-col px-6">
+          <NavItemMobile
+            href="/"
+            icon={<Home size={24} />}
+            label="Home"
+            active={pathname === "/"}
+          />
+          <NavItemMobile
+            href="/events"
+            icon={<Calendar size={24} />}
+            label="Events"
+            active={pathname === "/events"}
+          />
+          <NavItemMobile
+            href="/registered-event"
+            icon={<Presentation size={24} />}
+            label="Enrolled"
+            active={pathname === "/registered-event"}
+          />
+          <NavItemMobile
+            href="/dashboard"
+            icon={<User size={24} />}
+            label="Dashboard"
+            active={pathname === "/dashboard"}
+          />
+          {/* {session ? (
+              <NavItemMobile
+              href="/dashboard"
+              icon={<User size={24} />}
+              label="Dashboard"
+              active={pathname === "/dashboard"}
+            />
+          ) : (
+            <NavItemMobile
+            href="/login"
+            icon={<User size={24} />}
+            label="Login"
+            active={pathname === "/login"}
+          />
+          )} */}
         </div>
       </div>
     </nav>

@@ -14,8 +14,11 @@ const Footer = () => {
             <Link href="/events" className="hover:text-blue-400 m-2">
               Events
             </Link>
-            <Link href="/profile" className="hover:text-blue-400 m-2">
-              Profile
+            <Link href="/developers" className="hover:text-blue-400 m-2">
+              Developers
+            </Link>
+            <Link href="/about" className="hover:text-blue-400 m-2">
+              About
             </Link>
           </ul>
         </div>
