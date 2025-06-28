@@ -3,160 +3,120 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, User, Menu, X, Presentation } from "lucide-react";
-// import { useSession } from "next-auth/react";
+import {
+  Home,
+  Calendar,
+  User,
+  Menu,
+  X,
+  Presentation,
+} from "lucide-react";
 
 const Navbar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  // const { data: session } = useSession();
+
+  const navItems = [
+    { href: "/", label: "Home", icon: <Home size={22} /> },
+    { href: "/events", label: "Events", icon: <Calendar size={22} /> },
+    { href: "/registered-event", label: "Enrolled", icon: <Presentation size={22} /> },
+    { href: "/dashboard", label: "Dashboard", icon: <User size={22} /> },
+  ];
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-gray-900 py-3 shadow-md z-50">
-      <div className="flex justify-between items-center mx-auto md:px-20 px-5">
+    <nav className="fixed top-0 left-0 w-full bg-gray-900 z-50 shadow-md">
+      <div className="flex justify-between items-center mx-auto px-5 md:px-20 py-3">
         {/* Logo */}
-        <div className="text-xl font-bold text-gray-100">
-          <Link href="/">TechFest&apos;25</Link>
-        </div>
+        <Link href="/" className="text-xl font-bold text-white">
+          TechFest&apos;25
+        </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden sm:flex space-x-2">
-          <NavItem
-            href="/"
-            icon={<Home size={24} />}
-            label="Home"
-            active={pathname === "/"}
-          />
-          <NavItem
-            href="/events"
-            icon={<Calendar size={24} />}
-            label="Events"
-            active={pathname === "/events"}
-          />
-          <NavItem
-            href="/registered-event"
-            icon={<Presentation size={24} />}
-            label="Enrolled"
-            active={pathname === "/registered-event"}
-          />
-          <NavItem
-            href="/dashboard"
-            icon={<User size={24} />}
-            label="Dashboard"
-            active={pathname === "/dashboard"}
-          />
-          {/* {session ? (
-              <NavItem
-              href="/dashboard"
-              icon={<User size={24} />}
-              label="Dashboard"
-              active={pathname === "/dashboard"}
-            />
-          ) : (
+        {/* Desktop Nav */}
+        <div className="hidden sm:flex space-x-3 items-center">
+          {navItems.map((item) => (
             <NavItem
-            href="/login"
-            icon={<User size={24} />}
-            label="Login"
-            active={pathname === "/login"}
-          />
-          )} */}
+              key={item.href}
+              href={item.href}
+              icon={item.icon}
+              label={item.label}
+              active={pathname === item.href}
+            />
+          ))}
         </div>
 
-        {/* Mobile Hamburger Icon */}
+        {/* Hamburger Menu */}
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Open menu"
+          onClick={() => setIsOpen(true)}
           className="sm:hidden text-white"
         >
-          {isOpen ? <X size={28} /> : <Menu size={28} />}
+          <Menu size={26} />
         </button>
       </div>
 
-      {/* Mobile Menu (Slide-in) */}
+      {/* Mobile Drawer */}
       <div
-        className={`fixed top-0 left-0 w-64 h-full bg-gray-800 shadow-lg transform ${
+        className={`fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-lg z-50 transform transition-transform duration-300 sm:hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 sm:hidden`}
+        }`}
       >
-        <div className="flex justify-end p-4">
-          <button onClick={() => setIsOpen(false)} className="text-white">
-            <X size={28} />
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
+          <span className="text-lg font-semibold text-white">TechFest'25</span>
+          <button
+            aria-label="Close menu"
+            onClick={() => setIsOpen(false)}
+            className="text-white"
+          >
+            <X size={26} />
           </button>
         </div>
 
-        <div className="flex flex-col px-6">
-          <NavItemMobile
-            href="/"
-            icon={<Home size={24} />}
-            label="Home"
-            active={pathname === "/"}
-          />
-          <NavItemMobile
-            href="/events"
-            icon={<Calendar size={24} />}
-            label="Events"
-            active={pathname === "/events"}
-          />
-          <NavItemMobile
-            href="/registered-event"
-            icon={<Presentation size={24} />}
-            label="Enrolled"
-            active={pathname === "/registered-event"}
-          />
-          <NavItemMobile
-            href="/dashboard"
-            icon={<User size={24} />}
-            label="Dashboard"
-            active={pathname === "/dashboard"}
-          />
-          {/* {session ? (
-              <NavItemMobile
-              href="/dashboard"
-              icon={<User size={24} />}
-              label="Dashboard"
-              active={pathname === "/dashboard"}
-            />
-          ) : (
+        <div className="flex flex-col px-4 py-6 space-y-2">
+          {navItems.map((item) => (
             <NavItemMobile
-            href="/login"
-            icon={<User size={24} />}
-            label="Login"
-            active={pathname === "/login"}
-          />
-          )} */}
+              key={item.href}
+              href={item.href}
+              icon={item.icon}
+              label={item.label}
+              active={pathname === item.href}
+              onClick={() => setIsOpen(false)}
+            />
+          ))}
         </div>
       </div>
     </nav>
   );
 };
 
-// Desktop NavItem
-const NavItem = ({ href, icon, label, active }) => {
-  return (
-    <Link
-      href={href}
-      className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
-        active ? "text-blue-400 bg-gray-800" : "text-gray-400 hover:text-white"
-      }`}
-    >
-      {icon}
-      <span className="text-sm font-medium">{label}</span>
-    </Link>
-  );
-};
+// Desktop Nav Item
+const NavItem = ({ href, icon, label, active }) => (
+  <Link
+    href={href}
+    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
+      active
+        ? "bg-gray-800 text-blue-400"
+        : "text-gray-300 hover:text-white hover:bg-gray-800"
+    }`}
+  >
+    {icon}
+    {label}
+  </Link>
+);
 
-// Mobile NavItem
-const NavItemMobile = ({ href, icon, label, active }) => {
-  return (
-    <Link
-      href={href}
-      className={`flex items-center space-x-3 p-3 text-lg rounded-lg ${
-        active ? "text-blue-400 bg-gray-700" : "text-gray-300 hover:text-white"
-      }`}
-    >
-      {icon}
-      <span>{label}</span>
-    </Link>
-  );
-};
+// Mobile Nav Item
+const NavItemMobile = ({ href, icon, label, active, onClick }) => (
+  <Link
+    href={href}
+    onClick={onClick}
+    className={`flex items-center gap-3 px-4 py-3 rounded-md text-base font-medium transition ${
+      active
+        ? "bg-gray-700 text-blue-400"
+        : "text-gray-300 hover:text-white hover:bg-gray-700"
+    }`}
+  >
+    {icon}
+    {label}
+  </Link>
+);
 
 export default Navbar;

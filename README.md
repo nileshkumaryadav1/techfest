@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🎉 TechFest System - College Annual Technical Fest Platform
 
-## Getting Started
+A powerful and modern web application built using **Next.js 15 App Router** to manage the end-to-end activities of your **college’s annual tech fest** and **technical workshops**.
 
-First, run the development server:
+> 🔧 Designed for organizing events, handling registrations, managing speakers and workshops, and showcasing fest updates — all in one place!
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🚀 Features
+
+* 🎪 **Event Management:** Add, edit, and view technical fest events with detailed pages.
+* 📝 **Workshop Registrations:** Seamless registration and confirmation system for tech workshops.
+* 🎤 **Speaker/Guest Section:** Highlight keynote speakers and invited guests.
+* 🗕️ **Dynamic Schedule:** Real-time event and workshop schedule.
+* 🧽 **Certificate Generator (Optional):** Auto-generate certificates post-event.
+* 📢 **Announcements Section:** Post live updates, notices, and promotions.
+* 📸 **Gallery:** Upload photos from previous fests.
+* 👩‍💻 **Admin Panel:** Secure, role-based panel for organizing committee to manage content.
+* 🌙 **Dark Mode:** Fully responsive with light/dark theme toggle.
+
+---
+
+## 🛠️ Tech Stack
+
+* **Framework:** [Next.js 15](https://nextjs.org/) with App Router
+* **Styling:** Tailwind CSS, Framer Motion for animations
+* **Database:** MongoDB (via Mongoose or Prisma)
+* **Authentication:** NextAuth.js or custom JWT-based
+* **Media:** Cloudinary/ImageKit for images
+* **Email:** Nodemailer for event/workshop confirmations
+* **Deployment:** Vercel / Render / Railway
+
+---
+
+## 📁 Project Structure (App Router)
+
+```
+/app
+  /events          - All tech fest events
+  /workshops       - Tech workshops with registration
+  /admin           - Admin panel (protected route)
+  /api             - API routes for backend logic
+  /gallery         - Fest images
+  /about           - About the fest, team, and vision
+  /contact         - Contact form and map
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## ✨ Screenshots
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Event Listing    | Workshop Page  | Admin Panel       |
+| ---------------- | -------------- | ----------------- |
+| ![Event List](#) | ![Workshop](#) | ![Admin Panel](#) |
 
-## Learn More
+*(Screenshots coming soon...)*
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔒 Admin Credentials
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+You can manually create admin accounts via database or registration logic with a role field.
 
-## Deploy on Vercel
+```js
+role: "admin"
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🧑‍💻 Running Locally
+
+```bash
+git clone https://github.com/nileshkumaryadav1/techfest.git
+cd techfest
+npm install
+npm run dev
+```
+
+Make sure to add your `.env.local` with the following variables:
+
+```env
+MONGODB_URI=your_mongodb_url
+CLOUDINARY_API_KEY=your_cloudinary_key
+CLOUDINARY_SECRET=your_cloudinary_secret
+JWT_SECRET=your_jwt_secret
+EMAIL_SERVER=...
+NEXTAUTH_SECRET=...
+```
+
+---
+
+## 🥉 Possible Extensions
+
+* Payment integration (for paid workshops)
+* Live chat or help desk support
+* Fest leaderboard system
+* QR code check-in for events
+
+---
+
+## 🙌 Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## 📜 License
+
+[MIT](LICENSE)
+
+---
+
+## 💡 Built For
+
+> This platform was built to streamline the management of our **College Annual Technical Fest** and **Tech Workshops**, aiming to provide an engaging and organized digital experience to students, organizers, and guests.
+
+---
+
+## 🧐 Author
+
+Developed by [Nilesh Kumar](https://github.com/nileshkumaryadav1)
+
+---
