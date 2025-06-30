@@ -61,7 +61,7 @@ const Navbar = () => {
         }`}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
-          <span className="text-lg font-semibold text-white">TechFest'25</span>
+          <span className="text-lg font-semibold text-white">TechFest&apos;25</span>
           <button
             aria-label="Close menu"
             onClick={() => setIsOpen(false)}

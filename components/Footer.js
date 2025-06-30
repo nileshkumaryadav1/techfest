@@ -54,7 +54,7 @@ const Footer = () => {
       {/* 🚀 Copyright Section */}
       <div className="bg-black text-white py-6 px-6 sm:px-16 text-center">
         <p className="text-sm text-slate-400">
-          &copy; {new Date().getFullYear()} TechFest'25 · Built with ❤️ by
+          &copy; {new Date().getFullYear()} TechFest&apos;25 · Built with ❤️ by
           Nilesh Kumar.
         </p>
       </div>
