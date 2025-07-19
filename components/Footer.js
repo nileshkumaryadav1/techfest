@@ -1,61 +1,66 @@
 import Link from "next/link";
-import { Facebook, Github, Instagram } from "lucide-react";
+import { Facebook, Github, Instagram, Twitter, Linkedin } from "lucide-react";
+import { FestData, developers, navItems } from "@/data/FestData"; // adjust path if needed
 
 const Footer = () => {
-  return (
-    <footer className="bg-black text-white py-6 px-6 sm:px-16 text-center">
-      <div className="mx-auto px-6 grid gap-4 text-center">
-        {/* 📌 Navigation Section */}
-        <div>
-          <ul>
-            <Link
-              href="/"
-              className="hover:text-blue-400 m-2 text-sm text-slate-400"
-            >
-              Home
-            </Link>
-            <Link
-              href="/events"
-              className="hover:text-blue-400 m-2 text-sm text-slate-400"
-            >
-              Events
-            </Link>
-            <Link
-              href="/developers"
-              className="hover:text-blue-400 m-2 text-sm text-slate-400"
-            >
-              Developers
-            </Link>
-            <Link
-              href="/about"
-              className="hover:text-blue-400 m-2 text-sm text-slate-400"
-            >
-              About
-            </Link>
-          </ul>
-        </div>
+  const currentYear = new Date().getFullYear();
+  const { facebook, instagram, twitter, linkedin, github } = FestData.socialMedia;
 
-        {/* 🌐 Social Media Links */}
-        <div>
-          <div className="flex justify-center space-x-4 text-sm text-slate-400">
-            <a href="" className="hover:text-blue-400">
-              <Facebook size={24} />
-            </a>
-            <a href="" className="hover:text-blue-400">
-              <Instagram size={24} />
-            </a>
-            <a href="" className="hover:text-blue-400">
-              <Github size={24} />
-            </a>
-          </div>
-        </div>
+  return (
+    <footer className="bg-black text-white px-6 py-10 sm:px-16 text-center space-y-6">
+      {/* 📌 Navigation Links */}
+      <nav aria-label="Footer navigation">
+        <ul className="flex justify-center flex-wrap gap-4">
+          {navItems.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className="text-sm text-slate-400 hover:text-[color:var(--accent)] transition"
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* 🌐 Social Icons */}
+      <div className="flex justify-center gap-6">
+        {facebook && (
+          <Link href={facebook} target="_blank" aria-label="Facebook" className="text-slate-400 hover:text-blue-400 transition">
+            <Facebook size={24} />
+          </Link>
+        )}
+        {instagram && (
+          <Link href={instagram} target="_blank" aria-label="Instagram" className="text-slate-400 hover:text-pink-400 transition">
+            <Instagram size={24} />
+          </Link>
+        )}
+        {twitter && (
+          <Link href={twitter} target="_blank" aria-label="Twitter" className="text-slate-400 hover:text-sky-400 transition">
+            <Twitter size={24} />
+          </Link>
+        )}
+        {linkedin && (
+          <Link href={linkedin} target="_blank" aria-label="LinkedIn" className="text-slate-400 hover:text-blue-500 transition">
+            <Linkedin size={24} />
+          </Link>
+        )}
+        {github && (
+          <Link href={github} target="_blank" aria-label="GitHub" className="text-slate-400 hover:text-gray-300 transition">
+            <Github size={24} />
+          </Link>
+        )}
       </div>
 
-      {/* 🚀 Copyright Section */}
-      <div className="bg-black text-white py-6 px-6 sm:px-16 text-center">
-        <p className="text-sm text-slate-400">
-          &copy; {new Date().getFullYear()} TechFest&apos;25 · Built with ❤️ by
-          Nilesh Kumar.
+      {/* 🚀 Copyright */}
+      <div>
+        <p className="text-sm text-slate-400 flex justify-center items-center gap-2">
+          <img src="/favicon.ico" alt="Logo" className="w-5 h-5 inline-block" />
+          &copy; {currentYear} {FestData.name} · Built with ❤️ by{" "}
+          <Link href={developers[0].github} target="_blank" className="hover:text-[color:var(--accent)] underline">
+            {developers[0].name}
+          </Link>
         </p>
       </div>
     </footer>

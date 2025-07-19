@@ -8,7 +8,7 @@ const events = [
 
 const EventHighlightsSection = () => {
   return (
-    <section className="bg-gradient-to-br from-[#0D1117] to-[#1e1f3b] text-white py-20 px-6 sm:px-16">
+    <section className="bg-[color:var(--background)] text-[color:var(--foreground)] py-20 px-6 sm:px-16">
       <div className="max-w-6xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-[#00F0FF] mb-10">Event Highlights</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
