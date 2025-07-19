@@ -1,64 +1,119 @@
-import Link from "next/link";
+"use client";
 
-// Fetch all events
-async function getHomePageData() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/homepage`, {
-    cache: "no-store", // Ensures fresh data on each request
-  });
+import { useState, useEffect } from "react";
+import EventCard from "@/components/fest/EventCard";
 
-  if (!res.ok) throw new Error("Failed to fetch homepage data");
+const sortOptions = [
+  { label: "Newest First", value: "newest" },
+  { label: "Oldest First", value: "oldest" },
+  { label: "A-Z", value: "az" },
+  { label: "Z-A", value: "za" },
+];
 
-  return res.json();
-}
+export default function EventListPage() {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
+  const [sortBy, setSortBy] = useState("newest");
+  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState([]);
 
-export default async function HomePage() {
-  const { events } = await getHomePageData();
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("/api/homepage");
+        const data = await res.json();
+
+        if (res.ok && data.events) {
+          setEvents(data.events);
+        } else {
+          console.error("Failed to fetch events:", data?.error);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  const filteredEvents = events
+    .filter(({ title, category: eventCategory }) =>
+      (category === "All" || eventCategory === category) &&
+      title.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "az":
+          return a.title.localeCompare(b.title);
+        case "za":
+          return b.title.localeCompare(a.title);
+        case "oldest":
+          return new Date(a.date) - new Date(b.date);
+        case "newest":
+        default:
+          return new Date(b.date) - new Date(a.date);
+      }
+    });
+
+  const uniqueCategories = ["All", ...new Set(events.map((e) => e.category))];
 
   return (
-    <div className="bg-gray-100">
-      {/* Events Section */}
-      <section className="py-12 px-6 sm:px-12 lg:px-24">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6">
-            Featured Events
-          </h2>
+    <main className="min-h-screen px-6 md:px-20 py-10">
+      <h1 className="text-3xl md:text-4xl font-bold text-center text-[color:var(--accent)] mb-4">
+        Explore Events
+      </h1>
+
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Filter Bar */}
+        <div className="flex flex-col md:flex-row items-center gap-4">
+          <input
+            type="text"
+            placeholder="Search events..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full md:w-1/3 px-4 py-2 rounded-xl border border-[color:var(--border)] bg-transparent text-[color:var(--foreground)]"
+          />
+
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="px-4 py-2 rounded-xl border border-[color:var(--border)] bg-transparent text-[color:var(--foreground)]"
+          >
+            {uniqueCategories.map((cat) => (
+              <option key={cat} value={cat} className="text-black">
+                {cat}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-4 py-2 rounded-xl border border-[color:var(--border)] bg-transparent text-[color:var(--foreground)]"
+          >
+            {sortOptions.map(({ label, value }) => (
+              <option key={value} value={value} className="text-black">
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Event Grid */}
+        {loading ? (
+          <p className="text-center text-[color:var(--foreground)]">Loading events...</p>
+        ) : filteredEvents.length === 0 ? (
+          <p className="text-center text-[color:var(--foreground)]">No events found.</p>
+        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => (
-              <EventCard
-                key={event._id}
-                title={event.title}
-                date={event.date}
-                id={event._id}
-              />
+            {filteredEvents.map((event) => (
+              <EventCard key={event.slug} event={event} />
             ))}
           </div>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-// Event Card Component
-function EventCard({ title, date }) {
-  return (
-    <div className="flex flex-col p-6 bg-white rounded-lg shadow-md text-center transition-transform hover:scale-105">
-      <h3 className="text-lg sm:text-xl font-bold">{title}</h3>
-      <p className="text-gray-600">{date}</p>
-      <Link
-        // href={`/events/${id}`}
-        href={"/events"}
-        className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-      >
-        View Details →
-      </Link>
-
-      <Link
-        href={"/events"}
-        // href={`/events/${id}`}
-        className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-      >
-        Enroll Now
-      </Link>
-    </div>
+        )}
+      </div>
+    </main>
   );
 }

@@ -1,67 +1,68 @@
 "use client";
-import { useEffect, useState } from "react";
 
-export default function UserDashboard() {
-  const [registrations, setRegistrations] = useState([]);
-  const [loading, setLoading] = useState(true);
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { LogOut, Pencil, CalendarCheck } from "lucide-react";
+import EnrolledEvents from "@/components/fest/EnrolledEvent";
+
+export default function DashboardPage() {
+  const [student, setStudent] = useState(null);
+  const [events, setEvents] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
-    async function fetchRegistrations() {
-      const res = await fetch("/api/user/registrations");
-      const data = await res.json();
-      setRegistrations(data);
-      setLoading(false);
+    const storedStudent = localStorage.getItem("student");
+
+    if (!storedStudent) {
+      router.push("/login");
+      return;
     }
-    fetchRegistrations();
-  }, []);
 
-  async function handleDelete(id) {
-    if (!confirm("Are you sure you want to unregister?")) return;
+    try {
+      const parsed = JSON.parse(storedStudent);
+      setStudent(parsed);
 
-    const res = await fetch(`/api/user/registrations/${id}`, {
-      method: "DELETE",
-    });
-    const result = await res.json();
-
-    if (res.ok) {
-      setRegistrations(registrations.filter((reg) => reg._id !== id));
-      alert("Successfully unregistered from event.");
-    } else {
-      alert(result.error || "Failed to unregister.");
+      // Fetch registered events
+      fetch(`/api/student/${parsed._id}/events`)
+        .then((res) => res.json())
+        .then((data) => setEvents(data || []))
+        .catch((err) => {
+          console.error("Error fetching events", err);
+          setEvents([]);
+        });
+    } catch (err) {
+      console.error("Invalid student data in localStorage", err);
+      localStorage.removeItem("student");
+      router.push("/login");
     }
+  }, [router]);
+
+  if (!student) {
+    return (
+      <main className="min-h-screen flex items-center justify-center text-[var(--foreground)] bg-[var(--background)]">
+        <p className="text-center text-sm">Loading your Registered Events...</p>
+      </main>
+    );
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4 text-center">
-        Your Registered Events
-      </h1>
+    <main
+      className="min-h-screen px-4 py-8 md:px-12"
+      style={{
+        backgroundColor: "var(--background)",
+        color: "var(--foreground)",
+      }}
+    >
+      <div className="max-w-4xl mx-auto space-y-6">
+        <section>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <CalendarCheck size={20} /> Registered Events
+          </h2>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : registrations.length === 0 ? (
-        <p>You have not registered for any events yet.</p>
-      ) : (
-        <ul className="space-y-4">
-          {registrations[0].map((event) => (
-            <li
-              key={event._id}
-              className="flex justify-between items-center p-4 border rounded-lg shadow-md"
-            >
-              <div>
-                <h2 className="text-xl font-semibold">{event.title}</h2>
-                <p className="text-gray-600">{event.date}</p>
-              </div>
-              <button
-                onClick={() => handleDelete(event._id)}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-              >
-                Unregister
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+          <EnrolledEvents studentId={student._id} />
+        </section>
+      </div>
+    </main>
   );
 }

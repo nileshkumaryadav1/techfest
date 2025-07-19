@@ -2,7 +2,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import connectDB from "@/utils/db";
-import User from "@/models/User";
+import Student from "@/models/Student";
 import bcrypt from "bcrypt";
 
 export const authOptions = {
@@ -22,38 +22,38 @@ export const authOptions = {
           throw new Error("Email and password are required.");
         }
 
-        const user = await User.findOne({ email: email.toLowerCase() });
+        const student = await Student.findOne({ email: email.toLowerCase() });
 
-        if (!user) {
+        if (!student) {
           throw new Error("Invalid email or password.");
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, student.password);
         if (!isPasswordValid) {
           throw new Error("Invalid email or password.");
         }
 
         return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          role: user.role,
+          id: student._id.toString(),
+          name: student.name,
+          email: student.email,
+          role: student.role,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
+    async jwt({ token, student }) {
+      if (student) {
+        token.id = student.id;
+        token.role = student.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id;
-        session.user.role = token.role;
+        session.student.id = token.id;
+        session.student.role = token.role;
       }
       return session;
     },

@@ -1,97 +1,105 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
-import Link from "next/link";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
-  const { data: session, status } = useSession();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  useEffect(() => {
-    if (session) {
-      router.replace("/dashboard");
-    }
-  }, [session, router]);
-
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    setMessage("");
 
-    const form = e.currentTarget;
-    const email = form.email.value;
-    const password = form.password.value;
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    const res = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
+      const data = await res.json();
 
-    if (res?.error) {
-      setMessage("Invalid email or password.");
-    } else {
-      setMessage("Login successful!");
-      router.replace("/dashboard");
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      // Store both token and student info
+      console.log(data.student);
+      localStorage.setItem("student", JSON.stringify(data.student));
+
+      // Optional success toast (replace with real toast lib in production)
+      alert("Login successful!");
+
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
-  if (status === "loading") {
-    return <p className="text-center mt-20">Loading...</p>;
-  }
-
-  if (session) return null;
-
   return (
-    <div className="flex items-center justify-center h-[90vh] bg-gray-50 px-4">
-      <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold mb-4 text-center">Login</h1>
-        {message && (
-          <p
-            className={`mb-4 text-center ${
-              message.includes("Invalid") ? "text-red-500" : "text-green-500"
-            }`}
-          >
-            {message}
-          </p>
+    <main className="min-h-screen flex flex-col items-center justify-center bg-[var(--background)] text-[var(--foreground)] px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-5 p-6 rounded-2xl shadow-xl border border-[var(--border)] bg-[var(--card)] w-full max-w-md transition-all"
+      >
+        <h2 className="text-2xl font-bold text-center">Student Login</h2>
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          className="w-full p-3 rounded-xl border border-[var(--border)] bg-transparent focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          className="w-full p-3 rounded-xl border border-[var(--border)] bg-transparent focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+          required
+        />
+
+        {error && (
+          <p className="text-red-500 text-sm text-center animate-pulse">{error}</p>
         )}
-        <form onSubmit={handleLogin} className="space-y-3">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-            className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-            className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-          <p className="text-sm text-center text-gray-600">
-            Do not have an account?{" "}
-            <Link href="/register" className="text-blue-500 hover:underline">
-              Register
-            </Link>
-          </p>
-        </form>
-      </div>
-    </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-3 rounded-xl bg-[var(--accent)] text-white font-semibold hover:opacity-90 transition flex justify-center items-center"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="animate-spin mr-2 h-5 w-5" />
+              Logging in...
+            </>
+          ) : (
+            "Login"
+          )}
+        </button>
+      </form>
+
+      <Link
+        href="/register"
+        className="mt-6 text-[var(--highlight)] hover:underline text-sm"
+      >
+        Don&apos;t have an account? Register here.
+      </Link>
+    </main>
   );
 }

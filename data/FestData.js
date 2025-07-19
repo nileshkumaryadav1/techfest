@@ -70,3 +70,42 @@ export const developers = [
       linkedin: "https://www.linkedin.com/in/nileshkumar123/",
     },
   ];
+
+
+export const events = [
+  {
+    title: "Hackathon 5.0",
+    slug: "hackathon-5",
+    description:
+      "Join our 24-hour hackathon and compete to build innovative tech solutions. Teams of up to 4. Prizes worth ₹50,000!",
+    image: "/images/events/hackathon.jpg",
+    date: "August 15, 2025",
+    venue: "Main Auditorium",
+    category: "Coding",
+    tags: ["Tech", "Coding", "Hackathon"],
+  },
+   {
+    title: "Blind Coding Challenge 2026",
+    slug: "blind-coding-challenge-2026",
+    description:
+      "Test your coding skills in a blind coding challenge. Solve coding problems without seeing the code.",
+    image: "/images/events/blind-coding-challenge.jpg",
+    date: "August 17, 2026",
+    venue: "Seminar Hall 3",
+    category: "Coding",
+    tags: ["AI", "Seminar", "HumanTech", "Coding"],
+  },
+  {
+    title: "AI Talk 2025",
+    slug: "tech-talk-ai-2025",
+    description:
+      "Join the AI industry leaders to explore the future of Artificial Intelligence, ethics, and human augmentation.",
+    image: "/images/events/ai-talk.jpg",
+    date: "August 14, 2025",
+    venue: "Seminar Hall 2",
+    category: "Talk",
+    tags: ["AI", "Seminar", "HumanTech"],
+  },
+  // More...
+];
+

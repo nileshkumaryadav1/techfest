@@ -48,6 +48,7 @@ export default function AdminHomePage() {
           {data.events.map(event => (
             <li key={event._id} className="flex justify-between border p-2">
               {event.title} - {event.date}
+              {event.slug} - {event.description}
               <button onClick={() => deleteItem("events", event._id)} className="text-red-500">
                 Delete
               </button>
@@ -56,7 +57,9 @@ export default function AdminHomePage() {
         </ul>
         <div className="mt-3">
           <input type="text" placeholder="Title" value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} className="border p-1 mr-2" />
+       <input type="text" placeholder="slug" value={newEvent.slug} onChange={(e) => setNewEvent({ ...newEvent, slug: e.target.value })} className="border p-1 mr-2" />
           <input type="date" value={newEvent.date} onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })} className="border p-1 mr-2" />
+    <input type="text" placeholder="Description" value={newEvent.description} onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} className="border p-1 mr-2" />
           <button onClick={() => addItem("events", newEvent)} className="bg-blue-500 text-white px-3 py-1">Add</button>
         </div>
       </section>

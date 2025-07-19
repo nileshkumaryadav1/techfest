@@ -1,106 +1,97 @@
 "use client";
-import Link from "next/link";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function RegisterPage() {
-  const [user, setUser] = useState({ name: "", email: "", password: "" });
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    college: "",
+    year: "",
+    branch: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
 
-  async function handleRegister(e) {
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
 
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
+        body: JSON.stringify(form),
       });
 
-      const result = await res.json();
-      setMessage(result.message || result.error);
+      const data = await res.json();
 
-      if (result.message === "User registered successfully") {
-        setUser({ name: "", email: "", password: "" });
-        router.push("/login");
+      if (res.ok) {
+        alert("🎉 Registration successful!");
+        localStorage.setItem("student", JSON.stringify(data.student));
+
+        router.push("/dashboard");
+      } else {
+        alert(data.message || "Registration failed. Please try again.");
       }
     } catch (error) {
-      setMessage("Something went wrong. Please try again.");
+      console.error(error);
+      alert("Something went wrong. Please try later.");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 bg-[var(--background)] text-[var(--foreground)]">
       <form
-        onSubmit={handleRegister}
-        className="p-6 bg-white rounded-2xl shadow-lg w-full max-w-md"
+        onSubmit={handleSubmit}
+        className="w-full max-w-md p-6 space-y-4 bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-md"
       >
-        <h2 className="text-3xl font-semibold mb-6 text-center">Create Account</h2>
+        <h2 className="text-2xl font-bold text-center">🎓 Student Registration</h2>
 
-        <input
-          type="text"
-          placeholder="Full Name"
-          className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={user.name}
-          onChange={(e) => setUser({ ...user, name: e.target.value })}
-          required
-        />
-
-        <input
-          type="email"
-          placeholder="Email Address"
-          className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={user.email}
-          onChange={(e) => setUser({ ...user, email: e.target.value })}
-          required
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={user.password}
-          onChange={(e) => setUser({ ...user, password: e.target.value })}
-          required
-        />
+        {[
+          { name: "name", type: "text", placeholder: "Full Name" },
+          { name: "email", type: "email", placeholder: "Email Address" },
+          { name: "college", type: "text", placeholder: "College Name" },
+          { name: "year", type: "text", placeholder: "Year (e.g. 2nd Year)" },
+          { name: "branch", type: "text", placeholder: "Branch (e.g. CSE)" },
+          { name: "password", type: "password", placeholder: "Password" },
+        ].map(({ name, type, placeholder }) => (
+          <input
+            key={name}
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            value={form[name]}
+            onChange={handleChange}
+            required={name !== "college" && name !== "year" && name !== "branch"}
+            className="w-full p-2 rounded-lg bg-transparent border border-[var(--border)] placeholder:text-sm placeholder:text-gray-400"
+          />
+        ))}
 
         <button
           type="submit"
           disabled={loading}
-          className={`w-full p-3 rounded-lg text-white font-medium transition-all duration-200 ${
-            loading
-              ? "bg-blue-300 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className="w-full py-2 rounded-lg bg-[var(--accent)] text-white font-semibold hover:opacity-90 transition"
         >
           {loading ? "Registering..." : "Register"}
         </button>
-
-        {message && (
-          <p
-            className={`mt-4 text-center text-sm ${
-              message.toLowerCase().includes("success")
-                ? "text-green-600"
-                : "text-red-500"
-            }`}
-          >
-            {message}
-          </p>
-        )}
-
-        <p className="mt-6 text-center text-sm">
-          Already have an account?{" "}
-          <Link href="/login" className="text-blue-500 hover:underline">
-            Login
-          </Link>
-        </p>
       </form>
-    </div>
+
+      <Link
+        href="/login"
+        className="mt-4 text-sm text-[var(--highlight)] hover:underline"
+      >
+        Already registered? Login here →
+      </Link>
+    </main>
   );
 }
