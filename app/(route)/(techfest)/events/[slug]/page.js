@@ -88,6 +88,7 @@ export default function EventDetailPage({ params }) {
   return (
     <main className="min-h-screen px-6 md:px-20 py-16 bg-[var(--background)] text-[var(--foreground)]">
       <div className="max-w-4xl mx-auto rounded-2xl shadow-lg border border-[var(--border)] bg-[var(--card)] p-8">
+        <img src={event.imageUrl} alt={event.title} className="md:w-full w-100 md:h-100 h-50 mb-6" />
         <h1 className="text-4xl font-bold text-[var(--accent)] mb-3">
           {event.title}
         </h1>

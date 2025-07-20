@@ -13,12 +13,12 @@ import {
 const highlights = [
   {
     icon: <CalendarCheck size={32} />,
-    title: "4 Days of Events",
+    title: `${FestData.totalNumberOfDays} Days of Events`,
     desc: "A power-packed lineup of technical and cultural excitement.",
   },
   {
     icon: <Users size={32} />,
-    title: "200+ Participants",
+    title: `${FestData.totalParticipantCount}+ Participants`,
     desc: "From top colleges across the country, joining the innovation wave.",
   },
   {
@@ -28,7 +28,7 @@ const highlights = [
   },
   {
     icon: <Trophy size={32} />,
-    title: "30+ Competitions",
+    title: `${FestData.totalEventCount}+ Competitions`,
     desc: "Hackathons, debates, robo-races, and more!",
   },
   {

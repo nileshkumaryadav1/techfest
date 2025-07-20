@@ -4,31 +4,33 @@ import { useEffect, useState } from "react";
 import { CalendarDays, Clock4, MapPin } from "lucide-react";
 
 export default function TimelineSection() {
-  const [groupedEvents, setGroupedEvents] = useState({});
+  const [groupedEvents, setGroupedEvents] = useState([]);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("/api/event");
+        const res = await fetch("/api/homepage");
         const data = await res.json();
 
-        const sorted = data.sort((a, b) => new Date(a.time) - new Date(b.time));
+        const events = data.events || [];
 
-        const grouped = sorted.reduce((acc, event) => {
-          const eventDate = new Date(event.time);
-          const dayKey = eventDate.toLocaleDateString("en-IN", {
-            weekday: "long",
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          });
+        // Sort by date (ascending)
+        events.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-          if (!acc[dayKey]) acc[dayKey] = [];
-          acc[dayKey].push(event);
+        // Group by date (YYYY-MM-DD format)
+        const groupedMap = events.reduce((acc, event) => {
+          const dateKey = event.date;
+          if (!acc[dateKey]) acc[dateKey] = [];
+          acc[dateKey].push(event);
           return acc;
         }, {});
 
-        setGroupedEvents(grouped);
+        // Convert to array and sort again (just to be safe)
+        const groupedArray = Object.entries(groupedMap).sort(
+          ([a], [b]) => new Date(a) - new Date(b)
+        );
+
+        setGroupedEvents(groupedArray);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -47,46 +49,50 @@ export default function TimelineSection() {
           Event <span className="text-[color:var(--accent)]">Timeline</span>
         </h2>
 
-        {Object.entries(groupedEvents).map(([day, events], index) => (
-          <div
-            key={index}
-            className="mb-10 border-l-4 border-[color:var(--accent)] pl-6"
-          >
-            <h3 className="text-2xl font-semibold mb-2 flex items-center gap-2">
-              <CalendarDays className="w-5 h-5 text-[color:var(--secondary)]" />
-              {day}
-            </h3>
+        {groupedEvents.map(([date, events], index) => {
+          const formattedDate = new Date(date).toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
 
-            <ul className="space-y-4 mt-4">
-              {events.map((event, idx) => {
-                const time = new Date(event.time).toLocaleTimeString("en-IN", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true,
-                });
+          return (
+            <div
+              key={index}
+              className="mb-10 border-l-4 border-[color:var(--accent)] pl-6"
+            >
+              <h3 className="text-2xl font-semibold mb-2 flex items-center gap-2">
+                <CalendarDays className="w-5 h-5 text-[color:var(--secondary)]" />
+                {formattedDate}
+              </h3>
 
-                return (
+              <ul className="space-y-4 mt-4">
+                {events.map((event, idx) => (
                   <li
                     key={idx}
                     className="bg-[color:var(--border)] bg-opacity-10 p-4 rounded-xl border border-[color:var(--border)] shadow-sm"
                   >
-                    <h4 className="text-lg font-medium mb-1">{event.name}</h4>
+                    <h4 className="text-lg font-medium mb-1">{event.title}</h4>
                     <div className="text-sm flex flex-col sm:flex-row gap-2 text-[color:var(--secondary)]">
-                      <span className="flex items-center gap-1">
-                        <Clock4 className="w-4 h-4" />
-                        {time}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        {event.venue}
-                      </span>
+                      {(
+                        <span className="flex items-center gap-1">
+                          <Clock4 className="w-4 h-4" />
+                          {event.time}
+                        </span>
+                      )}
+                      { (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {event.venue}
+                        </span>
+                      )}
                     </div>
                   </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+                ))}
+              </ul>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

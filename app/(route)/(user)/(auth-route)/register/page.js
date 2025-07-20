@@ -1,18 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    if (localStorage.getItem("student")) {
+      router.push("/dashboard");
+    }
+  }, [router]);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     college: "",
     year: "",
     branch: "",
-    phone: "",         // 🔥 Added phone
+    phone: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -50,7 +57,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4 bg-[var(--background)] text-[var(--foreground)]">
+    <main className="md:min-h-screen py-5 flex flex-col items-center justify-center px-4 bg-[var(--background)] text-[var(--foreground)]">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md p-6 space-y-4 bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-md"
@@ -60,7 +67,7 @@ export default function RegisterPage() {
         {[
           { name: "name", type: "text", placeholder: "Full Name" },
           { name: "email", type: "email", placeholder: "Email Address" },
-          { name: "phone", type: "tel", placeholder: "Phone Number" }, // 🔥 Added phone
+          { name: "phone", type: "tel", placeholder: "Phone Number" },
           { name: "college", type: "text", placeholder: "College Name" },
           { name: "year", type: "text", placeholder: "Year (e.g. 2nd Year)" },
           { name: "branch", type: "text", placeholder: "Branch (e.g. CSE)" },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
@@ -10,6 +10,12 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (localStorage.getItem("student")) {
+      router.push("/dashboard");
+    }
+  }, [router]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -48,7 +54,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-[var(--background)] text-[var(--foreground)] px-4">
+    <main className="md:min-h-screen py-5 flex flex-col items-center justify-center bg-[var(--background)] text-[var(--foreground)] px-4">
       <form
         onSubmit={handleSubmit}
         className="space-y-5 p-6 rounded-2xl shadow-xl border border-[var(--border)] bg-[var(--card)] w-full max-w-md transition-all"

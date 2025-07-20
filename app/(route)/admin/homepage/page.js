@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function AdminHomePage() {
   const [data, setData] = useState({ events: [], sponsors: [], highlights: [] });
-  const [newEvent, setNewEvent] = useState({ title: "", slug: "", description: "", date: "" });
+  const [newEvent, setNewEvent] = useState({ title: "", slug: "", description: "", date: "", time: "", venue: "", imageUrl: "" });
   const [newSponsor, setNewSponsor] = useState({ name: "", image: "" });
   const [newHighlight, setNewHighlight] = useState({ image: "" });
 
@@ -56,6 +56,9 @@ export default function AdminHomePage() {
                 <p className="font-medium">{event.title} ({event.slug})</p>
                 <p className="text-sm text-gray-600">{event.description}</p>
                 <p className="text-sm text-gray-500">{event.date}</p>
+                <p className="text-sm text-gray-500">{event.time}</p>
+                <p className="text-sm text-gray-500">{event.venue}</p>
+                <p className="text-sm text-gray-500">{event.imageUrl}</p>
               </div>
               <button onClick={() => deleteItem("events", event._id)} className="text-red-500 font-semibold hover:underline">
                 Delete
@@ -67,6 +70,9 @@ export default function AdminHomePage() {
         <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
           <input type="text" placeholder="Title" value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} className="border p-2 rounded" />
           <input type="text" placeholder="Slug" value={newEvent.slug} onChange={(e) => setNewEvent({ ...newEvent, slug: e.target.value })} className="border p-2 rounded" />
+          <input type="time" placeholder="Time" value={newEvent.time} onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })} className="border p-2 rounded" />
+          <input type="text" placeholder="Venue" value={newEvent.venue} onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value })} className="border p-2 rounded" />
+          <input type="text" placeholder="Image URL" value={newEvent.imageUrl} onChange={(e) => setNewEvent({ ...newEvent, imageUrl: e.target.value })} className="border p-2 rounded" />
           <input type="text" placeholder="Description" value={newEvent.description} onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} className="border p-2 rounded" />
           <input type="date" value={newEvent.date} onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })} className="border p-2 rounded" />
         </div>

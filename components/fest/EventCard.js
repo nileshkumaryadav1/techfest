@@ -59,6 +59,7 @@ export default function EventCard({ event }) {
   return (
     <div className="flex flex-col justify-between h-full p-5 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-md hover:shadow-xl transition-shadow duration-200">
       <div>
+        <img src={event.imageUrl} alt={event.title} className="w-100 h-50 mb-6" />
         <h3 className="text-xl font-bold text-[color:var(--foreground)] mb-2">
           {event.title}
         </h3>

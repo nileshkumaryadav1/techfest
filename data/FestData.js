@@ -3,13 +3,14 @@ export const FestData = {
     year : "2026",
     theme: "TechYug",
     tagline: "The Era of HUM∆N and M∆CHINE",
-    description: "A new Yug where humans and machines co-create reality.",
+    description: "Welcome to TechYug, where tradition meets transformation, and imagination merges with innovation. In this new era, the synergy between human intelligence and artificial intelligence is redefining what's possible.",
     date: "10th to 14th January, 2026",
     venue: "Katihar Engineering College, Katihar, Bihar",
     organizers: "Department of Civil Engineering",
     sponsors: "TechCorp, AIWorks",
     totalEventCount: "40",
     totalWorkshopCount: "2",
+    totalNumberOfDays: "4",
     totalParticipantCount: "400",
     socialMedia: {
         facebook: "https://www.facebook.com/kectechfest",
@@ -19,6 +20,24 @@ export const FestData = {
         github: "https://github.com/kectechfest",
     }
 };
+
+export const sponsorsData = 
+[
+    {
+        name: "TechCorp",
+        image: "/logo.png",
+        companyUrl: "https://techcorp.in/",
+    },
+    {
+        name: "AIWorks",
+        image: "https://aiworks.in/",
+        companyUrl: "https://aiworks.in/",
+    },
+    {
+        name: "TechFest'25",
+        image: "https://techfest.in/",
+        companyUrl: "https://techfest.in/",
+}]
 
 export const CollegeData ={
     name: "Katihar Engineering College",
@@ -68,12 +87,4 @@ export const developersData = [
       github: "https://github.com/nileshkumaryadav1",
       linkedin: "https://www.linkedin.com/in/nileshkumar123/",
     },
-  ];
-
-export const eventTimeline = [
-    { day: "Day 1", date: "10th January, 2026", schedule: [] },
-    { day: "Day 2", date: "11th January, 2026", schedule: [] },
-    { day: "Day 3", date: "12th January, 2026", schedule: [] },
-    { day: "Day 4", date: "13th January, 2026", schedule: [] },
-    { day: "Day 5", date: "14th January, 2026", schedule: [] },
   ];

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function EditProfilePage() {
@@ -14,9 +15,16 @@ export default function EditProfilePage() {
 
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("student"));
+
+    if (!stored) {
+      router.push("/login");
+      return;
+    };
+
     if (stored) {
       setFormData({
         name: stored.name || "",

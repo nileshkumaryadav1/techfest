@@ -11,7 +11,7 @@ export default function Home(){
     <>
     <HeroSection />
     <AboutSection />
-    <GallerySection /> {/* Fest Gallery */}
+    <GallerySection /> {/* Events Carousel */}
     <TimelineSection />
     <EventHighlightsSection /> {/* Fest Highlight */}
     <ContactSection />

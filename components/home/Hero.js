@@ -1,12 +1,13 @@
 "use client";
 
 import { FestData } from "@/data/FestData";
+import { Clock4, MapPin } from "lucide-react";
 import Link from "next/link";
 
 export default function HeroSection() {
   return (
     <section
-      className="w-full min-h-screen flex flex-col justify-center items-center text-center px-6 sm:px-12 lg:px-24"
+      className="w-full md:min-h-screen pt-20 md:pt-1 flex flex-col justify-center items-center text-center px-6 sm:px-12 lg:px-24"
       style={{
         backgroundColor: "var(--background)",
         color: "var(--foreground)",
@@ -45,10 +46,13 @@ export default function HeroSection() {
           </Link>
         </div>
 
-        {/* Date */}
+        {/* Date & Venue */}
+        <div>
         <p className="text-sm sm:text-base md:text-lg text-[color:var(--secondary)]">
           {FestData.date}
-        </p>
+           </p>
+        <p>Venue : {FestData.venue}</p>
+       </div>
       </div>
     </section>
   );
