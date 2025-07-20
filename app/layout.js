@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
           <main className="mt-12 md:mt-16">
             {children}
           </main>
-          {/* <MobileNavbar /> */}
+          <MobileNavbar />
           <Footer />
         </SessionProviderWrapper>
       </body>

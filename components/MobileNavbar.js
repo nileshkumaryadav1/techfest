@@ -1,52 +1,48 @@
-// "use client";
+"use client";
 
-// import Link from "next/link";
-// import { usePathname } from "next/navigation";
-// import * as Icons from "lucide-react";
-// import { mobileNavItems } from "@/data/FestData";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  Home,
+  Calendar,
+  Trophy,
+  User,
+} from "lucide-react"; // or use any 4 icons you like
 
-// const MobileNavbar = () => {
-//   const pathname = usePathname();
+const navItems = [
+  { href: "/", label: "Home", icon: Home },
+  { href: "/events", label: "Events", icon: Calendar },
+  { href: "/certificate", label: "Certificate", icon: Trophy },
+  { href: "/dashboard", label: "Profile", icon: User },
+];
 
-//   return (
-//     <nav
-//       className="fixed bottom-0 left-0 w-full z-50 sm:hidden"
-//       style={{
-//         backgroundColor: "var(--background)",
-//         color: "var(--foreground)",
-//         borderTop: "1px solid var(--border)",
-//       }}
-//     >
-//       <div className="flex justify-around items-center px-2 py-3">
-//         {mobileNavItems.map((item) => (
-//           <NavItem
-//             key={item.href}
-//             href={item.href}
-//             label={item.label}
-//             icon={Icons[item.icon]}
-//             active={pathname === item.href}
-//           />
-//         ))}
-//       </div>
-//     </nav>
-//   );
-// };
+const MobileNavbar = () => {
+  const pathname = usePathname();
 
-// const NavItem = ({ href, icon: Icon , label, active }) => {
-//   return (
-//     <Link
-//       href={href}
-//       aria-label={label}
-//       title={label}
-//       className={`flex flex-col items-center justify-center px-3 py-2 rounded-full text-sm transition-all duration-200 ${
-//         active ? "bg-[var(--border)] text-[var(--accent)]" : "text-[var(--secondary)] hover:text-[var(--highlight)]"
-//       }`}
-//     >
-//       <Icon size={22} />
-//       {/* Uncomment below if you want to show text label under icons */}
-//       {/* <span className="text-[10px] mt-0.5">{label}</span> */}
-//     </Link>
-//   );
-// };
+  return (
+    <nav className="fixed bottom-0 left-0 w-full sm:hidden z-50 border-t border-[color:var(--border)] bg-[color:var(--background)] backdrop-blur shadow-md">
+      <div className="flex justify-around items-center px-2 py-2">
+        {navItems.map(({ href, label, icon: Icon }) => {
+          const isActive = pathname === href;
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex flex-col items-center justify-center text-xs px-4 py-1 transition-all duration-200 ease-in-out ${
+                isActive
+                  ? "text-[color:var(--accent)] scale-105 bg-[color:var(--border)] rounded-full"
+                  : "text-[color:var(--secondary)] hover:text-[color:var(--highlight)]"
+              }`}
+            >
+              <Icon size={22} />
+              {/* Optional label */}
+              {/* <span className="mt-1 text-[10px]">{label}</span> */}
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+};
 
-// export default MobileNavbar;
+export default MobileNavbar;

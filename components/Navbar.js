@@ -66,7 +66,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        <div className="flex flex-col px-4 py-6 space-y-2">
+        <div className="flex flex-col px-4 py-6 space-y-2 bg-[color:var(--background)] bg-opacity-90">
           {navItems.map((item) => (
             <NavItemMobile
               key={item.href}
@@ -76,6 +76,8 @@ const Navbar = () => {
             />
           ))}
         </div>
+
+        <div className="h-50 flex flex-col px-4 py-6 space-y-2 bg-[color:var(--background)] bg-opacity-90"></div>
       </div>
     </nav>
   );

@@ -12,6 +12,7 @@ export default function RegisterPage() {
     college: "",
     year: "",
     branch: "",
+    phone: "",         // 🔥 Added phone
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -36,10 +37,9 @@ export default function RegisterPage() {
       if (res.ok) {
         alert("🎉 Registration successful!");
         localStorage.setItem("student", JSON.stringify(data.student));
-
         router.push("/dashboard");
       } else {
-        alert(data.message || "Registration failed. Please try again.");
+        alert(data.message || data.error || "Registration failed. Please try again.");
       }
     } catch (error) {
       console.error(error);
@@ -60,6 +60,7 @@ export default function RegisterPage() {
         {[
           { name: "name", type: "text", placeholder: "Full Name" },
           { name: "email", type: "email", placeholder: "Email Address" },
+          { name: "phone", type: "tel", placeholder: "Phone Number" }, // 🔥 Added phone
           { name: "college", type: "text", placeholder: "College Name" },
           { name: "year", type: "text", placeholder: "Year (e.g. 2nd Year)" },
           { name: "branch", type: "text", placeholder: "Branch (e.g. CSE)" },
@@ -72,7 +73,9 @@ export default function RegisterPage() {
             placeholder={placeholder}
             value={form[name]}
             onChange={handleChange}
-            required={name !== "college" && name !== "year" && name !== "branch"}
+            required={
+              ["name", "email", "phone", "password"].includes(name)
+            }
             className="w-full p-2 rounded-lg bg-transparent border border-[var(--border)] placeholder:text-sm placeholder:text-gray-400"
           />
         ))}

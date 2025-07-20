@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Facebook, Github, Instagram, Twitter, Linkedin } from "lucide-react";
-import { FestData, developers, navItems } from "@/data/FestData"; // adjust path if needed
+import { FestData, developersData, footerNavItems } from "@/data/FestData"; // adjust path if needed
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -11,7 +11,7 @@ const Footer = () => {
       {/* 📌 Navigation Links */}
       <nav aria-label="Footer navigation">
         <ul className="flex justify-center flex-wrap gap-4">
-          {navItems.map((link) => (
+          {footerNavItems.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
@@ -55,11 +55,12 @@ const Footer = () => {
 
       {/* 🚀 Copyright */}
       <div>
-        <p className="text-sm text-slate-400 flex justify-center items-center gap-2">
+        <p className="text-sm text-slate-400 md:flex justify-center items-center gap-2">
           <img src="/favicon.ico" alt="Logo" className="w-5 h-5 inline-block" />
-          &copy; {currentYear} {FestData.name} · Built with ❤️ by{" "}
-          <Link href={developers[0].github} target="_blank" className="hover:text-[color:var(--accent)] underline">
-            {developers[0].name}
+          &copy; {currentYear} {FestData.name} ·
+          <p> Built with ❤️ by{" "}</p>
+          <Link href={developersData[0].github} target="_blank" className="hover:text-[color:var(--accent)] underline">
+            {developersData[0].name}
           </Link>
         </p>
       </div>

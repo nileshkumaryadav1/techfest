@@ -1,71 +1,55 @@
 "use client";
 
+import { FestData } from "@/data/FestData";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import {FestData} from "@/data/FestData";
 
-const BackgroundGlow = () => (
-  <div className="absolute inset-0 flex items-center justify-center -z-10 overflow-hidden">
-    <div className="w-[60vw] h-[60vw] rounded-full bg-[color:var(--highlight)] opacity-10 blur-[160px]" />
-  </div>
-);
-
-const HeroSection = () => {
+export default function HeroSection() {
   return (
     <section
-      className="relative h-[100vh] w-full flex items-center justify-center text-white px-6 sm:px-12 overflow-hidden"
+      className="w-full min-h-screen flex flex-col justify-center items-center text-center px-6 sm:px-12 lg:px-24"
       style={{
         backgroundColor: "var(--background)",
         color: "var(--foreground)",
       }}
     >
-      <BackgroundGlow />
-
-      {/* Particle dots */}
-      <div className="absolute top-0 left-0 w-full h-full bg-dot-white/[0.06] [mask-image:radial-gradient(ellipse_at_center,white,transparent)] pointer-events-none z-0" />
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8 }}
-        className="bg-white/5 backdrop-blur-md p-8 rounded-2xl max-w-3xl text-center shadow-[0_4px_60px_rgba(132,220,207,0.3)] border border-[color:var(--border)] z-10"
-        style={{
-          backgroundColor: "rgba(11,11,15,0.5)",
-        }}
-      >
-        <motion.h1
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="text-4xl sm:text-6xl font-extrabold text-[color:var(--accent)] drop-shadow"
-        >
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Fest Name */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight drop-shadow-md">
           {FestData.name}
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 1 }}
-          className="mt-4 text-lg sm:text-xl text-[color:var(--secondary)]"
-        >
+        {/* Theme + Tagline */}
+        <p className="text-lg sm:text-xl md:text-2xl text-[color:var(--highlight)] font-medium">
+           {FestData.theme} -
+           {FestData.tagline}
+        </p>
+
+        {/* Description */}
+        {/* <p className="text-sm sm:text-base md:text-lg text-[color:var(--secondary)] max-w-2xl mx-auto">
           {FestData.description}
-        </motion.p>
+        </p> */}
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
+        {/* CTA Buttons */}
+        <div className="flex flex-wrap justify-center gap-4 pt-6">
           <Link
             href="/events"
-            className="mt-8 inline-block bg-[color:var(--accent)] text-[color:var(--background)] font-semibold px-6 py-3 rounded-full hover:scale-105 transition-transform duration-300 shadow-md hover:shadow-[0_0_20px_rgba(132,220,207,0.5)]"
+            className="px-6 py-3 text-sm font-semibold rounded-2xl bg-[color:var(--accent)] text-[color:var(--background)] hover:scale-105 transition-transform shadow-md"
           >
             Explore Events
           </Link>
-        </motion.div>
-      </motion.div>
+          <Link
+            href="/register"
+            className="px-6 py-3 text-sm font-semibold rounded-2xl border border-[color:var(--accent)] text-[color:var(--accent)] hover:bg-[color:var(--accent)] hover:text-[color:var(--background)] transition-all shadow-md"
+          >
+            Register Now
+          </Link>
+        </div>
+
+        {/* Date */}
+        <p className="text-sm sm:text-base md:text-lg text-[color:var(--secondary)]">
+          {FestData.date}
+        </p>
+      </div>
     </section>
   );
-};
-
-export default HeroSection;
+}
