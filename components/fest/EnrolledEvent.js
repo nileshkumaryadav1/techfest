@@ -8,14 +8,21 @@ export default function EnrolledEvents({ studentId }) {
   const [loading, setLoading] = useState(true);
 
   const fetchEnrolled = async () => {
-    const res = await fetch(`/api/enrollments?studentId=${studentId}`);
-    const data = await res.json();
-    setEvents(data.enrolledEvents || []);
-    setLoading(false);
+    try {
+      const res = await fetch(`/api/enrollments?studentId=${studentId}`);
+      const data = await res.json();
+
+      const validEvents = (data.enrolledEvents || []).filter(e => e && e._id && e.title);
+      setEvents(validEvents);
+    } catch (err) {
+      console.error("Error fetching enrolled events", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchEnrolled();
+    if (studentId) fetchEnrolled();
   }, [studentId]);
 
   const handleDeEnroll = async (eventId) => {
@@ -30,7 +37,7 @@ export default function EnrolledEvents({ studentId }) {
       });
 
       if (res.ok) {
-        setEvents((prev) => prev.filter((e) => e._id !== eventId));
+        setEvents(prev => prev.filter(e => e._id !== eventId));
       } else {
         alert("Failed to de-enroll.");
       }
@@ -40,15 +47,48 @@ export default function EnrolledEvents({ studentId }) {
     }
   };
 
+  const handleDeEnrollAll = async () => {
+    const confirmAll = confirm("This will remove you from ALL enrolled events. Continue?");
+    if (!confirmAll) return;
+
+    try {
+      const res = await fetch(`/api/enrollments`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId }),
+      });
+
+      if (res.ok) {
+        setEvents([]); // Clear UI
+      } else {
+        alert("Failed to de-enroll from all events.");
+      }
+    } catch (err) {
+      console.error("Error de-enrolling from all", err);
+      alert("Something went wrong.");
+    }
+  };
+
   if (loading)
     return <p className="text-[color:var(--secondary)]">Loading your events...</p>;
 
   if (events.length === 0)
-    return <p className="text-[color:var(--secondary)]">You haven&apos;t enrolled in any events yet.</p>;
+    return (
+      <p className="text-[color:var(--secondary)]">
+        You haven&apos;t enrolled in any events yet.
+      </p>
+    );
 
   return (
     <div className="p-6 border border-[color:var(--border)] rounded-2xl bg-[color:var(--card)] shadow-sm">
-      {/* <h2 className="text-2xl font-bold text-[color:var(--foreground)] mb-5">📅 Enrolled Events</h2> */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={handleDeEnrollAll}
+          className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition text-sm font-medium"
+        >
+          De-register from All
+        </button>
+      </div>
 
       <ul className="space-y-4">
         {events.map((event) => (
@@ -61,16 +101,16 @@ export default function EnrolledEvents({ studentId }) {
                 {event.title}
               </p>
               <p className="text-sm text-[color:var(--secondary)]">
-                {event.description}
+                {event.description || "No description provided."}
               </p>
               <p className="text-xs text-[color:var(--secondary)] mt-1">
-                📆 {event.date}
+                📆 {event.date || "Date not available"}
               </p>
             </div>
 
             <div className="flex gap-4 text-sm font-medium">
               <Link
-                href={`/events/${event.slug}`}
+                href={`/events/${event.slug || ""}`}
                 className="px-3 py-1 rounded-md bg-[color:var(--accent)] text-black hover:opacity-90 transition"
               >
                 View

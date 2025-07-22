@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { CollegeData, FestData } from "@/data/FestData";
 
 export default function CertificatePage() {
   const [festId, setFestId] = useState("");
@@ -13,10 +14,17 @@ export default function CertificatePage() {
     try {
       const res = await fetch(`/api/certificate?festId=${festId.trim()}`);
       if (!res.ok) throw new Error("Invalid Fest ID");
+
       const data = await res.json();
+
+      // Check if essential event details exist, otherwise skip
+      if (!data?.name || !data?.events || !data?.dateRange) {
+        throw new Error("Incomplete certificate data");
+      }
+
       setCertificateData(data);
     } catch (err) {
-      alert("Certificate not found. Please enter a valid Fest ID.");
+      alert("Certificate not found or incomplete. Please enter a valid Fest ID.");
       setCertificateData(null);
     }
   }
@@ -49,9 +57,9 @@ export default function CertificatePage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", padding: "2rem", backgroundColor: "#ffffff", color: "#000000" }}>
+    <div style={{ minHeight: "100vh", padding: "2rem" }} className="bg-[color:var(--background)] text-[color:var(--foreground)]">
       <h1 style={{ textAlign: "center", fontSize: "2rem", fontWeight: "bold", marginBottom: "2rem" }}>
-        🎓 Download Your Certificate
+        🎓 Download Your <span className="text-[color:var(--accent)]"> {FestData.name} </span> Certificate
       </h1>
 
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
@@ -59,13 +67,13 @@ export default function CertificatePage() {
           type="text"
           placeholder="Enter Fest ID"
           value={festId}
-          onChange={(e) => setFestId(e.target.value)}
+          onChange={(e) => setFestId(e.target.value.toLowerCase())}
           style={{ padding: "0.5rem 1rem", width: "300px", border: "1px solid #ccc", borderRadius: "4px" }}
         />
         <button
           onClick={fetchCertificate}
           style={{
-            backgroundColor: "#4CAF50",
+            backgroundColor: "var(--accent)",
             color: "white",
             padding: "0.5rem 1.2rem",
             border: "none",
@@ -77,7 +85,7 @@ export default function CertificatePage() {
         </button>
       </div>
 
-      {certificateData && (
+      {certificateData && certificateData.name && certificateData.events && certificateData.dateRange && (
         <>
           <div
             ref={certRef}
@@ -91,26 +99,35 @@ export default function CertificatePage() {
               borderRadius: "6px",
             }}
           >
-            <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-              <h2 style={{ fontSize: "1.8rem", fontWeight: "bold" }}>Certificate of Participation</h2>
-              <p style={{ fontSize: "0.9rem", color: "#555" }}>
-                Presented by {certificateData.festName}
-              </p>
+            <div style={{ textAlign: "center", marginBottom: "1.5rem" }} className="flex justify-between">
+              <img src="/logo.png" alt="Logo" style={{ width: "100px", marginBottom: "0.5rem" }} />
+
+              <div>
+                <h1 style={{ fontSize: "2rem", fontWeight: "bold", color: "var(--accent)" }}>{CollegeData.name}</h1>
+                <h4 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Certificate of Participation</h4>
+                <p style={{ fontSize: "0.9rem", color: "#555" }}>
+                  Presented by <span style={{ fontWeight: "bold", color: "var(--accent)" }}>{certificateData.festName}</span>
+                </p>
+              </div>
+
+              <img src="/college/logo.png" alt="Logo" style={{ width: "100px", marginBottom: "0.5rem" }} />
             </div>
 
-            <h3 style={{ textAlign: "center", fontSize: "1.4rem", fontWeight: "bold", marginBottom: "0.5rem" }}>
+            <h3 style={{ textAlign: "center", fontSize: "1.4rem", fontWeight: "bold" }}>
               {certificateData.name}
             </h3>
+            <p style={{ textAlign: "center", fontSize: "0.6rem", marginBottom: "0.5rem" }}>Fest ID: {festId}</p>
 
             <p style={{ textAlign: "center", fontSize: "1rem", color: "#333", padding: "0 1rem" }}>
-              has successfully participated in the event{" "}
-              <strong>{certificateData.eventName}</strong> held on{" "}
-              <strong>{certificateData.date}</strong>.
+              has successfully participated in the events -{" "}
+              <p><strong>{certificateData.events}</strong> </p>
+              held on{" "}
+              <p><strong>{certificateData.dateRange}</strong>.</p>
             </p>
 
             <div style={{ marginTop: "2rem", display: "flex", justifyContent: "space-between", fontSize: "0.9rem", borderTop: "1px solid #eee", paddingTop: "1rem" }}>
               <p>
-                Certificate ID: <span style={{ fontFamily: "monospace" }}>{certificateData.certId}</span>
+                Certificate ID: <span style={{ fontFamily: "monospace", color: "var(--accent)" }}>{certificateData.certId}</span>
               </p>
               <div style={{ textAlign: "right" }}>
                 <p>Centre Fest Committee</p>
@@ -123,7 +140,7 @@ export default function CertificatePage() {
             <button
               onClick={downloadPDF}
               style={{
-                backgroundColor: "#4CAF50",
+                backgroundColor: "var(--accent)",
                 color: "white",
                 padding: "0.6rem 1.5rem",
                 border: "none",

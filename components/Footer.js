@@ -59,7 +59,7 @@ const Footer = () => {
           <img src="/favicon.ico" alt="Logo" className="w-5 h-5 inline-block" />
           &copy; {currentYear} {FestData.name} ·
           <p> Built with ❤️ by{" "}</p>
-          <Link href={developersData[0].github} target="_blank" className="hover:text-[color:var(--accent)] underline">
+          <Link href={developersData[0].portfolio} target="_blank" className="hover:text-[color:var(--accent)] underline">
             {developersData[0].name}
           </Link>
         </p>

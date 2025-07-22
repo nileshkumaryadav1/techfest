@@ -1,13 +1,13 @@
 export const FestData = {
-    name : "TechFest'26",
+    name : "Techfest'26",
     year : "2026",
     theme: "TechYug",
     tagline: "The Era of HUM∆N and M∆CHINE",
     description: "Welcome to TechYug, where tradition meets transformation, and imagination merges with innovation. In this new era, the synergy between human intelligence and artificial intelligence is redefining what's possible.",
     date: "10th to 14th January, 2026",
     venue: "Katihar Engineering College, Katihar, Bihar",
-    organizers: "Department of Civil Engineering",
-    sponsors: "TechCorp, AIWorks",
+    organizers: "Centre Organization, KEC Katihar",
+    sponsors: "KEC Katihar, Centre Organization",
     totalEventCount: "40",
     totalWorkshopCount: "2",
     totalNumberOfDays: "4",
@@ -24,19 +24,14 @@ export const FestData = {
 export const sponsorsData = 
 [
     {
-        name: "TechCorp",
+        name: "KEC Katihar",
         image: "/logo.png",
-        companyUrl: "https://techcorp.in/",
+        companyUrl: "http://keck.ac.in/",
     },
     {
-        name: "AIWorks",
-        image: "https://aiworks.in/",
-        companyUrl: "https://aiworks.in/",
-    },
-    {
-        name: "TechFest'25",
-        image: "https://techfest.in/",
-        companyUrl: "https://techfest.in/",
+        name: "Centre Organization",
+        image: "/logo.png",
+        companyUrl: "https://centreorg.vercel.app/",
 }]
 
 export const CollegeData ={
@@ -45,6 +40,7 @@ export const CollegeData ={
     contact: "123-456-7890",
     email: "principal@keck.ac.in",
     website: "http://keck.ac.in",
+    logo: "/college/logo.png",
     socialMedia: {
         facebook: "https://www.facebook.com/kec",
         instagram: "https://www.instagram.com/kec",
@@ -86,5 +82,6 @@ export const developersData = [
       image: "/developers/nilesh.jpg",
       github: "https://github.com/nileshkumaryadav1",
       linkedin: "https://www.linkedin.com/in/nileshkumar123/",
+      portfolio: "https://nileshkumar.vercel.app/",
     },
   ];

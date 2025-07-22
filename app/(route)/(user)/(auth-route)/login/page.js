@@ -43,7 +43,7 @@ export default function LoginPage() {
       localStorage.setItem("student", JSON.stringify(data.student));
 
       // Optional success toast (replace with real toast lib in production)
-      alert("Login successful!");
+      // alert("Login successful!");
 
       router.push("/dashboard");
     } catch (err) {

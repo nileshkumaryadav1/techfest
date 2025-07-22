@@ -53,3 +53,9 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/* ============================================ */
+/* globals.css */
+.input {
+  @apply w-full p-2 border border-gray-300 rounded-md mb-2;
+}

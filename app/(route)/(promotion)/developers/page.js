@@ -1,5 +1,5 @@
 import { developersData } from "@/data/FestData";
-import { Github, Linkedin } from "lucide-react";
+import { Github, Globe, Linkedin } from "lucide-react";
 
 export default function DevelopersPage() {
   return (
@@ -19,7 +19,7 @@ export default function DevelopersPage() {
   );
 }
 
-function DeveloperCard({ name, role, bio, image, github, linkedin }) {
+function DeveloperCard({ name, role, bio, image, github, linkedin, portfolio }) {
   return (
     <div className="p-6 rounded-2xl bg-[color:var(--border)] shadow-lg hover:shadow-xl transition-shadow duration-300">
       <img
@@ -46,6 +46,14 @@ function DeveloperCard({ name, role, bio, image, github, linkedin }) {
           className="hover:text-[color:var(--highlight)] transition-colors"
         >
           <Linkedin size={22} />
+        </a>
+        <a
+        href={portfolio}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-[color:var(--highlight)] transition-colors"
+        >
+        <Globe size={22} />
         </a>
       </div>
     </div>

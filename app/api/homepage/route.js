@@ -4,6 +4,9 @@ import Sponsor from "@/models/Sponsor";
 import Highlight from "@/models/Highlight";
 import { NextResponse } from "next/server";
 
+import Enrollment from "@/models/Enrollment";
+
+
 // Connect to MongoDB
 connectDB();
 
@@ -62,19 +65,49 @@ export async function PUT(req) {
 }
 
 // 📌 DELETE ITEM
+// export async function DELETE(req) {
+//   try {
+//     const { category, id } = await req.json();
+
+//     let model;
+//     if (category === "events") model = Event;
+//     else if (category === "sponsors") model = Sponsor;
+//     else if (category === "highlights") model = Highlight;
+//     else return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+
+//     await model.findByIdAndDelete(id);
+//     return NextResponse.json({ message: `${category} deleted successfully!` });
+//   } catch (error) {
+//     return NextResponse.json({ error: "Failed to delete data" }, { status: 500 });
+//   }
+// }
+
+// for de register the enrollred student
 export async function DELETE(req) {
+  await connectDB();
+
+  const { category, id } = await req.json();
+
   try {
-    const { category, id } = await req.json();
+    if (category === "events") {
+      // 1. Delete the event
+      await Event.findByIdAndDelete(id);
 
-    let model;
-    if (category === "events") model = Event;
-    else if (category === "sponsors") model = Sponsor;
-    else if (category === "highlights") model = Highlight;
-    else return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+      // 2. Also delete all enrollments for this event
+      await Enrollment.deleteMany({ eventId: id });
+    }
 
-    await model.findByIdAndDelete(id);
-    return NextResponse.json({ message: `${category} deleted successfully!` });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to delete data" }, { status: 500 });
+    if (category === "sponsors") {
+      // your sponsor deletion logic...
+    }
+
+    if (category === "highlights") {
+      // your highlight deletion logic...
+    }
+
+    return new Response(JSON.stringify({ success: true }), { status: 200 });
+  } catch (err) {
+    console.error("DELETE error:", err);
+    return new Response(JSON.stringify({ error: "Delete failed" }), { status: 500 });
   }
 }
