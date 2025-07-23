@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function HeroSection() {
   return (
     <section
-      className="relative w-full md:min-h-screen pb-10 md:py-0 md:pb-0 flex flex-col justify-center items-center px-6 sm:px-12 lg:px-24 overflow-hidden"
+      className="relative w-full min-h-screen flex flex-col justify-center items-center px-6 sm:px-12 lg:px-24 overflow-hidden"
       style={{
         backgroundColor: "var(--background)",
         color: "var(--foreground)",
@@ -16,7 +16,7 @@ export default function HeroSection() {
       {/* Main Content */}
       <div className="max-w-5xl mx-auto z-10 text-center space-y-7 pt-32 md:pt-2">
         {/* Fest Name */}
-        <h1 className="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-tight drop-shadow-xl">
+        <h1 className="text-6xl sm:text-8xl md:text-9xl font-extrabold tracking-tight leading-tight drop-shadow-xl">
           <span className="bg-gradient-to-r from-[color:var(--accent)] to-[color:var(--highlight)] bg-clip-text text-transparent">
             {FestData.name}
           </span>

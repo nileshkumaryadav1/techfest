@@ -88,7 +88,7 @@ export default function EventsSection() {
                   />
                   <div className="p-4">
                     <h3 className="text-xl font-semibold">{event.title}</h3>
-                    <p className="text-sm text-[color:var(--secondary)] mt-1">{event.date}</p>
+                    <p className="text-sm text-[color:var(--secondary)] mt-1">📅 {event.date} | ⏲️ {event.time}</p>
                     <p className="text-sm text-[color:var(--secondary)] mt-1">
                       {event.description.slice(0, 100) || "No description available."}
                     </p>

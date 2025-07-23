@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -31,7 +32,6 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Store admin data (excluding password)
       localStorage.setItem("admin", JSON.stringify(data.admin));
       router.push("/admin");
     } catch (err) {
@@ -40,36 +40,52 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">Admin Login</h1>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        <form onSubmit={handleLogin} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4">
+      <div className="w-full max-w-md rounded-xl shadow-lg p-8 border border-[var(--border)]">
+        <h1 className="text-3xl font-bold text-center text-[var(--foreground)] mb-6">
+          Admin Login
+        </h1>
+
+        {error && (
+          <div className="bg-red-100 border border-red-300 text-red-700 text-sm px-4 py-2 rounded mb-4">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium mb-1 text-[var(--foreground)]">
+              Email
+            </label>
             <input
+              id="email"
               type="email"
-              className="w-full px-4 py-2 border rounded-md"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="admin@example.com"
             />
           </div>
+
           <div>
-            <label className="block text-sm font-medium">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium mb-1 text-[var(--foreground)]">
+              Password
+            </label>
             <input
+              id="password"
               type="password"
-              className="w-full px-4 py-2 border rounded-md"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="••••••••"
+              placeholder="Enter your password"
             />
           </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
+            className="w-full bg-[var(--accent)] hover:bg-[var(--highlight)] text-white font-semibold py-2 rounded-md transition duration-200"
           >
             Log In
           </button>

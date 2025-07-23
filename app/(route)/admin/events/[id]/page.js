@@ -142,28 +142,48 @@ export default function EventDetailPage() {
           </>
         ) : (
           <>
-            <p><strong>Date:</strong> {new Date(event.date).toDateString()}</p>
-            <p><strong>Time:</strong> {event.time}</p>
-            <p><strong>Venue:</strong> {event.venue}</p>
-            <p><strong>Coordinators:</strong> {Array.isArray(event.coordinators)
+            <p><>Id:</> {event._id}</p>
+            <p><>Title:</> {event.title}</p>
+            <p><>Slug:</> {event.slug}</p>
+            <p><>Event ID:</> {event.eventId}</p>
+            <p><>Category:</> {event.category}</p>
+            <p><>Date:</> {new Date(event.date).toDateString()}</p>
+            <p><>Time:</> {event.time}</p>
+            <p><>Venue:</> {event.venue}</p>
+
+            <p><>Description:</> {event.description}</p>
+            <p><>Rules:</> 
+            <a href={event.ruleBookPdfUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline"> {event.ruleBookPdfUrl}</a>
+            </p>
+            <p><>Image:</> 
+            <a href={event.imageUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline"> {event.imageUrl}</a>
+            </p>
+
+            <p><>Coordinators:</> {Array.isArray(event.coordinators)
               ? event.coordinators.map((c, idx) => <span key={idx}>{c.name || c}{idx < event.coordinators.length - 1 ? ', ' : ''}</span>)
               : 'N/A'}
             </p>
+
+            <p><>Prize:</> {event.prizes}</p>
+
+            <p>Workshops:{event.workshops}</p>
+            <p><>Speakers:</> {event.speakers}</p>
+
             {enrolledEvent && (
-              <p className="text-md text-gray-600 font-bold">
+              <p className="text-sm text-gray-600 font-bold">
                 Students: {enrolledEvent.enrolledCount} enrolled
               </p>
             )}
-            {event.winner && (
-              <p><strong>Winner:</strong> {event.winner}</p>
-            )}
+           <p className="text-sm text-[color:var(--accent)] font-medium">
+            Winner: {event.winners.map((w) => w.name).join(", ") || "Not declared"}
+          </p>
           </>
         )}
       </section>
 
       {/* Registered Students */}
       <section className="bg-white p-6 rounded-xl shadow space-y-4 bg-[color:var(--foreground)] text-[color:var(--background)]">
-        <h2 className="text-xl font-semibold">👥 Registered Students ({students.length})</h2>
+        <h2 className="text-md font-semibold">👥 Registered Students ({students.length})</h2>
 
         <button onClick={downloadPDF} className="text-sm bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
           Download PDF

@@ -3,23 +3,22 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-export default function EventDetailPage({ params: asyncParams }){
+export default function EventDetailPage() {
   const router = useRouter();
-  const params = useParams(asyncParams); // ✅ unwrap
-  const slug = params.slug;
+  const { slug } = useParams();
 
   const [student, setStudent] = useState(null);
   const [event, setEvent] = useState(null);
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // Fetch event data
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         const res = await fetch(`/api/event/${slug}`);
         const data = await res.json();
-        if (!res.ok || data.error) setEvent(null);
-        else setEvent(data);
+        setEvent(res.ok && !data.error ? data : null);
       } catch (err) {
         console.error("Fetch error:", err);
         setEvent(null);
@@ -30,6 +29,7 @@ export default function EventDetailPage({ params: asyncParams }){
     fetchEvent();
   }, [slug]);
 
+  // Load student from localStorage
   useEffect(() => {
     try {
       const stored = localStorage.getItem("student");
@@ -39,9 +39,11 @@ export default function EventDetailPage({ params: asyncParams }){
     }
   }, []);
 
+  // Handle enrollment
   const handleEnroll = async (e) => {
     e.preventDefault();
     if (!student || !event?._id) return;
+
     try {
       const res = await fetch("/api/enroll", {
         method: "POST",
@@ -57,6 +59,7 @@ export default function EventDetailPage({ params: asyncParams }){
     }
   };
 
+  // Loading state
   if (loading) {
     return (
       <div className="text-center mt-24 text-lg text-[var(--secondary)] animate-pulse">
@@ -65,6 +68,7 @@ export default function EventDetailPage({ params: asyncParams }){
     );
   }
 
+  // Event not found
   if (!event) {
     return (
       <div className="text-center mt-24 text-red-500 text-xl font-semibold">
@@ -81,11 +85,10 @@ export default function EventDetailPage({ params: asyncParams }){
     );
   }
 
-  console.log(event);
-
   return (
     <main className="min-h-screen px-3 md:px-20 py-10 bg-[var(--background)] text-[var(--foreground)]">
       <div className="max-w-4xl mx-auto rounded-2xl shadow-xl border border-[var(--border)] bg-[var(--card)] md:p-8 p-4 space-y-8">
+
         {/* 📸 Event Image */}
         <img
           src={event.imageUrl}
@@ -94,24 +97,21 @@ export default function EventDetailPage({ params: asyncParams }){
         />
 
         {/* 🏷️ Event Info */}
-        <div className="flex flex-col md:flex-row md:gap-4 w-full">
+        <div className="flex flex-col md:flex-row md:gap-4">
           <div className="md:border-r border-[var(--border)] md:pr-4">
             <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--accent)] mb-3">
               {event.title}
             </h1>
-            <h4 className="text-sm md:text-md font-semibold text-[var(--highlight)]">
-              Event ID: {event.eventId}
-            </h4>
             <h4 className="text-sm md:text-md font-semibold text-[var(--highlight)] mb-5">
-              Category: {event.category}
+              Event ID: {event.eventId} {" | "} Category: {event.category}
             </h4>
             <p className="text-sm text-[var(--secondary)] mb-3">
-              📅 {event.date} &nbsp; | &nbsp; 📍 {event.venue}
+              📅 {event.date} | 🕧 {event.time} | 📍 {event.venue}
             </p>
           </div>
 
           {/* 📝 Description */}
-          <div className="text-base leading-relaxed whitespace-pre-line text-[var(--foreground)] md:pl-4 pt-4 md:pt-0">
+          <div className="md:pl-4 pt-4 md:pt-0 text-base leading-relaxed whitespace-pre-line">
             {event.description}
           </div>
         </div>
@@ -119,39 +119,45 @@ export default function EventDetailPage({ params: asyncParams }){
         {/* 🚀 Enroll Section */}
         <form onSubmit={handleEnroll} className="space-y-5 max-w-xl mx-auto text-center">
           <h2 className="text-xl md:text-2xl font-semibold text-[var(--highlight)]">
-  {event?.winners?.length > 0
-    ? <> 
-            <p className="text-sm text-[var(--secondary)]"><p>🏁 Event Concluded  </p>🏆 Winners: {event.winners.map(w => w.name).join(", ")}</p></>
-    : status === "success" || status === "already"
-    ? "✅ You're Already Enrolled"
-    : "🚀 Participate Now"}
-</h2>
+            {event?.winners?.length > 0 ? (
+              <>
+                <p className="text-sm text-[var(--secondary)]">
+                  <span>🏁 Event Concluded</span><br />
+                  🏆 Winners: {event.winners.map(w => w.name).join(", ")}
+                </p>
+              </>
+            ) : status === "success" || status === "already" ? (
+              "✅ You're Already Enrolled"
+            ) : (
+              "🚀 Participate Now"
+            )}
+          </h2>
 
+          {/* Button + Rulebook */}
           {student ? (
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
               {event?.winners?.length > 0 ? (
-  <button
-    disabled
-    className="bg-gray-400 text-white px-6 py-2.5 font-semibold rounded-xl shadow-md cursor-not-allowed"
-  >
-    🏆 Winners Declared
-  </button>
-) : status === "success" || status === "already" ? (
-  <button
-    disabled
-    className="bg-green-600 text-white px-6 py-2.5 font-semibold rounded-xl shadow-md cursor-not-allowed"
-  >
-    ✅ Enrolled
-  </button>
-) : (
-  <button
-    type="submit"
-    className="bg-[var(--accent)] text-black px-6 py-2.5 font-semibold rounded-xl shadow-md hover:scale-105 hover:shadow-lg transition-all"
-  >
-    🚀 Enroll Now
-  </button>
-)}
-
+                <button
+                  disabled
+                  className="bg-gray-400 text-white px-6 py-2.5 font-semibold rounded-xl shadow-md cursor-not-allowed"
+                >
+                  🏆 Winners Declared
+                </button>
+              ) : status === "success" || status === "already" ? (
+                <button
+                  disabled
+                  className="bg-green-600 text-white px-6 py-2.5 font-semibold rounded-xl shadow-md cursor-not-allowed"
+                >
+                  ✅ Enrolled
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="bg-[var(--accent)] text-black px-6 py-2.5 font-semibold rounded-xl shadow-md hover:scale-105 hover:shadow-lg transition-all"
+                >
+                  🚀 Enroll Now
+                </button>
+              )}
 
               {event.ruleBookPdfUrl && (
                 <a
@@ -167,25 +173,17 @@ export default function EventDetailPage({ params: asyncParams }){
           ) : (
             <p className="text-yellow-400">
               ⚠️ Please{" "}
-              <a
-                href="/login"
-                className="underline text-blue-400 hover:text-blue-300 transition"
-              >
+              <a href="/login" className="underline text-blue-400 hover:text-blue-300 transition">
                 login
               </a>{" "}
               to enroll.
             </p>
           )}
 
-          {status === "success" && (
-            <p className="text-green-400">✅ Successfully enrolled!</p>
-          )}
-          {status === "already" && (
-            <p className="text-yellow-400">👍 You&apos;re already enrolled.</p>
-          )}
-          {status === "error" && (
-            <p className="text-red-400">❌ Something went wrong. Try again.</p>
-          )}
+          {/* Status Messages */}
+          {status === "success" && <p className="text-green-400">✅ Successfully enrolled!</p>}
+          {status === "already" && <p className="text-yellow-400">👍 You&apos;re already enrolled.</p>}
+          {status === "error" && <p className="text-red-400">❌ Something went wrong. Try again.</p>}
         </form>
 
         {/* 👥 Coordinators */}
@@ -206,10 +204,8 @@ export default function EventDetailPage({ params: asyncParams }){
                     key={i}
                     className="bg-[var(--card)] p-4 border border-[var(--border)] rounded-xl shadow-sm hover:shadow-md transition"
                   >
-                    <h3 className="text-lg font-bold text-[var(--foreground)]">{name}</h3>
-                    {role && (
-                      <p className="text-sm italic text-[var(--highlight)]">{role}</p>
-                    )}
+                    <h3 className="text-lg font-bold">{name}</h3>
+                    {role && <p className="text-sm italic text-[var(--highlight)]">{role}</p>}
                     {contact ? (
                       <p className="text-sm mt-1 text-[var(--secondary)]">📞 {contact}</p>
                     ) : (

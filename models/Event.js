@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const EventSchema = new mongoose.Schema({
+  // at the time of event registration
   title: String,
   slug: String,
 
@@ -15,7 +16,10 @@ const EventSchema = new mongoose.Schema({
   ruleBookPdfUrl: String,
 
   imageUrl: String,
+  
+  prizes: String,
 
+  // below details will be updated aftre the event registered
   coordinators: [
     {
       name: { type: String, required: true },
@@ -36,8 +40,6 @@ const EventSchema = new mongoose.Schema({
       email: String,
     },
   ],
-  
-  prizes: String,
   
 });
 

@@ -73,82 +73,114 @@ export default function AdminEvents() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-bold mb-6">All Events</h1>
+      <h1 className="text-2xl font-bold mb-6">
+  All Events ({events.length})
+</h1>
 
-      <div className="space-y-4 bg-[color:var(--foreground)] text-[color:var(--background)]">
-        {events.length === 0 ? (
-          <p className="text-[color:var(--secondary)]">No events found.</p>
-        ) : (
-          events.map((event) => {
-            const matched = allEvents.find((e) => e._id === event._id);
-            return (
-              <div
-                key={event._id}
-                className="p-4 bg-white rounded-lg shadow border border-gray-200"
+<div className="space-y-4">
+  {events.length === 0 ? (
+    <p>No events found.</p>
+  ) : (
+    events.map((event) => {
+      const matched = allEvents.find((e) => e._id === event._id);
+
+      return (
+        <div key={event._id} className="p-4 rounded-lg shadow border">
+          <div className="flex justify-between flex-wrap gap-4">
+            <div className="space-y-1">
+              <p><strong>Id:</strong> {event._id}</p>
+              <p><strong>Title:</strong> {event.title}</p>
+              <p><strong>Slug:</strong> {event.slug}</p>
+              <p><strong>Event ID:</strong> {event.eventId}</p>
+              <p><strong>Category:</strong> {event.category}</p>
+              <p><strong>Date:</strong> {new Date(event.date).toDateString()}</p>
+              <p><strong>Time:</strong> {event.time}</p>
+              <p><strong>Venue:</strong> {event.venue}</p>
+              <p><strong>Description:</strong> {event.description}</p>
+              <p>
+                <strong>Rules:</strong>{" "}
+                <a
+                  href={event.ruleBookPdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  {event.ruleBookPdfUrl}
+                </a>
+              </p>
+              <p>
+                <strong>Image:</strong>{" "}
+                <a
+                  href={event.imageUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  {event.imageUrl}
+                </a>
+              </p>
+              <p>
+                <strong>Coordinators:</strong>{" "}
+                {Array.isArray(event.coordinators)
+                  ? event.coordinators
+                      .map((c) =>
+                        typeof c === "string"
+                          ? c
+                          : `${c.name}${c.contact ? ` (${c.contact})` : ""}`
+                      )
+                      .join(", ")
+                  : "N/A"}
+              </p>
+              <p><strong>Prize:</strong> {event.prizes}</p>
+              <p><strong>Workshops:</strong> {event.workshops}</p>
+              <p><strong>Speakers:</strong> {event.speakers}</p>
+
+              {matched && (
+                <p className="text-sm text-gray-600 font-medium">
+                  Students: {matched.enrolledCount} enrolled
+                </p>
+              )}
+
+              <p className="text-sm text-[color:var(--accent)] font-semibold">
+                Winner:{" "}
+                {event.winners.length > 0
+                  ? event.winners.map((w) => w.name).join(", ")
+                  : "Not declared"}
+              </p>
+            </div>
+
+            <div className="flex flex-col items-end gap-2">
+              <button
+                onClick={() => handleEditClick(event)}
+                className="text-blue-600 hover:underline"
               >
-                <div className="flex justify-between flex-wrap gap-4">
-                  <div>
-                    <h2 className="text-xl font-semibold">{event.title}</h2>
-                    <p className="text-sm text-gray-600">
-                      {new Date(event.date).toDateString()} at {event.time}
-                    </p>
-                    <p className="text-sm text-gray-600">Venue: {event.venue}</p>
-                    <p className="text-sm text-gray-600">
-                      Coordinators:{" "}
-                      {Array.isArray(event.coordinators)
-                        ? event.coordinators
-                            .map((c) =>
-                              typeof c === "string"
-                                ? c
-                                : `${c.name}${c.contact ? ` (${c.contact})` : ""}`
-                            )
-                            .join(", ")
-                        : "N/A"}
-                    </p>
+                Edit
+              </button>
+              <Link
+                href={`/admin/events/${event._id}`}
+                className="text-[color:var(--highlight)] underline"
+              >
+                View
+              </Link>
+              <button
+                onClick={() => handleDelete(event._id)}
+                className="text-red-500 hover:underline"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    })
+  )}
+</div>
 
-                    {matched && (
-                      <>
-                        <p className="text-sm text-gray-600">
-                          Students: {matched.enrolledCount} enrolled
-                        </p>
-                        <p className="text-sm text-green-600 font-medium">
-                          Winner: {event.winners.map((w) => w.name).join(", ") || "Not declared"}
-                        </p>
-                      </>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col items-end gap-2">
-                    <button
-                      onClick={() => handleEditClick(event)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Edit
-                    </button>
-                    <Link
-                      href={`/admin/events/${event._id}`}
-                      className="text-blue-500 underline"
-                    >
-                      View
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(event._id)}
-                      className="text-red-500 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
 
       {/* Edit Modal */}
       {editingEvent && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-lg shadow-lg">
+          <div className="p-6 rounded-lg w-full max-w-4xl shadow-lg">
             <h2 className="text-lg font-bold mb-4">Edit Event</h2>
 
             {[
@@ -163,6 +195,8 @@ export default function AdminEvents() {
               "eventId",
               "category",
               "ruleBookPdfUrl",
+              "workshops",
+              "speakers",
             ].map((field) => (
               <div key={field} className="mb-4">
                 <label className="block text-sm font-medium mb-1 capitalize">
@@ -246,23 +280,6 @@ export default function AdminEvents() {
               >
                 ➕ Add Coordinator
               </button>
-            </div>
-
-            {/* Winner */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Winner</label>
-              <select
-                className="w-full border px-3 py-2 rounded"
-                value={form.winner || ""}
-                onChange={(e) => setForm({ ...form, winner: e.target.value })}
-              >
-                <option value="">Select Winner</option>
-                {enrolledStudents.map((student) => (
-                  <option key={student._id} value={student.name}>
-                    {student.name} ({student.email})
-                  </option>
-                ))}
-              </select>
             </div>
 
             <div className="flex justify-end gap-3 mt-4">

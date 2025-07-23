@@ -11,15 +11,17 @@ const studentSchema = new mongoose.Schema({
   required: true,
   unique: true,
   },
+
   festId: {
   type: String,
   required: true,
   unique: true,
   },
-  role: String,
+
   college: String,
   year: String,
   branch: String,
+
   registeredEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
 });
 

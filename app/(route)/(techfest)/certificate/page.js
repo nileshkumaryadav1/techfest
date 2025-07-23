@@ -17,7 +17,6 @@ export default function CertificatePage() {
 
       const data = await res.json();
 
-      // Check if essential event details exist, otherwise skip
       if (!data?.name || !data?.events || !data?.dateRange) {
         throw new Error("Incomplete certificate data");
       }
@@ -57,18 +56,47 @@ export default function CertificatePage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", padding: "2rem" }} className="bg-[color:var(--background)] text-[color:var(--foreground)]">
-      <h1 style={{ textAlign: "center", fontSize: "2rem", fontWeight: "bold", marginBottom: "2rem" }}>
-        🎓 Download Your <span className="text-[color:var(--accent)]"> {FestData.name} </span> Certificate
+    <div
+      style={{
+        minHeight: "100vh",
+        padding: "2rem",
+        backgroundColor: "var(--background)",
+        color: "var(--foreground)",
+      }}
+    >
+      <h1
+        style={{
+          textAlign: "center",
+          fontSize: "2rem",
+          fontWeight: "bold",
+          marginBottom: "2rem",
+        }}
+      >
+        🎓 Download Your{" "}
+        <span style={{ color: "var(--accent)" }}>{FestData.name}</span> Certificate
       </h1>
 
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
+      {/* Input Area */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "1rem",
+          marginBottom: "2rem",
+        }}
+      >
         <input
           type="text"
           placeholder="Enter Fest ID"
           value={festId}
           onChange={(e) => setFestId(e.target.value.toLowerCase())}
-          style={{ padding: "0.5rem 1rem", width: "300px", border: "1px solid #ccc", borderRadius: "4px" }}
+          style={{
+            padding: "0.5rem 1rem",
+            width: "300px",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+          }}
         />
         <button
           onClick={fetchCertificate}
@@ -79,163 +107,108 @@ export default function CertificatePage() {
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
+            fontWeight: "bold",
           }}
         >
           Get Certificate
         </button>
       </div>
 
-{certificateData && certificateData.name && certificateData.events && certificateData.dateRange && (
+      {/* Certificate Preview */}
+{certificateData && (
   <>
-    <div
-      ref={certRef}
-      style={{
-        backgroundColor: "#fffefcff",
-        color: "#000000",
-        padding: "2rem",
-        width: "1000px",
-        margin: "2rem auto",
-        border: "1px solid #ddd",
-        borderRadius: "6px",
-        fontFamily: "monospace",
-      }}
-    >
-      {/* Header with logos and banner */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "1rem",
-        }}
-      >
-        <img
-          src="/logo.png"
-          alt="Logo Left"
-          style={{ width: "100px", borderRadius: "50%" }}
-        />
-
-        <div style={{ textAlign: "center" }}>
-          <img
-            src="branding/banner.png"
-            alt="Fest Banner"
-            style={{ width: "300px", marginBottom: "0.5rem" , alignContent:"center" }}
-          />
-          <p style={{ fontSize: "1rem", color: "#555" }}>
-            Presented by{" "}
-            <span style={{ fontWeight: "bold", color: "var(--accent)" }}>
-              {CollegeData.name}
-            </span>
-          </p>
-        </div>
-
-        <img
-          src="/college/logo.png"
-          alt="Logo Right"
-          style={{ width: "100px", borderRadius: "50%" }}
-        />
+  <div
+    ref={certRef}
+    style={{
+      backgroundColor: "#f4ebebff",
+      color: "#1a1a1a",
+      fontFamily: "Georgia, serif",
+      padding: "2rem",
+      maxWidth: "750px",
+      margin: "1rem auto",
+      border: "6px double #aaa",
+      borderRadius: "8px",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+      boxSizing: "border-box",
+    }}
+  >
+    {/* Header Section */}
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <img src="/college/logo.png" alt="College Logo" style={{ width: "60px", height: "60px", objectFit: "contain" }} className="rounded-full" />
+      <div style={{ textAlign: "center", flex: 1 }}>
+        <h2 style={{ margin: 0, fontSize: "1.3rem", fontWeight: "bold" }}>{CollegeData.name}</h2>
+        <h3 style={{ margin: "0.25rem 0", fontSize: "1.1rem", fontWeight: "normal", color: "#555" }}>
+          Presents
+        </h3>
+        <h1 style={{ margin: 0, fontSize: "1.6rem", color: "var(--accent)", fontWeight: "bold", letterSpacing: "1px" }}>{FestData.name}</h1>
       </div>
-
-      {/* Certificate Title */}
-      <h4
-        style={{
-          fontSize: "2rem",
-          fontWeight: "bold",
-          textAlign: "center",
-          margin: "1rem 0",
-          textDecoration: "underline",
-          textDecorationColor: "var(--accent)",
-        }}
-      >
-        CERTIFICATE OF PARTICIPATION
-      </h4>
-
-      {/* Participant Name */}
-      <h3
-        style={{
-          textAlign: "center",
-          fontSize: "1.4rem",
-          fontWeight: "bold",
-          marginBottom: "0.2rem",
-        }}
-      >
-        {certificateData.name}
-      </h3>
-
-      <p
-        style={{
-          textAlign: "center",
-          fontSize: "0.7rem",
-          marginBottom: "0.75rem",
-        }}
-      >
-        Fest ID: {festId}
-      </p>
-
-      {/* Certificate Body */}
-      <p
-        style={{
-          textAlign: "center",
-          fontSize: "1rem",
-          color: "#333",
-          margin: "1rem 2rem",
-          lineHeight: "1.6",
-        }}
-      >
-        has successfully participated in the event(s):
-        <br />
-        <strong>{certificateData.events}</strong>
-        <br />
-        held on <strong>{certificateData.dateRange}</strong>.
-      </p>
-
-      {/* Footer: Certificate ID + Signatory */}
-      <div
-        style={{
-          marginTop: "2rem",
-          display: "flex",
-          justifyContent: "space-between",
-          borderTop: "1px solid #eee",
-          paddingTop: "1rem",
-          fontSize: "0.9rem",
-        }}
-      >
-        <p>
-          Certificate ID:{" "}
-          <span style={{ color: "var(--accent)" }}>
-            {certificateData.certId}
-          </span>
-        </p>
-        <div style={{ textAlign: "right" }}>
-          <p>Centre Fest Committee</p>
-          <p style={{ fontSize: "0.75rem", marginTop: "0.25rem" }}>
-            Authorized Signatory
-          </p>
-        </div>
-      </div>
+      <img src="/logo.png" alt="Fest Logo" style={{ width: "60px", height: "60px", objectFit: "contain" }} />
     </div>
 
-    {/* Download Button */}
-    <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
+    {/* Divider */}
+    <hr style={{ margin: "1.5rem 0", borderTop: "2px solid #ccc" }} />
+
+    {/* Title */}
+    <h2
+      style={{
+        textAlign: "center",
+        fontSize: "1.4rem",
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        letterSpacing: "1px",
+        textDecoration: "underline",
+        textDecorationColor: "#4ade80",
+        marginBottom: "1rem",
+      }}
+    >
+      Certificate of Participation
+    </h2>
+
+    {/* Name */}
+    <h3 style={{ textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", marginBottom: "0.25rem" }}>
+      {certificateData.name}
+    </h3>
+    <p style={{ textAlign: "center", fontSize: "0.8rem", color: "#444", marginBottom: "1rem" }}>
+      Fest ID: <strong>{festId}</strong>
+    </p>
+
+    {/* Body */}
+    <p style={{ fontSize: "1rem", textAlign: "center", lineHeight: "1.6", marginBottom: "1.5rem" }}>
+      This is to certify that <strong>{certificateData.name}</strong> has actively participated in the event(s):{" "}
+      <strong>{certificateData.events}</strong> conducted during the <strong>TechFest 2026</strong> held on{" "}
+      <strong>{certificateData.dateRange}</strong> organized by <strong>{CollegeData.name}</strong>.
+    </p>
+
+    {/* Footer: Certificate ID & Sign */}
+    <div style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
+      <div>
+        <p style={{ fontSize: "0.7rem", color: "#666" }}>Certificate ID:</p>
+        <p style={{ fontSize: "0.85rem", fontWeight: "bold", color: "var(--accent)",}}>{certificateData.certId}</p>
+      </div>
+      <div style={{ textAlign: "right" }}>
+        <p style={{ fontSize: "0.9rem", fontWeight: "bold" }}>Centre Fest Committee</p>
+        <p style={{ fontSize: "0.7rem", color: "#4ade80" }}>Authorized Signatory</p>
+      </div>
+    </div>
+  </div>
+
+   {/* Download Button */}
+    <div style={{ textAlign: "center", marginTop: "1rem" }}>
       <button
         onClick={downloadPDF}
         style={{
           backgroundColor: "var(--accent)",
           color: "white",
-          padding: "0.6rem 1.5rem",
+          padding: "0.6rem 1.25rem",
           border: "none",
-          borderRadius: "6px",
-          fontWeight: "bold",
+          borderRadius: "4px",
+          fontSize: "0.9rem",
           cursor: "pointer",
-          fontSize: "1rem",
         }}
       >
         Download PDF
       </button>
-    </div>
-  </>
-)}
-
+    </div></>)}
     </div>
   );
 }

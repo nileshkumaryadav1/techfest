@@ -5,12 +5,17 @@ import { useEffect, useState } from "react";
 
 export default function EditProfilePage() {
   const [formData, setFormData] = useState({
+    _id: "",
+    festId: "",
+
     name: "",
     email: "",
+    phone: "",
+    // password: "",
+
     college: "",
     year: "",
     branch: "",
-    _id: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -27,12 +32,17 @@ export default function EditProfilePage() {
 
     if (stored) {
       setFormData({
+        _id: stored._id || "",
+        festId: stored.festId || "",
+
         name: stored.name || "",
         email: stored.email || "",
+        phone: stored.phone || "",
+        // password: stored.password || "",
+
         college: stored.college || "",
         year: stored.year || "",
         branch: stored.branch || "",
-        _id: stored._id || "",
       });
     }
     setLoading(false);
@@ -58,6 +68,7 @@ export default function EditProfilePage() {
     if (res.ok) {
       setMessage("✅ Profile updated successfully!");
       localStorage.setItem("student", JSON.stringify(data.student));
+      router.push("/dashboard");
     } else {
       setMessage("❌ Failed to update profile.");
     }
@@ -68,10 +79,12 @@ export default function EditProfilePage() {
   return (
     <div className="max-w-xl mx-auto my-10 p-6 bg-[var(--card)] rounded-xl shadow-xl">
       <h1 className="text-2xl font-bold mb-6">Edit Your Profile</h1>
-      {message && <p className="mb-4 text-sm text-green-500">{message}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
             <p>ID: {formData._id}</p>
+        </div>
+        <div>
+            <p>ID: {formData.festId}</p>
         </div>
         <div>
           <label className="block mb-1 font-medium">Name</label>
@@ -94,6 +107,28 @@ export default function EditProfilePage() {
             required
           />
         </div>
+        <div>
+          <label className="block mb-1 font-medium">Phone</label>
+          <input
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full p-2 rounded border bg-[var(--background)]"
+            type="tel"
+            required
+          />
+        </div>
+        {/* <div>
+          <label className="block mb-1 font-medium">Password</label>
+          <input
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full p-2 rounded border bg-[var(--background)]"
+            type="password"
+            required
+          />
+        </div> */}
         <div>
           <label className="block mb-1 font-medium">College</label>
           <input
@@ -131,6 +166,8 @@ export default function EditProfilePage() {
           Save Changes
         </button>
       </form>
+      
+      {message && <p className="mb-4 text-sm text-green-500">{message}</p>}
     </div>
   );
 }
