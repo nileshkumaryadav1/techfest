@@ -12,10 +12,12 @@ export default function EnrolledEvents({ studentId }) {
       const res = await fetch(`/api/enrollments?studentId=${studentId}`);
       const data = await res.json();
 
-      const validEvents = (data.enrolledEvents || []).filter(e => e && e._id && e.title);
+      const validEvents = (data.enrolledEvents || []).filter(
+        (e) => e && e._id && e.title
+      );
       setEvents(validEvents);
     } catch (err) {
-      console.error("Error fetching enrolled events", err);
+      console.error("Error fetching enrolled events:", err);
     } finally {
       setLoading(false);
     }
@@ -37,12 +39,12 @@ export default function EnrolledEvents({ studentId }) {
       });
 
       if (res.ok) {
-        setEvents(prev => prev.filter(e => e._id !== eventId));
+        setEvents((prev) => prev.filter((e) => e._id !== eventId));
       } else {
-        alert("Failed to de-enroll.");
+        alert("Failed to de-enroll from the event.");
       }
     } catch (err) {
-      console.error("Error while de-enrolling", err);
+      console.error("Error de-enrolling from event:", err);
       alert("Something went wrong.");
     }
   };
@@ -59,18 +61,24 @@ export default function EnrolledEvents({ studentId }) {
       });
 
       if (res.ok) {
-        setEvents([]); // Clear UI
+        setEvents([]);
       } else {
         alert("Failed to de-enroll from all events.");
       }
     } catch (err) {
-      console.error("Error de-enrolling from all", err);
+      console.error("Error de-enrolling from all:", err);
       alert("Something went wrong.");
     }
   };
 
+  if (!studentId) return null;
+
   if (loading)
-    return <p className="text-[color:var(--secondary)]">Loading your events...</p>;
+    return (
+      <p className="text-[color:var(--secondary)] flex items-center gap-2">
+        <span className="animate-spin text-xl">⏳</span> Loading your events...
+      </p>
+    );
 
   if (events.length === 0)
     return (
@@ -94,21 +102,21 @@ export default function EnrolledEvents({ studentId }) {
         {events.map((event) => (
           <li
             key={event._id}
-            className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 rounded-xl bg-[color:var(--background)] border border-[color:var(--border)] shadow transition-all hover:shadow-md"
+            className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 rounded-xl bg-[color:var(--background)] border border-[color:var(--border)] shadow hover:shadow-md transition-all"
           >
             <div className="flex-1">
               <p className="text-lg font-semibold text-[color:var(--foreground)]">
                 {event.title}
               </p>
               <p className="text-sm text-[color:var(--secondary)]">
-                {event.description || "No description provided."}
+                {event.description || "No description available."}
               </p>
               <p className="text-xs text-[color:var(--secondary)] mt-1">
-                📆 {event.date || "Date not available"}
+                📅 {event.date || "Date not provided"}
               </p>
             </div>
 
-            <div className="flex gap-4 text-sm font-medium">
+            <div className="flex gap-3 text-sm font-medium">
               <Link
                 href={`/events/${event.slug || ""}`}
                 className="px-3 py-1 rounded-md bg-[color:var(--accent)] text-black hover:opacity-90 transition"

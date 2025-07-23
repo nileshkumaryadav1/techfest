@@ -12,8 +12,8 @@ export default function AdminUsers() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Registered Students</h1>
+    <div className="p-6 bg-[color:var(--background)] text-[color:var(--foreground)]">
+      <h1 className="text-2xl font-bold mb-6">Registered Students</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {users.map(user => (
           <div

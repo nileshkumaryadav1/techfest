@@ -1,58 +1,60 @@
 "use client";
 
 import { FestData } from "@/data/FestData";
-import { Clock4, MapPin } from "lucide-react";
+import { Clock4, MapPin, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function HeroSection() {
   return (
     <section
-      className="w-full md:min-h-screen pt-20 md:pt-1 flex flex-col justify-center items-center text-center px-6 sm:px-12 lg:px-24"
+      className="relative w-full md:min-h-screen pb-10 md:py-0 md:pb-0 flex flex-col justify-center items-center px-6 sm:px-12 lg:px-24 overflow-hidden"
       style={{
         backgroundColor: "var(--background)",
         color: "var(--foreground)",
       }}
     >
-      <div className="max-w-4xl mx-auto space-y-6">
+      {/* Main Content */}
+      <div className="max-w-5xl mx-auto z-10 text-center space-y-7 pt-32 md:pt-2">
         {/* Fest Name */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight drop-shadow-md">
-          {FestData.name}
+        <h1 className="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-tight drop-shadow-xl">
+          <span className="bg-gradient-to-r from-[color:var(--accent)] to-[color:var(--highlight)] bg-clip-text text-transparent">
+            {FestData.name}
+          </span>
         </h1>
 
         {/* Theme + Tagline */}
-        <p className="text-lg sm:text-xl md:text-2xl text-[color:var(--highlight)] font-medium">
-           {FestData.theme} -
-           {FestData.tagline}
+        <p className="text-lg sm:text-xl md:text-2xl text-[color:var(--highlight)] font-semibold">
+          {FestData.theme} — {FestData.tagline}
         </p>
-
-        {/* Description */}
-        {/* <p className="text-sm sm:text-base md:text-lg text-[color:var(--secondary)] max-w-2xl mx-auto">
-          {FestData.description}
-        </p> */}
 
         {/* CTA Buttons */}
         <div className="flex flex-wrap justify-center gap-4 pt-6">
           <Link
             href="/events"
-            className="px-6 py-3 text-sm font-semibold rounded-2xl bg-[color:var(--accent)] text-[color:var(--background)] hover:scale-105 transition-transform shadow-md"
+            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-2xl bg-[color:var(--accent)] text-[color:var(--background)] hover:scale-105 transition-transform shadow-lg"
           >
-            Explore Events
+            Explore Events <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/register"
-            className="px-6 py-3 text-sm font-semibold rounded-2xl border border-[color:var(--accent)] text-[color:var(--accent)] hover:bg-[color:var(--accent)] hover:text-[color:var(--background)] transition-all shadow-md"
+            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-2xl border border-[color:var(--accent)] text-[color:var(--accent)] hover:bg-[color:var(--accent)] hover:text-[color:var(--background)] transition-all shadow-lg"
           >
-            Register Now
+            Register Now <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
         {/* Date & Venue */}
-        <div>
-        <p className="text-sm sm:text-base md:text-lg text-[color:var(--secondary)]">
-          {FestData.date}
-           </p>
-        <p>Venue : {FestData.venue}</p>
-       </div>
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-6 text-sm sm:text-base md:text-lg text-[color:var(--secondary)]">
+          <div className="flex items-center gap-2">
+            <Clock4 className="w-5 h-5 text-[color:var(--accent)]" />
+            <span>{FestData.date}</span>
+          </div>
+          <span className="hidden sm:inline-block">|</span>
+          <div className="flex items-center gap-2">
+            <MapPin className="w-5 h-5 text-[color:var(--accent)]" />
+            <span>{FestData.venue}</span>
+          </div>
+        </div>
       </div>
     </section>
   );

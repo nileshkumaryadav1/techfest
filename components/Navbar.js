@@ -19,7 +19,7 @@ const Navbar = () => {
         {/* Logo */}
         <Link href="/" className="text-xl font-extrabold tracking-tight text-[color:var(--accent)]">
         <img
-          src="/favicon.ico"
+          src="/logo.png"
           alt="Logo"
           className="w-8 h-8 inline-block mr-2"
         />

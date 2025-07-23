@@ -9,26 +9,26 @@ export async function GET() {
   try {
     await connectDB();
 
-    const events = await Event.find().populate("winners", "name phone email").lean();
+    const events = await Event.find().lean();
     const enrollments = await Enrollment.find().populate("studentId").lean();
 
     const enrollmentMap = {};
-enrollments.forEach((e) => {
-  const eid = e.eventId?.toString();
-  const student = e.studentId;
+    enrollments.forEach((e) => {
+      const eid = e.eventId?.toString();
+      const student = e.studentId;
 
-  // Skip if student doesn't exist
-  if (!eid || !student || !student._id) return;
+      if (!eid || !student || !student._id) return;
 
-  if (!enrollmentMap[eid]) enrollmentMap[eid] = [];
+      if (!enrollmentMap[eid]) enrollmentMap[eid] = [];
 
-  enrollmentMap[eid].push({
-    _id: student._id,
-    name: student.name,
-    email: student.email,
-  });
-});
-
+      enrollmentMap[eid].push({
+        _id: student._id,
+        name: student.name,
+        phone: student.phone,
+        email: student.email,
+        festId: student.festId,
+      });
+    });
 
     const fullData = events.map((event) => ({
       _id: event._id,
@@ -54,9 +54,9 @@ enrollments.forEach((e) => {
 export async function PATCH(req) {
   try {
     await connectDB();
-    const { eventId, winnerIds } = await req.json();
+    const { eventId, winners } = await req.json();
 
-    if (!eventId || !Array.isArray(winnerIds)) {
+    if (!eventId || !Array.isArray(winners)) {
       return NextResponse.json({ success: false, message: "Invalid payload" }, { status: 400 });
     }
 
@@ -66,27 +66,26 @@ export async function PATCH(req) {
     }
 
     const enrolledIds = await Enrollment.find({ eventId }).distinct("studentId");
+    const enrolledSet = new Set(enrolledIds.map(String));
 
-    const isValid = winnerIds.every((id) => enrolledIds.map(String).includes(id));
+    const isValid = winners.every((w) => enrolledSet.has(w._id));
     if (!isValid) {
       return NextResponse.json({
         success: false,
-        message: "One or more winnerIds are not enrolled for this event.",
+        message: "One or more winners are not enrolled for this event.",
       }, { status: 400 });
     }
 
-    event.winners = winnerIds;
+    event.winners = winners;
     await event.save();
-
-    const updated = await Event.findById(eventId).populate("winners", "name email").lean();
 
     return NextResponse.json({
       success: true,
       message: "Winners replaced successfully",
       updatedEvent: {
-        _id: updated._id,
-        title: updated.title,
-        winners: updated.winners,
+        _id: event._id,
+        title: event.title,
+        winners: event.winners,
       },
     });
   } catch (err) {
@@ -95,13 +94,13 @@ export async function PATCH(req) {
   }
 }
 
-// 🔹 PUT: Add winner(s) to the existing list
+// 🔹 PUT: Add winners to existing list
 export async function PUT(req) {
   try {
     await connectDB();
-    const { eventId, winnerIds } = await req.json();
+    const { eventId, winners } = await req.json();
 
-    if (!eventId || !Array.isArray(winnerIds)) {
+    if (!eventId || !Array.isArray(winners)) {
       return NextResponse.json({ success: false, message: "Invalid payload" }, { status: 400 });
     }
 
@@ -111,33 +110,29 @@ export async function PUT(req) {
     }
 
     const enrolledIds = await Enrollment.find({ eventId }).distinct("studentId");
+    const enrolledSet = new Set(enrolledIds.map(String));
 
-    const isValid = winnerIds.every((id) => enrolledIds.map(String).includes(id));
+    const isValid = winners.every((w) => enrolledSet.has(w._id));
     if (!isValid) {
       return NextResponse.json({
         success: false,
-        message: "One or more winnerIds are not enrolled in the event.",
+        message: "One or more winners are not enrolled in the event.",
       }, { status: 400 });
     }
 
-    // Add new unique winner IDs to existing list
-    const existingIds = event.winners.map(String);
-    const newWinners = [
-      ...new Set([...existingIds, ...winnerIds.map(String)]),
-    ];
+    const existingMap = new Map(event.winners.map(w => [w._id.toString(), w]));
+    winners.forEach(w => existingMap.set(w._id.toString(), w));
 
-    event.winners = newWinners;
+    event.winners = Array.from(existingMap.values());
     await event.save();
-
-    const updated = await Event.findById(eventId).populate("winners", "name email").lean();
 
     return NextResponse.json({
       success: true,
       message: "Winners added successfully",
       updatedEvent: {
-        _id: updated._id,
-        title: updated.title,
-        winners: updated.winners,
+        _id: event._id,
+        title: event.title,
+        winners: event.winners,
       },
     });
   } catch (err) {

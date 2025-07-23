@@ -7,6 +7,7 @@ export const FestData = {
     date: "10th to 14th January, 2026",
     venue: "Katihar Engineering College, Katihar, Bihar",
     organizers: "Centre Organization, KEC Katihar",
+    organizersLink: "https://centreorg.vercel.app/",
     sponsors: "KEC Katihar, Centre Organization",
     totalEventCount: "40",
     totalWorkshopCount: "2",
@@ -27,11 +28,13 @@ export const sponsorsData =
         name: "KEC Katihar",
         image: "/logo.png",
         companyUrl: "http://keck.ac.in/",
+        tier: "Platinum",
     },
     {
         name: "Centre Organization",
         image: "/logo.png",
         companyUrl: "https://centreorg.vercel.app/",
+        tier: "Gold",
 }]
 
 export const CollegeData ={

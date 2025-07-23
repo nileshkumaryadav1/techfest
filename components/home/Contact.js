@@ -23,7 +23,7 @@ export default function RegisterCTA() {
           <span className="font-semibold text-[color:var(--highlight)]">innovative</span>,{" "}
           <span className="font-semibold text-[color:var(--highlight)]">exciting</span>, and{" "}
           <span className="font-semibold text-[color:var(--highlight)]">unforgettable</span>{" "}
-          TechFest at <span className="underline decoration-[color:var(--accent)]">{CollegeData.name}</span>.
+          TechFest at <span className="hover:underline decoration-[color:var(--accent)] text-[color:var(--highlight)]">{CollegeData.name}</span>.
         </p>
 
         {/* Buttons */}

@@ -62,17 +62,17 @@ export default function AdminSettings() {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-blue-700">Admin Settings</h1>
+      <h1 className="text-2xl font-bold text-[color:var(--highlight)]">Admin Settings</h1>
 
-      <div className="bg-white shadow p-4 rounded space-y-2">
+      <div className="bg-[color:var(--foreground)] text-[color:var(--background)] border border-[color:var(--border)] p-4 rounded space-y-2">
         <p><strong>Name:</strong> {admin?.name}</p>
         <p><strong>Email:</strong> {admin?.email}</p>
         <p><strong>Role:</strong> {admin?.role}</p>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 ">
         <span className="text-sm">Theme: {theme}</span>
-        <button onClick={toggleTheme} className="bg-gray-200 px-3 py-1 rounded">
+        <button onClick={toggleTheme} className="bg-[color:var(--highlight)] text-[color:var(--background)] px-3 py-1 rounded">
           Toggle Theme
         </button>
       </div>

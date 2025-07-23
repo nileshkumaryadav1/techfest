@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -12,17 +12,25 @@ export default function WinnersTab() {
   }, []);
 
   const fetchEvents = async () => {
-    const res = await axios.get("/api/admin/winners");
-    if (res.data.success) setEvents(res.data.events);
+    try {
+      const res = await axios.get("/api/admin/winners");
+      if (res.data.success) setEvents(res.data.events);
+    } catch (err) {
+      console.error("Failed to fetch events:", err);
+    }
   };
 
-  const updateWinners = async (eventId, winnerIds, idx) => {
+  const updateWinners = async (eventId, winnerList, idx) => {
     setSavingIdx(idx);
     try {
-      await axios.patch("/api/admin/winners", { eventId, winnerIds });
+      await axios.patch("/api/admin/winners", {
+        eventId,
+        winners: winnerList,
+      });
       alert("Winners updated successfully!");
-    } catch {
+    } catch (err) {
       alert("Error updating winners.");
+      console.error(err);
     } finally {
       setSavingIdx(null);
       fetchEvents();
@@ -35,8 +43,9 @@ export default function WinnersTab() {
       await axios.delete("/api/admin/winners", { data: { eventId } });
       alert("Winners cleared.");
       fetchEvents();
-    } catch {
+    } catch (err) {
       alert("Error clearing winners.");
+      console.error(err);
     }
   };
 
@@ -45,7 +54,7 @@ export default function WinnersTab() {
       <h1 className="text-3xl font-bold mb-8 text-center text-blue-800">Manage Event Winners</h1>
 
       {events.map((event, idx) => {
-        const winnerIds = event.winners.map((w) => w._id);
+        const currentWinnerIds = event.winners.map((w) => w._id);
 
         return (
           <div key={event._id} className="border rounded-lg shadow-sm p-5 mb-8 bg-white">
@@ -68,25 +77,24 @@ export default function WinnersTab() {
                   </p>
                 ) : (
                   event.enrolledStudents.map((student) => {
-                    const isChecked = winnerIds.includes(student._id);
+                    const isChecked = currentWinnerIds.includes(student._id);
                     return (
                       <label key={student._id} className="flex items-center gap-2">
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => {
-                            const updatedIds = isChecked
-                              ? winnerIds.filter((id) => id !== student._id)
-                              : [...winnerIds, student._id];
+                            const newWinners = isChecked
+                              ? event.winners.filter((w) => w._id !== student._id)
+                              : [...event.winners, {
+                                  _id: student._id,
+                                  name: student.name,
+                                  email: student.email,
+                                }];
 
                             setEvents((prev) =>
                               prev.map((ev, i) =>
-                                i === idx
-                                  ? {
-                                      ...ev,
-                                      winners: updatedIds.map((id) => ({ _id: id })),
-                                    }
-                                  : ev
+                                i === idx ? { ...ev, winners: newWinners } : ev
                               )
                             );
                           }}
@@ -102,7 +110,7 @@ export default function WinnersTab() {
 
               <div className="flex gap-4 mt-4">
                 <button
-                  onClick={() => updateWinners(event._id, winnerIds, idx)}
+                  onClick={() => updateWinners(event._id, event.winners, idx)}
                   disabled={savingIdx === idx}
                   className="px-4 py-2 rounded bg-green-600 text-white font-medium hover:bg-green-700 transition"
                 >

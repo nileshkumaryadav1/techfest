@@ -56,7 +56,7 @@ const Footer = () => {
       {/* 🚀 Copyright */}
       <div>
         <p className="text-sm text-slate-400 md:flex justify-center items-center gap-2">
-          <img src="/favicon.ico" alt="Logo" className="w-5 h-5 inline-block" />
+          <img src="/logo.png" alt="Logo" className="w-5 h-5 inline-block" />
           &copy; {currentYear} {FestData.name} ·
           <p> Built with ❤️ by{" "}</p>
           <Link href={developersData[0].portfolio} target="_blank" className="hover:text-[color:var(--accent)] underline">

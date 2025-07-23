@@ -27,7 +27,7 @@ export async function GET(req) {
   }
 
   // 3. Collect event titles, festName, and dates
-  const eventTitles = enrollments.map((enroll) => enroll.eventId.title + " , ");
+  const eventTitles = enrollments.map((enroll) => enroll.eventId.title + ", ");
   const festName = enrollments[0].eventId.festName || "TechFest 2025";
   
   const allDates = enrollments.map((e) => new Date(e.eventId.date));

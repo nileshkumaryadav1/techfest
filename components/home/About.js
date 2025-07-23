@@ -1,6 +1,7 @@
 "use client";
 
 import { CollegeData, FestData } from "@/data/FestData";
+import Link from "next/link";
 
 export default function AboutSection() {
   return (
@@ -19,13 +20,17 @@ export default function AboutSection() {
           <p>
             Presented by{" "}
             <span className="font-semibold text-[color:var(--highlight)]">
+              <Link href={CollegeData.website} target="_blank" className="hover:underline decoration-[color:var(--accent)]">
               {CollegeData.name}
+              </Link>
             </span>
           </p>
           <p>
             Organised by{" "}
             <span className="font-semibold text-[color:var(--highlight)]">
+              <Link href={FestData.organizersLink} target="_blank" className="hover:underline decoration-[color:var(--accent)]">
               {FestData.organizers}
+              </Link>
             </span>
           </p>
         </div>
