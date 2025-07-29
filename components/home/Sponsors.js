@@ -13,7 +13,13 @@ export default function Sponsors() {
           {/* Heading */}
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-              Our <Link href="/sponsors" className="text-[color:var(--accent)] hover:underline hover:cursor-pointer">Sponsors</Link>
+              Our{" "}
+              <Link
+                href="/sponsors"
+                className="text-[color:var(--accent)] hover:underline hover:cursor-pointer"
+              >
+                Sponsors
+              </Link>
             </h2>
             <p className="text-[color:var(--secondary)] text-base sm:text-lg">
               Proudly supported by trailblazing brands & industry leaders
@@ -40,6 +46,16 @@ export default function Sponsors() {
                 </span>
               </a>
             ))}
+          </div>
+
+          {/* CTA */}
+          <div className="flex flex-wrap justify-center items-center gap-4 pt-8">
+            <Link
+              href="/new-sponsor"
+              className="px-6 py-3 text-sm font-semibold rounded-full bg-[color:var(--accent)] text-[color:var(--background)] hover:scale-105 transition-transform shadow-md"
+            >
+              Become Our Sponsor
+            </Link>
           </div>
         </div>
       </section>

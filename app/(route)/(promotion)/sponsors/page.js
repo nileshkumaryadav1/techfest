@@ -48,7 +48,7 @@ export default function Sponsors() {
               href="/new-sponsor"
               className="px-6 py-3 text-sm font-semibold rounded-full bg-[color:var(--accent)] text-[color:var(--background)] hover:scale-105 transition-transform shadow-md"
             >
-              Become a Sponsor
+              Become Our Sponsor
             </Link>
           </div>
         </div>

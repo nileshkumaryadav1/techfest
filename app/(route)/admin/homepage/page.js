@@ -151,13 +151,19 @@ export default function AdminHomePage() {
 
         <ul className="space-y-4">
           {data.sponsors?.map(s => (
-            <li key={s._id} className="border p-4 rounded shadow flex justify-between items-center">
+            <li key={s._id} className="border p-4 rounded shadow flex flex-col justify-between items-center">
               <div className="flex items-center gap-3">
                 {s.image && (
-                  <Image src={s.image} alt={s.name} width={50} height={40} className="rounded" />
+                  <img src={s.image} alt={s.name} width={50} height={40} className="rounded" />
                 )}
                 <span className="font-medium">{s.name}</span>
               </div>
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-500">{s.email}</span>
+                <span className="text-sm text-gray-500">{s.company}</span>
+                <span className="text-sm text-gray-500">{s.phone}</span>
+              </div>
+              <p className="text-sm">{s.message}</p>
               <button
                 onClick={() => deleteItem("sponsors", s._id)}
                 className="text-red-600 hover:underline font-semibold"
@@ -179,7 +185,7 @@ export default function AdminHomePage() {
         </div>
 
         {newSponsor.image && (
-          <Image
+          <img
             src={newSponsor.image}
             alt="Preview"
             width={100}

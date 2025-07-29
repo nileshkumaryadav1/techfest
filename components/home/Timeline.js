@@ -88,7 +88,7 @@ export default function TimelineSection() {
                       className="bg-[color:var(--border)] bg-opacity-10 p-4 rounded-xl border border-[color:var(--border)] shadow-sm"
                     >
                       <Link
-                        href={`/fest/${event.slug}`}
+                        href={`/events/${event.slug}`}
                         className="hover:underline hover:cursor-pointer"
                       >
                       <h4 className="text-lg font-medium mb-1">

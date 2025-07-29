@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import TeamEnrollForm from "@/components/fest/TeamEnrollForm";
 
 export default function EventDetailPage() {
   const router = useRouter();
@@ -178,8 +177,6 @@ export default function EventDetailPage() {
                 📘 View Rulebook
               </a>
             )}
-
-            <TeamEnrollForm studentId={student?._id} event={event} />
           </div>
 
           {status === "success" && (

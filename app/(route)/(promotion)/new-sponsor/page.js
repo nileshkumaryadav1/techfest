@@ -10,6 +10,7 @@ export default function SponsorPage() {
     company: "",
     phone: "",
     message: "",
+    image: "",
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -30,7 +31,7 @@ export default function SponsorPage() {
 
       if (res.ok) {
         toast.success("Thank you for your interest in sponsoring!");
-        setFormData({ name: "", email: "", company: "", phone: "", message: "" });
+        setFormData({ name: "", email: "", company: "", phone: "", message: "" , image: ""});
       } else {
         toast.error("Something went wrong.");
       }
@@ -47,7 +48,7 @@ export default function SponsorPage() {
         {/* Header */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold">
-            Partner With Us as a <span className="text-[color:var(--accent)]">Sponsor</span>
+            Partner With Us as Our <span className="text-[color:var(--accent)]">Sponsor</span>
           </h1>
           <p className="text-[color:var(--secondary)] text-lg">
             Empower innovation, support student talent, and amplify your brand visibility.
@@ -77,7 +78,7 @@ export default function SponsorPage() {
         <div className="text-center">
           <h2 className="text-2xl font-semibold mb-2">Make a Difference</h2>
           <p className="text-[color:var(--secondary)]">
-            By sponsoring, you’re not just investing in an event — you’re uplifting students, supporting grassroots innovation, and enabling skill development in young minds.
+            By sponsoring, you&apos;re not just investing in an event — you&apos;re uplifting students, supporting grassroots innovation, and enabling skill development in young minds.
           </p>
         </div>
 
@@ -121,6 +122,14 @@ export default function SponsorPage() {
             onChange={handleChange}
             className="p-3 rounded-lg border bg-transparent"
           />
+          <input
+            type="text"
+            name="image"
+            placeholder="Image URL"
+            value={formData.image}
+            onChange={handleChange}
+            className="p-3 rounded-lg border bg-transparent"
+          />
           <textarea
             name="message"
             placeholder="Message or interest area..."
@@ -134,7 +143,7 @@ export default function SponsorPage() {
             disabled={submitting}
             className="bg-[color:var(--accent)] text-[color:var(--background)] px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-transform"
           >
-            {submitting ? "Submitting..." : "Become a Sponsor"}
+            {submitting ? "Submitting..." : "Become Our Sponsor"}
           </button>
         </form>
       </div>

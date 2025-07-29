@@ -1,32 +1,32 @@
 export const FestData = {
-    name : "Techfest'26",
+    name : "CentreFest'26",
     year : "2026",
     theme: "TechYug",
     tagline: "The Era of HUM∆N and M∆CHINE",
     description: "Welcome to TechYug, where tradition meets transformation, and imagination merges with innovation. In this new era, the synergy between human intelligence and artificial intelligence is redefining what's possible.",
-    date: "10th to 14th January, 2026",
-    venue: "Katihar Engineering College, Katihar, Bihar",
+    date: "30th July - 3rd August, 2025",
+    venue: "H1 & H2, KEC Katihar, Bihar",
     organizers: "Centre Organization, KEC Katihar",
     organizersLink: "https://centreorg.vercel.app/",
     sponsors: "KEC Katihar, Centre Organization",
-    totalEventCount: "40",
-    totalWorkshopCount: "2",
-    totalNumberOfDays: "4",
-    totalParticipantCount: "400",
+    totalEventCount: "12",
+    totalWorkshopCount: "0",
+    totalNumberOfDays: "5",
+    totalParticipantCount: "17",
     socialMedia: {
-        facebook: "https://www.facebook.com/kectechfest",
-        instagram: "https://www.instagram.com/kectechfest",
-        twitter: "https://twitter.com/kectechfest",
-        linkedin: "https://www.linkedin.com/in/kectechfest",
-        github: "https://github.com/kectechfest",
+        facebook: "",
+        instagram: "https://www.instagram.com/centre_kec1",
+        twitter: "",
+        linkedin: "",
+        github: "https://github.com/nileshkumaryadav1/techfest",
     }
 };
 
 export const sponsorsData = 
 [
     {
-        name: "KEC Katihar",
-        image: "/logo.png",
+        name: "Katihar Engineering College",
+        image: "/college/logo.png",
         companyUrl: "http://keck.ac.in/",
         tier: "Platinum",
     },
@@ -45,10 +45,10 @@ export const CollegeData ={
     website: "http://keck.ac.in",
     logo: "/college/logo.png",
     socialMedia: {
-        facebook: "https://www.facebook.com/kec",
-        instagram: "https://www.instagram.com/kec",
-        twitter: "https://twitter.com/kec",
-        linkedin: "https://www.linkedin.com/kec",
+        facebook: "",
+        instagram: "",
+        twitter: "",
+        linkedin: "",
     },
 };
 
