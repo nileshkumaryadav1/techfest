@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { ArrowRightCircle } from "lucide-react";
 import { CollegeData } from "@/data/FestData";
+import FadeInSection from "../dashboard/custom/FadeInSection";
 
 export default function RegisterCTA() {
   return (
+    <FadeInSection>
     <section
       className="w-full py-20 px-6 sm:px-12 lg:px-24 bg-[color:var(--background)] text-[color:var(--foreground)]"
       id="register"
@@ -44,5 +46,6 @@ export default function RegisterCTA() {
         </div>
       </div>
     </section>
+    </FadeInSection>
   );
 }

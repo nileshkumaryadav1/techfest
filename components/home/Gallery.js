@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FestData } from "@/data/FestData";
 import Link from "next/link";
+import FadeInSection from "../dashboard/custom/FadeInSection";
 
 export default function EventsSection() {
   const scrollRef = useRef(null);
@@ -55,13 +56,14 @@ export default function EventsSection() {
   }, []);
 
   return (
+    <FadeInSection>
     <section
       id="events"
       className="w-full py-16 px-6 sm:px-12 lg:px-24 bg-[color:var(--background)] text-[color:var(--foreground)]"
     >
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
-          Explore Our <span className="text-[color:var(--accent)]">Events</span>
+          Explore Our <Link href="/events" className="text-[color:var(--accent)] hover:underline hover:cursor-pointer">Events</Link>
         </h2>
 
         {/* Highlighted Events Carousel */}
@@ -107,12 +109,15 @@ export default function EventsSection() {
               key={idx}
               className="p-4 bg-[color:var(--border)] bg-opacity-10 rounded-xl shadow hover:shadow-md border border-[color:var(--border)]"
             >
+              <Link href={`/events?category=${cat.name}`} className="block h-full">
               <div className="text-3xl mb-2">{cat.icon}</div>
               <p className="text-sm font-medium">{cat.name}</p>
+              </Link>
             </div>
           ))}
         </div>
       </div>
     </section>
+    </FadeInSection>
   );
 }

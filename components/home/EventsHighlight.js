@@ -9,6 +9,7 @@ import {
   Rocket,
   Star,
 } from "lucide-react";
+import FadeInSection from "../dashboard/custom/FadeInSection";
 
 const highlights = [
   {
@@ -45,6 +46,7 @@ const highlights = [
 
 export default function HighlightsSection() {
   return (
+    <FadeInSection>
     <section
       className="w-full py-16 px-6 sm:px-12 lg:px-24 bg-[color:var(--background)] text-[color:var(--foreground)]"
       id="highlights"
@@ -70,5 +72,6 @@ export default function HighlightsSection() {
         </div>
       </div>
     </section>
+    </FadeInSection>
   );
 }

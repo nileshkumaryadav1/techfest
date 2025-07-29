@@ -9,7 +9,6 @@ export default function AdminEvents() {
   const [allEvents, setAllEvents] = useState([]);
   const [editingEvent, setEditingEvent] = useState(null);
   const [form, setForm] = useState({});
-  const [enrolledStudents, setEnrolledStudents] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -39,13 +38,6 @@ export default function AdminEvents() {
   const handleEditClick = async (event) => {
     setEditingEvent(event._id);
     setForm(event);
-
-    try {
-      const res = await axios.get(`/api/admin/enrolled?eventId=${event._id}`);
-      setEnrolledStudents(res.data || []);
-    } catch (err) {
-      console.error("Failed to fetch enrolled students:", err);
-    }
   };
 
   const handleUpdate = async () => {
@@ -72,116 +64,90 @@ export default function AdminEvents() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-bold mb-6">
-  All Events ({events.length})
-</h1>
+    <div className="max-w-5xl mx-auto p-6 space-y-8">
+      <h1 className="text-3xl font-bold text-[color:var(--accent)]">Manage Events</h1>
 
-<div className="space-y-4">
-  {events.length === 0 ? (
-    <p>No events found.</p>
-  ) : (
-    events.map((event) => {
-      const matched = allEvents.find((e) => e._id === event._id);
+      {events.length === 0 ? (
+        <p>No events found.</p>
+      ) : (
+        events.map((event) => {
+          const matched = allEvents.find((e) => e._id === event._id);
 
-      return (
-        <div key={event._id} className="p-4 rounded-lg shadow border">
-          <div className="flex justify-between flex-wrap gap-4">
-            <div className="space-y-1">
-              <p><strong>Id:</strong> {event._id}</p>
-              <p><strong>Title:</strong> {event.title}</p>
-              <p><strong>Slug:</strong> {event.slug}</p>
-              <p><strong>Event ID:</strong> {event.eventId}</p>
-              <p><strong>Category:</strong> {event.category}</p>
-              <p><strong>Date:</strong> {new Date(event.date).toDateString()}</p>
-              <p><strong>Time:</strong> {event.time}</p>
-              <p><strong>Venue:</strong> {event.venue}</p>
-              <p><strong>Description:</strong> {event.description}</p>
-              <p>
-                <strong>Rules:</strong>{" "}
-                <a
-                  href={event.ruleBookPdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  {event.ruleBookPdfUrl}
-                </a>
-              </p>
-              <p>
-                <strong>Image:</strong>{" "}
-                <a
-                  href={event.imageUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  {event.imageUrl}
-                </a>
-              </p>
-              <p>
-                <strong>Coordinators:</strong>{" "}
-                {Array.isArray(event.coordinators)
-                  ? event.coordinators
-                      .map((c) =>
-                        typeof c === "string"
-                          ? c
-                          : `${c.name}${c.contact ? ` (${c.contact})` : ""}`
-                      )
-                      .join(", ")
-                  : "N/A"}
-              </p>
-              <p><strong>Prize:</strong> {event.prizes}</p>
-              <p><strong>Workshops:</strong> {event.workshops}</p>
-              <p><strong>Speakers:</strong> {event.speakers}</p>
+          return (
+            <div key={event._id} className="p-5 rounded-lg shadow border space-y-2">
+              <div className="flex justify-between items-start flex-wrap gap-4">
+                <div className="text-sm space-y-1">
+                  <p><strong>Title:</strong> {event.title}</p>
+                  <p><strong>Category:</strong> {event.category}</p>
+                  <p><strong>Event ID:</strong> {event.eventId}</p>
+                  <p><strong>Date:</strong> {new Date(event.date).toDateString()} ⏰ {event.time}</p>
+                  <p><strong>Venue:</strong> {event.venue}</p>
+                  <p><strong>Prize:</strong> {event.prizes}</p>
+                  <p><strong>Description:</strong> {event.description}</p>
+                  <p>
+                    <strong>Rulebook:</strong>{" "}
+                    <a href={event.ruleBookPdfUrl} className="text-blue-600 underline" target="_blank" rel="noreferrer">
+                      View
+                    </a>
+                  </p>
+                  <p>
+                    <strong>Image:</strong>{" "}
+                    <a href={event.imageUrl} className="text-blue-600 underline" target="_blank" rel="noreferrer">
+                      View
+                    </a>
+                  </p>
+                  <p>
+                    <strong>Coordinators:</strong>{" "}
+                    {Array.isArray(event.coordinators)
+                      ? event.coordinators.map((c) =>
+                          typeof c === "string" ? c : `${c.name} (${c.contact})`
+                        ).join(", ")
+                      : "N/A"}
+                  </p>
+                  <p><strong>Workshops:</strong> {event.workshops}</p>
+                  <p><strong>Speakers:</strong> {event.speakers}</p>
+                  {matched && (
+                    <p className="text-gray-600">👥 Enrolled: {matched.enrolledCount}</p>
+                  )}
+                  <p className="text-[color:var(--highlight)]">
+                    🏆 Winner:{" "}
+                    {event.winners.length > 0
+                      ? event.winners.map((w) => w.name).join(", ")
+                      : "Not declared"}
+                  </p>
+                </div>
 
-              {matched && (
-                <p className="text-sm text-gray-600 font-medium">
-                  Students: {matched.enrolledCount} enrolled
-                </p>
-              )}
-
-              <p className="text-sm text-[color:var(--accent)] font-semibold">
-                Winner:{" "}
-                {event.winners.length > 0
-                  ? event.winners.map((w) => w.name).join(", ")
-                  : "Not declared"}
-              </p>
+                <div className="flex flex-col gap-2 text-sm">
+                  <button
+                    onClick={() => handleEditClick(event)}
+                    className="text-blue-600 hover:underline"
+                  >
+                    ✏️ Edit
+                  </button>
+                  <Link
+                    href={`/admin/events/${event._id}`}
+                    className="text-[color:var(--accent)] hover:underline"
+                  >
+                    🔍 View
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(event._id)}
+                    className="text-red-600 hover:underline"
+                  >
+                    ❌ Delete
+                  </button>
+                </div>
+              </div>
             </div>
-
-            <div className="flex flex-col items-end gap-2">
-              <button
-                onClick={() => handleEditClick(event)}
-                className="text-blue-600 hover:underline"
-              >
-                Edit
-              </button>
-              <Link
-                href={`/admin/events/${event._id}`}
-                className="text-[color:var(--highlight)] underline"
-              >
-                View
-              </Link>
-              <button
-                onClick={() => handleDelete(event._id)}
-                className="text-red-500 hover:underline"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    })
-  )}
-</div>
-
+          );
+        })
+      )}
 
       {/* Edit Modal */}
       {editingEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="p-6 rounded-lg w-full max-w-4xl shadow-lg">
-            <h2 className="text-lg font-bold mb-4">Edit Event</h2>
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex justify-center items-center px-4">
+          <div className="w-full max-w-3xl p-6 rounded-lg shadow-lg overflow-y-auto max-h-[90vh]">
+            <h2 className="text-lg font-semibold mb-4">Edit Event</h2>
 
             {[
               "title",
@@ -199,12 +165,10 @@ export default function AdminEvents() {
               "speakers",
             ].map((field) => (
               <div key={field} className="mb-4">
-                <label className="block text-sm font-medium mb-1 capitalize">
-                  {field}
-                </label>
+                <label className="block text-sm font-medium mb-1 capitalize">{field}</label>
                 <input
-                  type="text"
-                  className="w-full border px-3 py-2 rounded"
+                  type={field === "date" ? "date" : "text"}
+                  className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]"
                   value={form[field] || ""}
                   onChange={(e) => setForm({ ...form, [field]: e.target.value })}
                 />
@@ -213,15 +177,13 @@ export default function AdminEvents() {
 
             {/* Coordinators */}
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">
-                Coordinators
-              </label>
+              <label className="block text-sm font-medium mb-2">Coordinators</label>
               {form.coordinators?.map((coord, idx) => (
-                <div key={idx} className="flex flex-col md:flex-row gap-2 mb-3">
+                <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
                   <input
                     type="text"
                     placeholder="Name"
-                    className="flex-1 border px-3 py-2 rounded"
+                    className="border px-3 py-2 rounded"
                     value={coord.name}
                     onChange={(e) => {
                       const updated = [...form.coordinators];
@@ -232,7 +194,7 @@ export default function AdminEvents() {
                   <input
                     type="text"
                     placeholder="Phone"
-                    className="flex-1 border px-3 py-2 rounded"
+                    className="border px-3 py-2 rounded"
                     value={coord.contact}
                     onChange={(e) => {
                       const updated = [...form.coordinators];
@@ -243,7 +205,7 @@ export default function AdminEvents() {
                   <input
                     type="text"
                     placeholder="Role"
-                    className="flex-1 border px-3 py-2 rounded"
+                    className="border px-3 py-2 rounded"
                     value={coord.role}
                     onChange={(e) => {
                       const updated = [...form.coordinators];
@@ -258,13 +220,12 @@ export default function AdminEvents() {
                       updated.splice(idx, 1);
                       setForm({ ...form, coordinators: updated });
                     }}
-                    className="text-red-500 hover:text-red-700 px-2"
+                    className="text-red-600 text-sm"
                   >
-                    ❌
+                    Remove
                   </button>
                 </div>
               ))}
-
               <button
                 type="button"
                 onClick={() =>
@@ -276,25 +237,25 @@ export default function AdminEvents() {
                     ],
                   })
                 }
-                className="text-sm text-blue-600 hover:underline"
+                className="text-blue-600 text-sm hover:underline mt-2"
               >
                 ➕ Add Coordinator
               </button>
             </div>
 
-            <div className="flex justify-end gap-3 mt-4">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() => setEditingEvent(null)}
-                className="text-gray-500"
+                className="text-gray-600 hover:underline"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdate}
                 disabled={loading}
-                className="bg-blue-600 text-white px-4 py-2 rounded"
+                className="bg-[color:var(--primary)] text-white px-4 py-2 rounded hover:opacity-90"
               >
-                {loading ? "Saving..." : "Save"}
+                {loading ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </div>

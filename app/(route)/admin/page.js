@@ -23,7 +23,7 @@ export default function AdminPage() {
           className="text-[color:var(--highlight)] hover:text-[color:var(--accent)] flex items-center gap-2 border border-[color:var(--border)] px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg hover:scale-[1.03] transition-all duration-300"
         >
           <Sparkles className="w-5 h-5" />
-          Add New Items (Events, Sponsors, Highlights)
+          Add New Items (Events, Sponsors)
         </Link>
       </div>
     </main>

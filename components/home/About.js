@@ -2,9 +2,11 @@
 
 import { CollegeData, FestData } from "@/data/FestData";
 import Link from "next/link";
+import FadeInSection from "../dashboard/custom/FadeInSection";
 
 export default function AboutSection() {
   return (
+    <FadeInSection>
     <section
       id="about"
       className="w-full py-20 px-6 sm:px-12 lg:px-24 bg-[color:var(--background)] text-[color:var(--foreground)]"
@@ -41,5 +43,6 @@ export default function AboutSection() {
         </p>
       </div>
     </section>
+    </FadeInSection>
   );
 }

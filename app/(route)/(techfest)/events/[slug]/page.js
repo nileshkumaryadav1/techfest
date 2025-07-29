@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import TeamEnrollForm from "@/components/fest/TeamEnrollForm";
 
 export default function EventDetailPage() {
   const router = useRouter();
@@ -12,15 +14,13 @@ export default function EventDetailPage() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Fetch event data
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         const res = await fetch(`/api/event/${slug}`);
         const data = await res.json();
         setEvent(res.ok && !data.error ? data : null);
-      } catch (err) {
-        console.error("Fetch error:", err);
+      } catch {
         setEvent(null);
       } finally {
         setLoading(false);
@@ -29,7 +29,6 @@ export default function EventDetailPage() {
     fetchEvent();
   }, [slug]);
 
-  // Load student from localStorage
   useEffect(() => {
     try {
       const stored = localStorage.getItem("student");
@@ -39,7 +38,6 @@ export default function EventDetailPage() {
     }
   }, []);
 
-  // Handle enrollment
   const handleEnroll = async (e) => {
     e.preventDefault();
     if (!student || !event?._id) return;
@@ -59,7 +57,6 @@ export default function EventDetailPage() {
     }
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="text-center mt-24 text-lg text-[var(--secondary)] animate-pulse">
@@ -68,7 +65,6 @@ export default function EventDetailPage() {
     );
   }
 
-  // Event not found
   if (!event) {
     return (
       <div className="text-center mt-24 text-red-500 text-xl font-semibold">
@@ -87,43 +83,45 @@ export default function EventDetailPage() {
 
   return (
     <main className="min-h-screen px-3 md:px-20 py-10 bg-[var(--background)] text-[var(--foreground)]">
-      <div className="max-w-4xl mx-auto rounded-2xl shadow-xl border border-[var(--border)] bg-[var(--card)] md:p-8 p-4 space-y-8">
-
-        {/* 📸 Event Image */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-4xl mx-auto rounded-2xl shadow-xl border border-[var(--border)] bg-[var(--card)] md:p-8 p-4 space-y-10"
+      >
+        {/* 📸 Image */}
         <img
           src={event.imageUrl}
           alt={event.title}
           className="w-full h-64 object-cover rounded-xl shadow-md"
         />
 
-        {/* 🏷️ Event Info */}
-        <div className="flex flex-col md:flex-row md:gap-4">
-          <div className="md:border-r border-[var(--border)] md:pr-4">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--accent)] mb-3">
-              {event.title}
-            </h1>
-            <h4 className="text-sm md:text-md font-semibold text-[var(--highlight)] mb-5">
-              Event ID: {event.eventId} {" | "} Category: {event.category}
-            </h4>
-            <p className="text-sm text-[var(--secondary)] mb-3">
-              📅 {event.date} | 🕧 {event.time} | 📍 {event.venue}
-            </p>
-          </div>
-
-          {/* 📝 Description */}
-          <div className="md:pl-4 pt-4 md:pt-0 text-base leading-relaxed whitespace-pre-line">
-            {event.description}
-          </div>
+        {/* Title and Meta */}
+        <div className="space-y-4 border-b pb-6 border-[var(--border)]">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--accent)]">
+            {event.title}
+          </h1>
+          <h4 className="text-sm md:text-base text-[var(--highlight)]">
+            🎯 Event ID: {event.eventId} | 📂 Category: {event.category}
+          </h4>
+          <p className="text-sm text-[var(--secondary)]">
+            📅 {event.date} | 🕒 {event.time} | 📍 {event.venue}
+          </p>
         </div>
 
-        {/* 🚀 Enroll Section */}
-        <form onSubmit={handleEnroll} className="space-y-5 max-w-xl mx-auto text-center">
-          <h2 className="text-xl md:text-2xl font-semibold text-[var(--highlight)]">
+        {/* 📝 Description */}
+        <p className="text-base leading-relaxed whitespace-pre-line">
+          {event.description}
+        </p>
+
+        {/* 📘 Rulebook & Enroll */}
+        <form onSubmit={handleEnroll} className="space-y-6 text-center">
+          <h2 className="text-xl font-semibold text-[var(--highlight)]">
             {event?.winners?.length > 0 ? (
               <>
                 <p className="text-sm text-[var(--secondary)]">
-                  <span>🏁 Event Concluded</span><br />
-                  🏆 Winners: {event.winners.map(w => w.name).join(", ")}
+                  🏁 Event Concluded <br />
+                  🏆 Winners: {event.winners.map((w) => w.name).join(", ")}
                 </p>
               </>
             ) : status === "success" || status === "already" ? (
@@ -133,62 +131,71 @@ export default function EventDetailPage() {
             )}
           </h2>
 
-          {/* Button + Rulebook */}
-          {student ? (
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-              {event?.winners?.length > 0 ? (
+          <div className="flex flex-wrap gap-4 justify-center">
+            {student ? (
+              event?.winners?.length > 0 ? (
                 <button
                   disabled
-                  className="bg-gray-400 text-white px-6 py-2.5 font-semibold rounded-xl shadow-md cursor-not-allowed"
+                  className="bg-gray-400 text-white px-6 py-2.5 rounded-xl font-semibold cursor-not-allowed"
                 >
                   🏆 Winners Declared
                 </button>
               ) : status === "success" || status === "already" ? (
                 <button
                   disabled
-                  className="bg-green-600 text-white px-6 py-2.5 font-semibold rounded-xl shadow-md cursor-not-allowed"
+                  className="bg-green-600 text-white px-6 py-2.5 rounded-xl font-semibold cursor-not-allowed"
                 >
                   ✅ Enrolled
                 </button>
               ) : (
                 <button
                   type="submit"
-                  className="bg-[var(--accent)] text-black px-6 py-2.5 font-semibold rounded-xl shadow-md hover:scale-105 hover:shadow-lg transition-all"
+                  className="bg-[var(--accent)] text-black px-6 py-2.5 rounded-xl font-semibold hover:scale-105 transition-all"
                 >
                   🚀 Enroll Now
                 </button>
-              )}
-
-              {event.ruleBookPdfUrl && (
+              )
+            ) : (
+              <p className="text-yellow-400">
+                ⚠️ Please{" "}
                 <a
-                  href={event.ruleBookPdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border border-[var(--accent)] text-[var(--accent)] px-6 py-2.5 font-semibold rounded-xl hover:bg-[var(--accent)] hover:text-black transition shadow"
+                  href="/login"
+                  className="underline text-blue-400 hover:text-blue-300"
                 >
-                  📘 View Rulebook
-                </a>
-              )}
-            </div>
-          ) : (
-            <p className="text-yellow-400">
-              ⚠️ Please{" "}
-              <a href="/login" className="underline text-blue-400 hover:text-blue-300 transition">
-                login
-              </a>{" "}
-              to enroll.
-            </p>
-          )}
+                  login
+                </a>{" "}
+                to enroll.
+              </p>
+            )}
 
-          {/* Status Messages */}
-          {status === "success" && <p className="text-green-400">✅ Successfully enrolled!</p>}
-          {status === "already" && <p className="text-yellow-400">👍 You&apos;re already enrolled.</p>}
-          {status === "error" && <p className="text-red-400">❌ Something went wrong. Try again.</p>}
+            {event.ruleBookPdfUrl && (
+              <a
+                href={event.ruleBookPdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border border-[var(--accent)] text-[var(--accent)] px-6 py-2.5 rounded-xl hover:bg-[var(--accent)] hover:text-black transition shadow"
+              >
+                📘 View Rulebook
+              </a>
+            )}
+
+            <TeamEnrollForm studentId={student?._id} event={event} />
+          </div>
+
+          {status === "success" && (
+            <p className="text-green-400">✅ Successfully enrolled!</p>
+          )}
+          {status === "already" && (
+            <p className="text-yellow-400">👍 You&apos;re already enrolled.</p>
+          )}
+          {status === "error" && (
+            <p className="text-red-400">❌ Something went wrong. Try again.</p>
+          )}
         </form>
 
         {/* 👥 Coordinators */}
-        {Array.isArray(event.coordinators) && event.coordinators.length > 0 && (
-          <section className="mt-14 border-t border-[var(--border)] pt-8">
+        {event.coordinators?.length > 0 && (
+          <section className="border-t border-[var(--border)] pt-8">
             <h2 className="text-2xl font-semibold mb-6 text-[var(--accent)] text-center">
               👥 Event Coordinators
             </h2>
@@ -205,11 +212,13 @@ export default function EventDetailPage() {
                     className="bg-[var(--card)] p-4 border border-[var(--border)] rounded-xl shadow-sm hover:shadow-md transition"
                   >
                     <h3 className="text-lg font-bold">{name}</h3>
-                    {role && <p className="text-sm italic text-[var(--highlight)]">{role}</p>}
+                    {role && (
+                      <p className="text-sm italic text-[var(--highlight)]">{role}</p>
+                    )}
                     {contact ? (
                       <p className="text-sm mt-1 text-[var(--secondary)]">📞 {contact}</p>
                     ) : (
-                      <p className="text-sm mt-1 text-gray-400">📞 Contact not available</p>
+                      <p className="text-sm mt-1 text-gray-400">📞 Not available</p>
                     )}
                   </div>
                 );
@@ -218,8 +227,8 @@ export default function EventDetailPage() {
           </section>
         )}
 
-        {/* 🔙 Back Button */}
-        <div className="pt-12 text-center">
+        {/* Back */}
+        <div className="pt-10 text-center">
           <button
             onClick={() => router.back()}
             className="text-sm underline text-[var(--secondary)] hover:text-[var(--highlight)] transition"
@@ -227,7 +236,7 @@ export default function EventDetailPage() {
             ← Back to Events
           </button>
         </div>
-      </div>
+      </motion.div>
     </main>
   );
 }
