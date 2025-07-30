@@ -26,7 +26,7 @@ export default function EventsSection() {
       try {
         const res = await fetch("/api/homepage");
         const data = await res.json();
-        console.log(data.events);
+        // console.log(data.events);
         setHighlightedEvents(data.events.slice(0, 6)); // limit to 6
         setLoading(false);
       } catch (err) {

@@ -38,7 +38,8 @@ export default function WinnersTab() {
   };
 
   const clearWinners = async (eventId) => {
-    if (!confirm("Are you sure you want to clear all winners for this event?")) return;
+    if (!confirm("Are you sure you want to clear all winners for this event?"))
+      return;
     try {
       await axios.delete("/api/admin/winners", { data: { eventId } });
       alert("Winners cleared.");
@@ -51,16 +52,25 @@ export default function WinnersTab() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold mb-8 text-center text-blue-800">Manage Event Winners</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center">
+        Manage Event Winners
+      </h1>
 
       {events.map((event, idx) => {
         const currentWinnerIds = event.winners.map((w) => w._id);
 
         return (
-          <div key={event._id} className="border rounded-lg shadow-sm p-5 mb-8 bg-white">
+          <div
+            key={event._id}
+            className="border rounded-lg shadow-sm p-5 mb-8 bg-white"
+          >
             <div className="flex justify-between items-center mb-2">
-              <h2 className="text-xl font-semibold text-indigo-700">{event.title}</h2>
-              <span className="text-sm text-gray-500">{event.enrolledCount} enrolled</span>
+              <h2 className="text-xl font-semibold text-indigo-700">
+                {event.title}
+              </h2>
+              <span className="text-sm text-gray-500">
+                {event.enrolledCount} enrolled
+              </span>
             </div>
 
             <p className="text-sm text-gray-600">
@@ -70,27 +80,36 @@ export default function WinnersTab() {
             <div className="mt-4">
               <p className="font-medium mb-2 text-gray-800">Select Winners:</p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {event.enrolledStudents.length === 0 ? (
-                  <p className="text-sm italic text-gray-500 col-span-2">
+                  <div className="col-span-full text-sm italic text-gray-500 border rounded-md p-4 bg-gray-50">
                     No students enrolled for this event.
-                  </p>
+                  </div>
                 ) : (
                   event.enrolledStudents.map((student) => {
                     const isChecked = currentWinnerIds.includes(student._id);
+
                     return (
-                      <label key={student._id} className="flex items-center gap-2">
+                      <label
+                        key={student._id}
+                        className="flex items-center gap-3 border rounded-lg p-3 bg-white shadow-sm hover:shadow-md transition"
+                      >
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => {
                             const newWinners = isChecked
-                              ? event.winners.filter((w) => w._id !== student._id)
-                              : [...event.winners, {
-                                  _id: student._id,
-                                  name: student.name,
-                                  email: student.email,
-                                }];
+                              ? event.winners.filter(
+                                  (w) => w._id !== student._id
+                                )
+                              : [
+                                  ...event.winners,
+                                  {
+                                    _id: student._id,
+                                    name: student.name,
+                                    email: student.email,
+                                  },
+                                ];
 
                             setEvents((prev) =>
                               prev.map((ev, i) =>
@@ -98,10 +117,16 @@ export default function WinnersTab() {
                               )
                             );
                           }}
+                          className="w-4 h-4 accent-[color:var(--accent)]"
                         />
-                        <span className="text-sm text-gray-700">
-                          {student.name} ({student.email})
-                        </span>
+                        <div>
+                          <p className="text-sm font-medium text-gray-800">
+                            {student.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {student.email}
+                          </p>
+                        </div>
                       </label>
                     );
                   })

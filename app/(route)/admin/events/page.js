@@ -65,51 +65,100 @@ export default function AdminEvents() {
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-8">
-      <h1 className="text-3xl font-bold text-[color:var(--accent)]">Manage Events</h1>
+      <h1 className="text-3xl font-bold text-[color:var(--accent)]">
+        Manage Events
+      </h1>
 
       {events.length === 0 ? (
-        <p>No events found.</p>
+        <p className="text-center text-gray-500 text-sm">No events found.</p>
       ) : (
         events.map((event) => {
           const matched = allEvents.find((e) => e._id === event._id);
 
           return (
-            <div key={event._id} className="p-5 rounded-lg shadow border space-y-2">
-              <div className="flex justify-between items-start flex-wrap gap-4">
-                <div className="text-sm space-y-1">
-                  <p><strong>Title:</strong> {event.title}</p>
-                  <p><strong>Category:</strong> {event.category}</p>
-                  <p><strong>Event ID:</strong> {event.eventId}</p>
-                  <p><strong>Date:</strong> {new Date(event.date).toDateString()} ⏰ {event.time}</p>
-                  <p><strong>Venue:</strong> {event.venue}</p>
-                  <p><strong>Prize:</strong> {event.prizes}</p>
-                  <p><strong>Description:</strong> {event.description}</p>
-                  <p>
-                    <strong>Rulebook:</strong>{" "}
-                    <a href={event.ruleBookPdfUrl} className="text-blue-600 underline" target="_blank" rel="noreferrer">
-                      View
-                    </a>
-                  </p>
-                  <p>
-                    <strong>Image:</strong>{" "}
-                    <a href={event.imageUrl} className="text-blue-600 underline" target="_blank" rel="noreferrer">
-                      View
-                    </a>
-                  </p>
-                  <p>
+            <div
+              key={event._id}
+              className="bg-white border border-gray-200 rounded-2xl shadow-md p-6 hover:shadow-lg transition-all duration-300"
+            >
+              <div className="flex flex-col md:flex-row justify-between gap-6">
+                {/* Left - Event Details */}
+                <div className="text-sm text-gray-700 space-y-2 flex-1">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    {event.title}
+                  </h2>
+                  <div className="grid sm:grid-cols-2 gap-x-6 gap-y-1">
+                    <p>
+                      <strong>Category:</strong> {event.category}
+                    </p>
+                    <p>
+                      <strong>Event ID:</strong> {event.eventId}
+                    </p>
+                    <p>
+                      <strong>Date & Time:</strong>{" "}
+                      {new Date(event.date).toDateString()} ⏰ {event.time}
+                    </p>
+                    <p>
+                      <strong>Venue:</strong> {event.venue}
+                    </p>
+                    <p>
+                      <strong>Prize:</strong> {event.prizes}
+                    </p>
+                    <p>
+                      <strong>Workshops:</strong> {event.workshops || "N/A"}
+                    </p>
+                    <p>
+                      <strong>Speakers:</strong> {event.speakers || "N/A"}
+                    </p>
+                    <p>
+                      <strong>Enrolled:</strong> {matched?.enrolledCount || 0}
+                    </p>
+                  </div>
+
+                  <div className="mt-3">
+                    <p className="text-gray-600 leading-relaxed">
+                      <strong>Description:</strong> {event.description}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-2">
+                    {event.ruleBookPdfUrl && (
+                      <a
+                        href={event.ruleBookPdfUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline text-sm"
+                      >
+                        📘 Rulebook
+                      </a>
+                    )}
+                    {event.imageUrl && (
+                      <a
+                        href={event.imageUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline text-sm"
+                      >
+                        🖼️ Image
+                      </a>
+                    )}
+                  </div>
+
+                  <div className="mt-2">
                     <strong>Coordinators:</strong>{" "}
-                    {Array.isArray(event.coordinators)
-                      ? event.coordinators.map((c) =>
-                          typeof c === "string" ? c : `${c.name} (${c.contact})`
-                        ).join(", ")
-                      : "N/A"}
-                  </p>
-                  <p><strong>Workshops:</strong> {event.workshops}</p>
-                  <p><strong>Speakers:</strong> {event.speakers}</p>
-                  {matched && (
-                    <p className="text-gray-600">👥 Enrolled: {matched.enrolledCount}</p>
-                  )}
-                  <p className="text-[color:var(--highlight)]">
+                    <span className="text-gray-700">
+                      {Array.isArray(event.coordinators)
+                        ? event.coordinators
+                            .map((c) =>
+                              typeof c === "string"
+                                ? c
+                                : `${c.name} (${c.contact || "No contact"})`
+                            )
+                            .join(", ")
+                        : "N/A"}
+                    </span>
+                  </div>
+
+                  <p className="text-[color:var(--highlight)] font-semibold mt-2">
                     🏆 Winner:{" "}
                     {event.winners.length > 0
                       ? event.winners.map((w) => w.name).join(", ")
@@ -117,22 +166,23 @@ export default function AdminEvents() {
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-2 text-sm">
+                {/* Right - Action Buttons */}
+                <div className="flex flex-col gap-3 text-sm min-w-[120px]">
                   <button
                     onClick={() => handleEditClick(event)}
-                    className="text-blue-600 hover:underline"
+                    className="px-3 py-1 rounded-md border border-blue-500 text-blue-600 hover:bg-blue-50 transition"
                   >
                     ✏️ Edit
                   </button>
                   <Link
                     href={`/admin/events/${event._id}`}
-                    className="text-[color:var(--accent)] hover:underline"
+                    className="px-3 py-1 rounded-md border border-[color:var(--accent)] text-[color:var(--accent)] hover:bg-[color:var(--accent)/10] transition text-center"
                   >
                     🔍 View
                   </Link>
                   <button
                     onClick={() => handleDelete(event._id)}
-                    className="text-red-600 hover:underline"
+                    className="px-3 py-1 rounded-md border border-red-500 text-red-600 hover:bg-red-50 transition"
                   >
                     ❌ Delete
                   </button>
@@ -142,48 +192,69 @@ export default function AdminEvents() {
           );
         })
       )}
-
       {/* Edit Modal */}
       {editingEvent && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex justify-center items-center px-4">
-          <div className="w-full max-w-3xl p-6 rounded-lg shadow-lg overflow-y-auto max-h-[90vh]">
-            <h2 className="text-lg font-semibold mb-4">Edit Event</h2>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 overflow-y-auto max-h-[90vh]">
+            <h2 className="text-2xl font-bold mb-6 text-[color:var(--accent)]">
+              ✏️ Edit Event
+            </h2>
 
-            {[
-              "title",
-              "slug",
-              "date",
-              "time",
-              "venue",
-              "description",
-              "imageUrl",
-              "prizes",
-              "eventId",
-              "category",
-              "ruleBookPdfUrl",
-              "workshops",
-              "speakers",
-            ].map((field) => (
-              <div key={field} className="mb-4">
-                <label className="block text-sm font-medium mb-1 capitalize">{field}</label>
-                <input
-                  type={field === "date" ? "date" : "text"}
-                  className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]"
-                  value={form[field] || ""}
-                  onChange={(e) => setForm({ ...form, [field]: e.target.value })}
-                />
-              </div>
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                "title",
+                "slug",
+                "date",
+                "time",
+                "venue",
+                "description",
+                "imageUrl",
+                "prizes",
+                "eventId",
+                "category",
+                "ruleBookPdfUrl",
+                "workshops",
+                "speakers",
+              ].map((field) => (
+                <div key={field} className="flex flex-col">
+                  <label className="text-sm font-semibold mb-1 capitalize text-gray-700 dark:text-gray-200">
+                    {field}
+                  </label>
+                  <input
+                    type={
+                      field === "date"
+                        ? "date"
+                        : field === "time"
+                        ? "time"
+                        : field === "eventId" || field === "number"
+                        ? "number"
+                        : "text"
+                    }
+                    className="rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-2 focus:ring-2 focus:ring-[color:var(--accent)] focus:outline-none bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 w-full"
+                    value={form[field] || ""}
+                    onChange={(e) =>
+                      setForm({ ...form, [field]: e.target.value })
+                    }
+                  />
+                </div>
+              ))}
+            </div>
 
             {/* Coordinators */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">Coordinators</label>
-              {form.coordinators?.map((coord, idx) => (
-                <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+            <div className="mt-8">
+              <label className="text-sm font-semibold mb-2 block text-[color:var(--accent)]">
+                👥 Coordinators
+              </label>
+
+              {(form.coordinators || []).map((coord, idx) => (
+                <div
+                  key={idx}
+                  className="grid grid-cols-1 md:grid-cols-4 gap-3 items-center mb-2"
+                >
                   <input
                     type="text"
                     placeholder="Name"
-                    className="border px-3 py-2 rounded"
+                    className="rounded-xl border px-3 py-2 bg-gray-50 dark:bg-gray-800 text-[color:var(--accent)]"
                     value={coord.name}
                     onChange={(e) => {
                       const updated = [...form.coordinators];
@@ -194,7 +265,7 @@ export default function AdminEvents() {
                   <input
                     type="text"
                     placeholder="Phone"
-                    className="border px-3 py-2 rounded"
+                    className="rounded-xl border px-3 py-2 bg-gray-50 dark:bg-gray-800 text-[color:var(--accent)]"
                     value={coord.contact}
                     onChange={(e) => {
                       const updated = [...form.coordinators];
@@ -205,7 +276,7 @@ export default function AdminEvents() {
                   <input
                     type="text"
                     placeholder="Role"
-                    className="border px-3 py-2 rounded"
+                    className="rounded-xl border px-3 py-2 bg-gray-50 dark:bg-gray-800 text-[color:var(--accent)]"
                     value={coord.role}
                     onChange={(e) => {
                       const updated = [...form.coordinators];
@@ -220,12 +291,13 @@ export default function AdminEvents() {
                       updated.splice(idx, 1);
                       setForm({ ...form, coordinators: updated });
                     }}
-                    className="text-red-600 text-sm"
+                    className="text-red-500 text-sm hover:underline"
                   >
-                    Remove
+                    ❌ Remove
                   </button>
                 </div>
               ))}
+
               <button
                 type="button"
                 onClick={() =>
@@ -237,23 +309,24 @@ export default function AdminEvents() {
                     ],
                   })
                 }
-                className="text-blue-600 text-sm hover:underline mt-2"
+                className="mt-2 text-sm text-blue-600 hover:underline"
               >
                 ➕ Add Coordinator
               </button>
             </div>
 
-            <div className="flex justify-end gap-3">
+            {/* Actions */}
+            <div className="flex justify-end gap-4 mt-8">
               <button
                 onClick={() => setEditingEvent(null)}
-                className="text-gray-600 hover:underline"
+                className="px-4 py-2 rounded-xl text-gray-600 dark:text-gray-300 hover:underline"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdate}
                 disabled={loading}
-                className="bg-[color:var(--primary)] text-white px-4 py-2 rounded hover:opacity-90"
+                className="px-6 py-2 rounded-xl bg-[color:var(--highlight)] font-semibold hover:opacity-90 transition"
               >
                 {loading ? "Saving..." : "Save Changes"}
               </button>

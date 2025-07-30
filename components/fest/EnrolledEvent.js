@@ -109,10 +109,10 @@ export default function EnrolledEvents({ studentId }) {
                 {event.title}
               </p>
               <p className="text-sm text-[color:var(--secondary)]">
-                {event.description || "No description available."}
+                {event.description.slice(0, 100) + "..." || "No description available."}
               </p>
               <p className="text-xs text-[color:var(--secondary)] mt-1">
-                📅 {event.date || "Date not provided"}
+                📅 {event.date || "Date not provided"} | {event.time}
               </p>
             </div>
 
