@@ -11,15 +11,17 @@ import {
   Settings,
   Menu,
   LogOut,
+  Pencil,
+  User,
 } from "lucide-react";
 
 // Admin Navigation Links
 const adminLinks = [
-  { name: "Dashboard", href: "/admin", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { name: "Add Items", href: "/admin/homepage", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { name: "All Events", href: "/admin/events", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { name: "Registrations", href: "/admin/users", icon: <Users className="w-5 h-5" /> },
-  { name: "Winners", href: "/admin/winners", icon: <Trophy className="w-5 h-5" /> },
+  { name: "Dashboard", href: "/admin", icon: <User className="w-5 h-5" /> },
+  { name: "Add New Items", href: "/admin/homepage", icon: <Pencil className="w-5 h-5" /> },
+  { name: "View & Manage All Events", href: "/admin/events", icon: <LayoutDashboard className="w-5 h-5" /> },
+  { name: "Registrated Students", href: "/admin/users", icon: <Users className="w-5 h-5" /> },
+  { name: "Winners List", href: "/admin/winners", icon: <Trophy className="w-5 h-5" /> },
   { name: "Settings", href: "/admin/settings", icon: <Settings className="w-5 h-5" /> },
 ];
 
@@ -86,7 +88,7 @@ export default function AdminLayout({ children }) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2 md:px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   isActive
                     ? "bg-[color:var(--accent)]/10 text-[color:var(--accent)]"
                     : "hover:bg-[color:var(--accent)]/10 hover:text-[color:var(--accent)]"
@@ -109,7 +111,7 @@ export default function AdminLayout({ children }) {
           )}
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-3 py-2 w-full rounded-lg text-sm font-medium text-red-500 hover:bg-red-500/10 transition"
+            className="flex items-center gap-2 md:px-3 md:py-2 w-full rounded-lg text-sm font-medium text-red-500 hover:bg-red-500/10 transition"
           >
             <LogOut className="w-5 h-5" />
             {sidebarOpen && <span>Logout</span>}

@@ -77,11 +77,11 @@ export default function AdminSettings() {
   };
 
   return (
-    <div className="p-6 space-y-8 text-[color:var(--foreground)]">
-      <div className="text-3xl font-bold text-[color:var(--highlight)]">Admin Settings</div>
+    <div className="md:p-6 md:space-y-8 space-y-3 text-[color:var(--foreground)]">
+      <div className="md:text-3xl text-xl text-center font-bold text-[color:var(--highlight)]">Admin Settings</div>
 
       {/* Admin Details */}
-      <div className="border border-[color:var(--border)] p-4 rounded-xl bg-white/5 backdrop-blur">
+      <div className="border border-[color:var(--border)] md:p-4 p-3 rounded-xl bg-white/5 backdrop-blur">
         <p><strong>Name:</strong> {admin?.name}</p>
         <p><strong>Email:</strong> {admin?.email}</p>
         <p><strong>Role:</strong> {admin?.role}</p>
@@ -95,7 +95,7 @@ export default function AdminSettings() {
         </span>
         <button
           onClick={toggleTheme}
-          className="bg-[color:var(--highlight)] text-[color:var(--background)] px-4 py-2 rounded-lg font-medium hover:scale-105 transition-all"
+          className="bg-[color:var(--highlight)] text-[color:var(--background)] px-4 md:py-2 py-1 rounded-lg font-medium hover:scale-105 transition-all"
         >
           Toggle Theme
         </button>
@@ -105,7 +105,7 @@ export default function AdminSettings() {
       {admin?.role === "superadmin" && (
         <>
           {/* Add Admin */}
-          <div className="bg-white/5 border border-[color:var(--border)] p-6 rounded-xl space-y-4">
+          <div className="bg-white/5 border border-[color:var(--border)] md:p-6 p-4 rounded-xl space-y-4">
             <h2 className="text-lg font-semibold text-[color:var(--accent)]">➕ Add New Admin</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <input
@@ -140,11 +140,11 @@ export default function AdminSettings() {
           </div>
 
           {/* List All Admins */}
-          <div className="border border-[color:var(--border)] p-6 rounded-xl space-y-4 bg-white/5">
-            <h2 className="text-lg font-semibold text-[color:var(--accent)]">👥 All Admins</h2>
+          <div className="border border-[color:var(--border)] md:p-6 p-2 rounded-xl md:space-y-4 bg-white/5">
+            <h2 className="text-lg text-center font-semibold text-[color:var(--accent)]">👥 All Admins</h2>
             <ul className="divide-y divide-[color:var(--border)]">
               {allAdmins.map((a) => (
-                <li key={a._id} className="py-2 flex justify-between items-center">
+                <li key={a._id} className="py-2">
                   <div>
                     <p className="font-medium">{a.name} ({a.role})</p>
                     <p className="text-sm text-gray-400">{a.email}</p>

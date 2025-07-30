@@ -93,11 +93,13 @@ export default function EventCard({ event }) {
       {/* Image + Category Badge */}
       <div className="relative mb-4">
         {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={title}
-            className="w-full h-40 object-cover rounded-xl border border-[color:var(--border)]"
-          />
+          <Link href={`/events/${slug}`}>
+            <img
+              src={imageUrl}
+              alt={title}
+              className="w-full h-40 object-cover rounded-xl border border-[color:var(--border)]"
+            />
+          </Link>
         ) : (
           <div
             className="
@@ -127,13 +129,13 @@ export default function EventCard({ event }) {
       </h3>
       {description && (
         <p className="text-sm text-[color:var(--secondary)] line-clamp-3 mb-3">
-          {description}
+          {description.slice(0, 100) + (description.length > 100 ? "..." : "")}
         </p>
       )}
 
       {/* Quick Meta */}
       {(date || time || venue) && (
-        <p className="text-xs text-[color:var(--foreground-muted,#6b7280)] mb-2">
+        <p className="text-xs text-[color:var(--highlight)] mb-2">
           {date && <>📅 {date} </>}
           {time && <>• ⏰ {time} </>}
           {venue && <>• 📍 {venue}</>}
@@ -143,8 +145,9 @@ export default function EventCard({ event }) {
       {/* Prizes */}
       {prizes && (
         <p className="text-xs mb-3">
-          <span className="inline-block px-2 py-1 rounded bg-[color:var(--primary)]/10 text-[color:var(--primary)] font-medium">
-            🏆 {prizes}
+          <span className="inline-block py-1 rounded bg-[color:var(--primary)]/10 text-[color:var(--primary)] font-medium">
+            <span className="font-bold text-md">🏆 Prizes : </span>
+            {prizes}
           </span>
         </p>
       )}
@@ -187,7 +190,9 @@ export default function EventCard({ event }) {
                 {coordinatorPrimary?.name && (
                   <>
                     {": "}
-                    <span className="font-semibold">{coordinatorPrimary.name}</span>
+                    <span className="font-semibold">
+                      {coordinatorPrimary.name}
+                    </span>
                     {coordinatorPrimary.contact && (
                       <>
                         {" "}

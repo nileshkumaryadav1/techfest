@@ -125,32 +125,32 @@ export default function AdminHomePage() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-12 text-[color:var(--foreground)] bg-[color:var(--background)]">
-      <h1 className="text-3xl font-bold text-center text-[color:var(--accent)]">
-        Admin Dashboard
+    <div className="md:p-6 md:max-w-6xl md:mx-auto md:space-y-12 space-y-4 text-[color:var(--foreground)] bg-[color:var(--background)]">
+      <h1 className="text-xl md:text-3xl font-bold text-center text-[color:var(--accent)] mb-1">
+        Add New Events & Sponsors
       </h1>
 
       {/* EVENTS SECTION */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">📅 Manage Events</h2>
+        <h2 className="text-md md:text-2xl font-semibold md:mb-4 mb-1 text-center">📅 Manage Events</h2>
 
         <ul className="space-y-6">
           {data.events?.map((event) => (
             <li
               key={event._id}
-              className="bg-white rounded-2xl shadow-md border border-gray-200 p-6 transition hover:shadow-lg"
+              className="bg-white rounded-2xl shadow-md border border-gray-200 md:p-6 p-3 transition hover:shadow-lg"
             >
-              <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
-                <div className="space-y-2 text-gray-700">
-                  <h3 className="text-xl font-semibold text-gray-800">
+              <div className="flex flex-col sm:flex-row justify-between items-start md:gap-6">
+                <div className="md:space-y-2 text-gray-700">
+                  <h3 className="text-md md:text-xl font-semibold text-gray-800 text-center">
                     {event.title}
-                    <span className="ml-2 text-sm text-gray-500">
+                    <span className="ml-2 text-xs text-gray-500">
                       ({event.slug})
                     </span>
                   </h3>
 
                   {event.description && (
-                    <p className="text-sm text-gray-600">{event.description}</p>
+                    <p className="text-sm text-gray-600">{event.description.slice(0, 50) + "..."}</p>
                   )}
 
                   <p className="text-sm">
@@ -167,7 +167,7 @@ export default function AdminHomePage() {
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline break-all"
                       >
-                        {event.ruleBookPdfUrl}
+                        {event.ruleBookPdfUrl.slice(0, 20) + "..."}
                       </a>
                     </p>
                   )}
@@ -181,7 +181,7 @@ export default function AdminHomePage() {
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline break-all"
                       >
-                        {event.imageUrl}
+                        {event.imageUrl.slice(0, 20) + "..."}
                       </a>
                     </p>
                   )}
@@ -196,7 +196,7 @@ export default function AdminHomePage() {
                 <div className="self-end sm:self-start">
                   <button
                     onClick={() => deleteItem("events", event._id)}
-                    className="text-red-600 hover:text-red-800 text-sm font-medium underline underline-offset-2 hover:cursor-pointer"
+                    className="text-red-600 hover:text-red-800 text-sm font-medium hover:cursor-pointer border rounded p-1"
                   >
                     Delete Event
                   </button>
@@ -241,15 +241,15 @@ export default function AdminHomePage() {
 
       {/* SPONSORS SECTION */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">🎖️ Manage Sponsors</h2>
+        <h2 className="md:text-2xl text-xl font-semibold mb-4 text-center">🎖️ Manage Sponsors</h2>
 
         <ul className="space-y-6">
           {data.sponsors?.map((s) => (
             <li
               key={s._id}
-              className="bg-white rounded-2xl shadow-md border border-gray-200 p-6 flex flex-col gap-4 transition hover:shadow-lg"
+              className="bg-white rounded-2xl shadow-md border border-gray-200 md:p-6 p-3 flex flex-col md:gap-4 transition hover:shadow-lg"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center md:gap-4">
                 {s.image && (
                   <img
                     src={s.image}
@@ -259,12 +259,12 @@ export default function AdminHomePage() {
                     className="rounded-lg border object-cover"
                   />
                 )}
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="md:text-lg font-semibold text-gray-800">
                   {s.name}
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-gray-600">
+              <div className="grid grid-cols-1 sm:grid-cols-3 md:gap-2 text-sm text-gray-600">
                 {s.email && <p>📧 {s.email}</p>}
                 {s.company && <p>🏢 {s.company}</p>}
                 {s.phone && <p>📞 {s.phone}</p>}

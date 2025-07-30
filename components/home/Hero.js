@@ -17,7 +17,7 @@ export default function HeroSection() {
       >
         <div className="max-w-6xl w-full z-10 space-y-8">
           {/* Fest Name */}
-          <h1 className="text-[clamp(2.5rem,10vw,6rem)] font-extrabold leading-tight tracking-tight drop-shadow-md">
+          <h1 className="text-[clamp(3rem,10vw,6rem)] font-extrabold leading-tight tracking-tight drop-shadow-md">
             <span className="bg-gradient-to-r from-[color:var(--accent)] to-[color:var(--highlight)] bg-clip-text text-transparent">
               {FestData.name}
             </span>

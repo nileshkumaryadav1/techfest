@@ -51,8 +51,8 @@ export default function WinnersTab() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold mb-8 text-center">
+    <div className="max-w-4xl mx-auto md:px-4 md:py-6">
+      <h1 className="text-xl md:text-3xl font-bold md:mb-8 mb-1 text-center">
         Manage Event Winners
       </h1>
 
@@ -62,25 +62,25 @@ export default function WinnersTab() {
         return (
           <div
             key={event._id}
-            className="border rounded-lg shadow-sm p-5 mb-8 bg-white"
+            className="border rounded-lg shadow-sm md:p-5 p-2 md:mb-8 mb-4 bg-white"
           >
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-xl font-semibold text-indigo-700">
+            <div className="flex flex-col justify-between items-center md:mb-2 mb-1">
+              <h2 className="text-md md:text-xl font-semibold text-indigo-700">
                 {event.title}
               </h2>
-              <span className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500">
                 {event.enrolledCount} enrolled
-              </span>
+              </p>
             </div>
 
             <p className="text-sm text-gray-600">
               📅 {new Date(event.date).toLocaleDateString()} | 📍 {event.venue}
             </p>
 
-            <div className="mt-4">
-              <p className="font-medium mb-2 text-gray-800">Select Winners:</p>
+            <div className="mt-2 md:mt-4">
+              <p className="mb-2 text-gray-800 font-semibold text-center">Select Winners:</p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">
                 {event.enrolledStudents.length === 0 ? (
                   <div className="col-span-full text-sm italic text-gray-500 border rounded-md p-4 bg-gray-50">
                     No students enrolled for this event.

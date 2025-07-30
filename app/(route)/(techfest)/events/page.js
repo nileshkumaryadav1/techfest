@@ -62,7 +62,9 @@ export default function EventListPage() {
   return (
     <main className="min-h-screen px-6 md:px-20 py-10">
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-4">
-        Explore <span className="text-[color:var(--accent)]">Events</span>
+        Explore <span className="text-[color:var(--accent)]">Events
+          <span className="text-[color:var(--highlight)] text-sm"> ({filteredEvents.length})</span>
+        </span>
       </h1>
 
       <div className="max-w-6xl mx-auto space-y-6">

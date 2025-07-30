@@ -2,16 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Home,
-  Calendar,
-  Trophy,
-  User,
-} from "lucide-react"; // or use any 4 icons you like
+import { Home, Calendar, Trophy, User } from "lucide-react"; // or use any 4 icons you like
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
   { href: "/events", label: "Events", icon: Calendar },
+  { href: "/registered-event", label: "Enrolled", icon: Calendar },
   { href: "/certificate", label: "Certificate", icon: Trophy },
   { href: "/dashboard", label: "Profile", icon: User },
 ];
@@ -36,7 +32,7 @@ const MobileNavbar = () => {
             >
               <Icon size={22} />
               {/* Optional label */}
-              {/* <span className="mt-1 text-[10px]">{label}</span> */}
+              <span className="mt-1 text-[10px]">{label}</span>
             </Link>
           );
         })}

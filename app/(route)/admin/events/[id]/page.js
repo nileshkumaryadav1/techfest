@@ -112,27 +112,27 @@ export default function EventDetailPage() {
     );
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-10">
+    <div className="md:max-w-4xl md:mx-auto md:px-4 md:py-8 md:space-y-10 space-y-2">
       {/* <h1 className="text-3xl font-bold">{event?.title}</h1> */}
 
       {/* Event Info */}
-      <section className="bg-white p-6 rounded-xl shadow space-y-3 bg-[color:var(--foreground)] text-[color:var(--background)]">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">📅 Event Information</h2>
-          <div className="flex gap-4">
+      <section className="bg-white md:p-6 rounded-xl shadow md:space-y-3 bg-[color:var(--foreground)] text-[color:var(--background)]">
+        <div className="">
+          {/* <h2 className="text-xl font-semibold">📅 Event Information</h2> */}
+          {/* <div className="flex justify-around p-2">
             <button
               onClick={() => setEditMode(!editMode)}
-              className="text-blue-600 hover:underline"
+              className="text-blue-600 hover:underline border p-1 rounded px-5"
             >
               {editMode ? "Cancel" : "Edit"}
             </button>
             <button
               onClick={handleEventDelete}
-              className="text-red-600 hover:underline"
+              className="text-red-600 hover:underline border p-1 rounded"
             >
               Delete
             </button>
-          </div>
+          </div> */}
         </div>
 
         {editMode ? (
@@ -157,12 +157,12 @@ export default function EventDetailPage() {
             </button>
           </>
         ) : (
-          <div className="bg-white shadow-md rounded-xl p-6 space-y-4 border">
-            <h2 className="text-2xl font-bold text-[color:var(--primary)]">
+          <div className="bg-white shadow-md rounded-xl md:p-6 p-3 md:space-y-4 border">
+            <h2 className="text-lg md:text-2xl font-bold text-[color:var(--primary)] text-center">
               {event.title}
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:gap-4 text-sm">
               <p>
                 <span className="font-semibold">ID:</span> {event._id}
               </p>
@@ -186,13 +186,13 @@ export default function EventDetailPage() {
               <p>
                 <span className="font-semibold">Venue:</span> {event.venue}
               </p>
-              <p className="col-span-1 sm:col-span-2">
+              <p className="col-span-1 md:col-span-2">
                 <span className="font-semibold">Description:</span>{" "}
                 {event.description}
               </p>
             </div>
 
-            <div className="space-y-2 text-sm">
+            <div className="md:space-y-2 text-sm">
               <p>
                 <span className="font-semibold">Rules:</span>{" "}
                 <a
@@ -265,7 +265,7 @@ export default function EventDetailPage() {
       </section>
 
       {/* Registered Students */}
-      <section className="bg-white p-6 rounded-xl shadow space-y-4 bg-[color:var(--foreground)] text-[color:var(--background)]">
+      <section className="bg-white md:p-6 p-3 rounded-xl shadow md:space-y-4 bg-[color:var(--foreground)] text-[color:var(--background)]">
         <h2 className="text-md font-semibold">
           👥 Registered Students ({students.length})
         </h2>
@@ -274,7 +274,7 @@ export default function EventDetailPage() {
           onClick={downloadPDF}
           className="text-sm bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
         >
-          Download PDF
+          Download PDF of Regd. Student
         </button>
 
         <ul className="mt-4 space-y-2">

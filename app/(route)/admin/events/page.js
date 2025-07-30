@@ -64,9 +64,9 @@ export default function AdminEvents() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-8">
-      <h1 className="text-3xl font-bold text-[color:var(--accent)]">
-        Manage Events
+    <div className="max-w-5xl mx-auto md:p-6 md:space-y-8 space-y-2">
+      <h1 className="md:text-3xl text-xl font-bold text-[color:var(--accent)] text-center">
+        Manage Events ({events.length})
       </h1>
 
       {events.length === 0 ? (
@@ -78,15 +78,15 @@ export default function AdminEvents() {
           return (
             <div
               key={event._id}
-              className="bg-white border border-gray-200 rounded-2xl shadow-md p-6 hover:shadow-lg transition-all duration-300"
+              className="bg-white border border-gray-200 rounded-2xl shadow-md md:p-6 p-3 hover:shadow-lg transition-all duration-300"
             >
               <div className="flex flex-col md:flex-row justify-between gap-6">
                 {/* Left - Event Details */}
-                <div className="text-sm text-gray-700 space-y-2 flex-1">
-                  <h2 className="text-xl font-semibold text-gray-900">
+                <div className="text-sm text-gray-700 md:space-y-2 flex-1">
+                  <h2 className="md:text-xl text-lg text-center font-semibold text-gray-900">
                     {event.title}
                   </h2>
-                  <div className="grid sm:grid-cols-2 gap-x-6 gap-y-1">
+                  <div className="grid sm:grid-cols-2 gap-x-6 md:gap-y-1">
                     <p>
                       <strong>Category:</strong> {event.category}
                     </p>
@@ -116,11 +116,12 @@ export default function AdminEvents() {
 
                   <div className="mt-3">
                     <p className="text-gray-600 leading-relaxed">
-                      <strong>Description:</strong> {event.description}
+                      <strong>Description:</strong>{" "}
+                      {event.description.slice(0, 100) + "..." || "N/A"}
                     </p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-2">
+                  <div className="flex sm:flex-row items-center gap-3 mt-2">
                     {event.ruleBookPdfUrl && (
                       <a
                         href={event.ruleBookPdfUrl}
@@ -168,18 +169,18 @@ export default function AdminEvents() {
 
                 {/* Right - Action Buttons */}
                 <div className="flex flex-col gap-3 text-sm min-w-[120px]">
+                  <Link
+                    href={`/admin/events/${event._id}`}
+                    className="px-3 py-4 rounded-md border border-[color:var(--accent)] text-[color:var(--accent)] hover:bg-[color:var(--accent)/10] transition text-center"
+                  >
+                    🔍 View
+                  </Link>
                   <button
                     onClick={() => handleEditClick(event)}
                     className="px-3 py-1 rounded-md border border-blue-500 text-blue-600 hover:bg-blue-50 transition"
                   >
                     ✏️ Edit
                   </button>
-                  <Link
-                    href={`/admin/events/${event._id}`}
-                    className="px-3 py-1 rounded-md border border-[color:var(--accent)] text-[color:var(--accent)] hover:bg-[color:var(--accent)/10] transition text-center"
-                  >
-                    🔍 View
-                  </Link>
                   <button
                     onClick={() => handleDelete(event._id)}
                     className="px-3 py-1 rounded-md border border-red-500 text-red-600 hover:bg-red-50 transition"
