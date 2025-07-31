@@ -212,7 +212,7 @@ export default function EventCard({ event }) {
             )}
 
             {/* Registered Students */}
-            <p>🧑‍🎓 {plural(registeredCount, "Registered Student")}</p>
+            {/* <p>🧑‍🎓 {plural(registeredCount, "Registered Student")}</p> */}
 
             {/* Winners */}
             {winnersCount > 0 && <p>🏅 {plural(winnersCount, "Winner")}</p>}

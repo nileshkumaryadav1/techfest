@@ -9,13 +9,13 @@ export default function HeroSection() {
   return (
     <FadeInSection>
       <section
-        className="relative w-full min-h-screen flex items-center justify-center px-4 sm:px-8 md:px-16 lg:px-24 md:py-20 py-10 overflow-hidden text-center"
+        className="relative w-full min-h-screen flex items-center justify-center px-4 sm:px-8 md:px-16 lg:px-24 md:py-20 overflow-hidden text-center"
         style={{
           backgroundColor: "var(--background)",
           color: "var(--foreground)",
         }}
       >
-        <div className="max-w-6xl w-full z-10 space-y-8">
+        <div className="max-w-6xl w-full z-10 md:space-y-8">
           {/* Fest Name */}
           <h1 className="text-[clamp(3rem,10vw,6rem)] font-extrabold leading-tight tracking-tight drop-shadow-md">
             <span className="bg-gradient-to-r from-[color:var(--accent)] to-[color:var(--highlight)] bg-clip-text text-transparent">
