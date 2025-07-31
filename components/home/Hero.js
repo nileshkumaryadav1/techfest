@@ -3,7 +3,8 @@
 import { FestData } from "@/data/FestData";
 import { Clock4, MapPin, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import FadeInSection from "../dashboard/custom/FadeInSection";
+import FadeInSection from "../custom/FadeInSection";
+import BlurText from "../custom/ui/BlurText";
 
 export default function HeroSection() {
   return (
@@ -24,8 +25,14 @@ export default function HeroSection() {
           </h1>
 
           {/* Theme + Tagline */}
-          <p className="text-[clamp(1rem,3vw,1.5rem)] font-semibold text-[color:var(--highlight)]">
-            {FestData.theme} — {FestData.tagline}
+          <p className="flex flex-col items-center">
+            <BlurText
+              text={`${FestData.theme} - ${FestData.tagline}`}
+              delay={150}
+              animateBy="words"
+              direction="top"
+              className="text-[clamp(1rem,3vw,1.5rem)] font-semibold text-[color:var(--highlight)]"
+            />
           </p>
 
           {/* CTA Buttons */}

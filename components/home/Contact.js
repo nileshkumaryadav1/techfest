@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRightCircle } from "lucide-react";
 import { CollegeData, FestData } from "@/data/FestData";
-import FadeInSection from "../dashboard/custom/FadeInSection";
+import FadeInSection from "../custom/FadeInSection";
 
 export default function RegisterCTA() {
   return (

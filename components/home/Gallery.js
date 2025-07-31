@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FestData } from "@/data/FestData";
 import Link from "next/link";
-import FadeInSection from "../dashboard/custom/FadeInSection";
+import FadeInSection from "../custom/FadeInSection";
 
 export default function EventsSection() {
   const scrollRef = useRef(null);

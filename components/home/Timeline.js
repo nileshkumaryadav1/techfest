@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CalendarDays, Clock4, MapPin } from "lucide-react";
-import FadeInSection from "../dashboard/custom/FadeInSection";
+import FadeInSection from "../custom/FadeInSection";
 import Link from "next/link";
 
 export default function TimelineSection() {

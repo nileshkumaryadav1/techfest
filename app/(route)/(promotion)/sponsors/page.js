@@ -1,4 +1,4 @@
-import FadeInSection from "@/components/dashboard/custom/FadeInSection";
+import FadeInSection from "@/components/custom/FadeInSection";
 import { sponsorsData } from "@/data/FestData";
 import Link from "next/link";
 

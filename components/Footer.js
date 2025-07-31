@@ -7,7 +7,7 @@ const Footer = () => {
   const { facebook, instagram, twitter, linkedin, github } = FestData.socialMedia;
 
   return (
-    <footer className="bg-black text-white px-6 py-10 sm:px-16 text-center space-y-6">
+    <footer className="bg-black text-white px-6 py-13 md:py-10 sm:px-16 text-center space-y-6">
       {/* 📌 Navigation Links */}
       <nav aria-label="Footer navigation">
         <ul className="flex justify-center flex-wrap gap-4">

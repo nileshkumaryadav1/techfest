@@ -2,10 +2,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import { FestData } from "@/data/FestData";
-
 import { CalendarCheck, Users, Mic, Trophy, Rocket, Star } from "lucide-react";
-import FadeInSection from "../dashboard/custom/FadeInSection";
+import FadeInSection from "../custom/FadeInSection";
 
 export default function HighlightsSection() {
   const [users, setUsers] = useState([]);

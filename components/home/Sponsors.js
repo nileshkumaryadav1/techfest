@@ -1,5 +1,5 @@
 import { sponsorsData } from "@/data/FestData";
-import FadeInSection from "../dashboard/custom/FadeInSection";
+import FadeInSection from "../custom/FadeInSection";
 import Link from "next/link";
 
 export default function Sponsors() {

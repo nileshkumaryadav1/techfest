@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import BlurText from "@/components/custom/ui/BlurText";
 
 export default function EventDetailPage() {
   const router = useRouter();
@@ -109,9 +110,11 @@ export default function EventDetailPage() {
         </div>
 
         {/* 📝 Description */}
-        <p className="text-base leading-relaxed whitespace-pre-line">
-          {event.description}
-        </p>
+        <BlurText
+          text={event.description}
+          delay={10}
+          className="text-base leading-relaxed whitespace-pre-line"
+        />
 
         {/* 📘 Rulebook & Enroll */}
         <form onSubmit={handleEnroll} className="space-y-6 text-center">
