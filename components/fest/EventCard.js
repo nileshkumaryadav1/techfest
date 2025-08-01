@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import CountdownTimer from "../custom/CountdownTimer";
 
 export default function EventCard({ event }) {
   const [enrolling, setEnrolling] = useState(false);
@@ -9,7 +10,6 @@ export default function EventCard({ event }) {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
-  // ---- Derived / safe values ----
   const {
     _id,
     title = "Untitled Event",
@@ -28,11 +28,9 @@ export default function EventCard({ event }) {
   } = event || {};
 
   const coordinatorPrimary = coordinators?.[0];
-  const coordinatorCount = coordinators?.length || 0;
   const registeredCount = registeredStudents?.length || 0;
   const winnersCount = winners?.length || 0;
 
-  // ---- Load student + enrollment check ----
   useEffect(() => {
     const storedStudent = localStorage.getItem("student");
     if (!storedStudent) return;
@@ -43,55 +41,35 @@ export default function EventCard({ event }) {
     fetch(`/api/enrollments?studentId=${parsedStudent._id}`)
       .then((res) => res.json())
       .then((data) => {
-        const enrolledEvents = data.enrolledEvents || [];
-        const alreadyEnrolled = enrolledEvents.some((e) => e._id === _id);
+        const alreadyEnrolled = data?.enrolledEvents?.some((e) => e._id === _id);
         setIsEnrolled(alreadyEnrolled);
       })
-      .catch((err) => console.error("Failed to check enrollment", err));
+      .catch(console.error);
   }, [_id]);
 
-  // ---- Enroll ----
   const handleEnroll = async () => {
-    if (!student) {
-      alert("Please log in first.");
-      return;
-    }
-
+    if (!student) return alert("Please log in first.");
     setEnrolling(true);
 
     const res = await fetch("/api/enroll", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        studentId: student._id,
-        eventId: _id,
-      }),
+      body: JSON.stringify({ studentId: student._id, eventId: _id }),
     });
 
     const data = await res.json();
     setEnrolling(false);
 
-    if (res.ok) {
-      setIsEnrolled(true);
-    } else {
-      alert(data.message || "❌ Enrollment failed.");
-    }
+    if (res.ok) setIsEnrolled(true);
+    else alert(data.message || "❌ Enrollment failed.");
   };
 
-  // ---- UI Helpers ----
-  const plural = (count, word) => `${count} ${word}${count === 1 ? "" : "s"}`;
+  const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
   return (
-    <div
-      className="
-        flex flex-col justify-between h-full p-5 rounded-2xl
-        border border-[color:var(--border)]
-        bg-[color:var(--card)]
-        shadow-md hover:shadow-xl transition-shadow duration-200
-      "
-    >
-      {/* Image + Category Badge */}
-      <div className="relative mb-4">
+    <div className="flex flex-col justify-between h-full p-4 sm:p-5 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-md hover:shadow-lg transition-shadow duration-200">
+      {/* Image */}
+      <div className="relative mb-3 sm:mb-4">
         {imageUrl ? (
           <Link href={`/events/${slug}`}>
             <img
@@ -101,84 +79,72 @@ export default function EventCard({ event }) {
             />
           </Link>
         ) : (
-          <div
-            className="
-              w-full h-40 rounded-xl border border-[color:var(--border)]
-              flex items-center justify-center text-sm text-[color:var(--secondary)]
-            "
-          >
+          <div className="w-full h-40 flex items-center justify-center text-sm text-[color:var(--secondary)] bg-muted rounded-xl border border-[color:var(--border)]">
             No Image
           </div>
         )}
 
         {category && (
-          <span
-            className="
-              absolute top-2 left-2 px-3 py-1 text-xs font-semibold rounded-full
-              bg-[color:var(--accent)] text-white shadow
-            "
-          >
+          <span className="absolute top-2 left-2 px-3 py-1 text-xs font-semibold rounded-full bg-[color:var(--accent)] text-white shadow-sm">
             {category}
           </span>
         )}
       </div>
 
-      {/* Title + Short Desc */}
-      <h3 className="text-xl font-bold text-[color:var(--foreground)] mb-1">
-        {title}
-      </h3>
+      {/* Title */}
+      <h3 className="text-lg sm:text-xl font-bold text-[color:var(--foreground)] mb-1">{title}</h3>
+
+      {/* Description */}
       {description && (
-        <p className="text-sm text-[color:var(--secondary)] line-clamp-3 mb-3">
+        <p className="text-sm text-[color:var(--secondary)] line-clamp-3 mb-2 sm:mb-3">
           {description.slice(0, 100) + (description.length > 100 ? "..." : "")}
         </p>
       )}
 
-      {/* Quick Meta */}
+      {/* Meta Info */}
       {(date || time || venue) && (
-        <p className="text-xs text-[color:var(--highlight)] mb-2">
-          {date && <>📅 {date} </>}
-          {time && <>• ⏰ {time} </>}
+        <p className="text-xs text-[color:var(--highlight)] mb-2 space-x-1">
+          {date && <>📅 {date}</>}
+          {time && <>• ⏰ {time}</>}
           {venue && <>• 📍 {venue}</>}
         </p>
       )}
 
+      {/* Timer */}
+      <CountdownTimer date={date} time={time} />
+
       {/* Prizes */}
       {prizes && (
-        <p className="text-xs">
-          <span className="inline-block py-1 rounded bg-[color:var(--primary)]/10 text-[color:var(--primary)] font-medium">
-            <span className="font-bold text-md">🏆 Prizes : </span>
-            {prizes}
+        <p className="text-xs mt-2">
+          <span className="inline-block bg-[color:var(--primary)]/10 text-[color:var(--primary)] px-2 py-1 rounded font-medium">
+            🏆 <strong>Prizes:</strong> {prizes}
           </span>
         </p>
       )}
 
       {/* Winners */}
-      {winners.map((w) => (
-        <p key={w._id} className="text-xs">
-          <span className="inline-block py-1 rounded bg-[color:var(--primary)]/10 text-[color:var(--primary)] font-medium">
-            <span className="font-bold text-md">🏆 Winner : </span>
-            {w.name}
-          </span>
-        </p>
-      ))}
+      {winnersCount > 0 && (
+        <div className="text-xs mt-1 space-y-1">
+          {winners.map((w) => (
+            <div key={w._id} className="inline-block bg-green-100 text-green-700 px-2 py-1 rounded">
+              🏅 <strong>Winner:</strong> {w.name}
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* Expand / collapse extra details */}
-      <div className="mb-4">
+      {/* Show More */}
+      <div className="my-3">
         <button
           type="button"
           onClick={() => setShowMore((v) => !v)}
-          className="
-            text-xs font-medium underline underline-offset-2
-            text-[color:var(--accent)]
-            hover:opacity-80 transition
-          "
+          className="text-xs font-medium underline underline-offset-2 text-[color:var(--accent)] hover:opacity-80 transition"
         >
           {showMore ? "Hide details ▲" : "Show details ▼"}
         </button>
 
         {showMore && (
           <div className="mt-3 space-y-2 text-xs text-[color:var(--foreground)]">
-            {/* Rulebook */}
             {ruleBookPdfUrl && (
               <p>
                 📘{" "}
@@ -193,55 +159,41 @@ export default function EventCard({ event }) {
               </p>
             )}
 
-            {/* Coordinators */}
-            {coordinatorCount > 0 && (
+            {coordinatorPrimary?.name && (
               <p>
-                👥 {plural(coordinatorCount, "Coordinator")}
-                {coordinatorPrimary?.name && (
+                👥 <strong>{plural(coordinators.length, "Coordinator")}:</strong>{" "}
+                {coordinatorPrimary.name}
+                {coordinatorPrimary.contact && (
                   <>
-                    {": "}
-                    <span className="font-semibold">
-                      {coordinatorPrimary.name}
-                    </span>
-                    {coordinatorPrimary.contact && (
-                      <>
-                        {" "}
-                        (
-                        <a
-                          href={`tel:${coordinatorPrimary.contact}`}
-                          className="text-[color:var(--accent)] hover:underline"
-                        >
-                          {coordinatorPrimary.contact}
-                        </a>
-                        )
-                      </>
-                    )}
+                    {" "}
+                    (
+                    <a
+                      href={`tel:${coordinatorPrimary.contact}`}
+                      className="text-[color:var(--accent)] hover:underline"
+                    >
+                      {coordinatorPrimary.contact}
+                    </a>
+                    )
                   </>
                 )}
               </p>
             )}
-
-            {/* Registered Students */}
-            {/* <p>🧑‍🎓 {plural(registeredCount, "Registered Student")}</p> */}
           </div>
         )}
       </div>
 
-      {/* Actions */}
-      <div className="mt-auto flex flex-col sm:flex-row gap-3">
+      {/* Buttons */}
+      <div className="mt-auto flex flex-col sm:flex-row gap-2 sm:gap-3">
         <button
           onClick={handleEnroll}
           disabled={enrolling || isEnrolled || winnersCount > 0}
-          className={`
-    w-full sm:w-auto px-4 py-2 rounded-xl font-medium transition
-    ${
-      winnersCount > 0
-        ? "bg-gray-400 text-white cursor-not-allowed"
-        : isEnrolled
-        ? "bg-green-500 text-white cursor-not-allowed"
-        : "bg-[color:var(--accent)] text-white hover:opacity-90"
-    }
-  `}
+          className={`w-full sm:w-auto px-4 py-2 rounded-xl font-semibold transition ${
+            winnersCount > 0
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : isEnrolled
+              ? "bg-green-500 text-white cursor-not-allowed"
+              : "bg-[color:var(--accent)] text-white hover:opacity-90"
+          }`}
         >
           {winnersCount > 0
             ? "Enrollment Closed 🏁"
@@ -254,12 +206,7 @@ export default function EventCard({ event }) {
 
         <Link
           href={`/events/${slug}`}
-          className="
-            w-full sm:w-auto px-4 py-2 rounded-xl border
-            border-[color:var(--accent)] text-[color:var(--accent)]
-            font-medium hover:bg-[color:var(--accent)] hover:text-white
-            transition text-center
-          "
+          className="w-full sm:w-auto px-4 py-2 text-center rounded-xl border border-[color:var(--accent)] text-[color:var(--accent)] font-semibold hover:bg-[color:var(--accent)] hover:text-white transition"
         >
           View Details
         </Link>

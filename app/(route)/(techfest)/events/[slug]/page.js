@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import BlurText from "@/components/custom/ui/BlurText";
+import CountdownTimer from "@/components/custom/CountdownTimer";
 
 export default function EventDetailPage() {
   const router = useRouter();
@@ -65,6 +66,9 @@ export default function EventDetailPage() {
     );
   }
 
+  const date = event.date;
+  const time = event.time;
+
   if (!event) {
     return (
       <div className="text-center mt-24 text-red-500 text-xl font-semibold">
@@ -82,12 +86,12 @@ export default function EventDetailPage() {
   }
 
   return (
-    <main className="min-h-screen px-3 md:px-20 py-10 bg-[var(--background)] text-[var(--foreground)]">
+    <main className="min-h-screen px-3 md:px-20 md:py-10 py-5 bg-[var(--background)] text-[var(--foreground)]">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-4xl mx-auto rounded-2xl shadow-xl border border-[var(--border)] bg-[var(--card)] md:p-8 p-4 space-y-10"
+        className="max-w-4xl mx-auto rounded-2xl shadow-xl border border-[var(--border)] bg-[var(--card)] md:p-8 p-4 md:space-y-10 space-y-4"
       >
         {/* 📸 Image */}
         <img
@@ -97,7 +101,7 @@ export default function EventDetailPage() {
         />
 
         {/* Title and Meta */}
-        <div className="space-y-4 border-b pb-6 border-[var(--border)]">
+        <div className="md:space-y-4 spce-y-3 border-b md:pb-6 pb-4 border-[var(--border)]">
           <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--accent)]">
             {event.title}
           </h1>
@@ -107,6 +111,8 @@ export default function EventDetailPage() {
           <p className="text-sm text-[var(--secondary)]">
             📅 {event.date} | 🕒 {event.time} | 📍 {event.venue}
           </p>
+          {/* Countdown Timer */}
+          <CountdownTimer date={date} time={time} />
         </div>
 
         {/* 📝 Description */}
@@ -121,7 +127,7 @@ export default function EventDetailPage() {
           <h2 className="text-xl font-semibold text-[var(--highlight)]">
             {event?.winners?.length > 0 ? (
               <>
-                <p className="text-sm text-[var(--secondary)]">
+                <p className="text-sm text-[var(--highlight)]">
                   🏁 Event Concluded <br />
                   🏆 Winners: {event.winners.map((w) => w.name).join(", ")}
                 </p>
@@ -196,7 +202,7 @@ export default function EventDetailPage() {
         {/* 👥 Coordinators */}
         {event.coordinators?.length > 0 && (
           <section className="border-t border-[var(--border)] pt-8">
-            <h2 className="text-2xl font-semibold mb-6 text-[var(--accent)] text-center">
+            <h2 className="text-xl md:text-2xl font-semibold mb-6 text-[var(--accent)] text-center">
               👥 Event Coordinators
             </h2>
             <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
@@ -213,12 +219,18 @@ export default function EventDetailPage() {
                   >
                     <h3 className="text-lg font-bold">{name}</h3>
                     {role && (
-                      <p className="text-sm italic text-[var(--highlight)]">{role}</p>
+                      <p className="text-sm italic text-[var(--highlight)]">
+                        {role}
+                      </p>
                     )}
                     {contact ? (
-                      <p className="text-sm mt-1 text-[var(--secondary)]">📞 {contact}</p>
+                      <p className="text-sm mt-1 text-[var(--secondary)]">
+                        📞 {contact}
+                      </p>
                     ) : (
-                      <p className="text-sm mt-1 text-gray-400">📞 Not available</p>
+                      <p className="text-sm mt-1 text-gray-400">
+                        📞 Not available
+                      </p>
                     )}
                   </div>
                 );

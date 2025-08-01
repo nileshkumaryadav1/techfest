@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import CountdownTimer from "../custom/CountdownTimer";
 
 export default function EnrolledEvents({ studentId }) {
   const [events, setEvents] = useState([]);
@@ -92,7 +93,7 @@ export default function EnrolledEvents({ studentId }) {
     );
 
   return (
-    <div className="p-6 border border-[color:var(--border)] rounded-2xl bg-[color:var(--card)] shadow-sm">
+    <div className="md:p-6 p-3 border border-[color:var(--border)] rounded-2xl bg-[color:var(--card)] shadow-sm">
       <div className="flex justify-between mb-4">
         <p className="text-[color:var(--highlight)]">
           Enrolled in :{" "}
@@ -112,7 +113,7 @@ export default function EnrolledEvents({ studentId }) {
         {events.map((event) => (
           <li
             key={event._id}
-            className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 rounded-xl bg-[color:var(--background)] border border-[color:var(--border)] shadow hover:shadow-md transition-all"
+            className="flex flex-col md:flex-row justify-between items-start md:items-center md:gap-4 gap-2 p-3 md:p-4 rounded-xl bg-[color:var(--background)] border border-[color:var(--border)] shadow hover:shadow-md transition-all"
           >
             <div className="flex-1">
               <p className="text-lg font-semibold text-[color:var(--foreground)]">
@@ -125,6 +126,9 @@ export default function EnrolledEvents({ studentId }) {
               <p className="text-sm text-[color:var(--highlight)] mt-1">
                 📅 {event.date || "Date not provided"} | {event.time}
               </p>
+
+              {/* Countdown Timer */}
+              <CountdownTimer date={event.date} time={event.time} />
             </div>
 
             <div className="flex gap-3 text-sm font-medium">
