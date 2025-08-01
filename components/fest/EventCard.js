@@ -144,13 +144,23 @@ export default function EventCard({ event }) {
 
       {/* Prizes */}
       {prizes && (
-        <p className="text-xs mb-3">
+        <p className="text-xs">
           <span className="inline-block py-1 rounded bg-[color:var(--primary)]/10 text-[color:var(--primary)] font-medium">
             <span className="font-bold text-md">🏆 Prizes : </span>
             {prizes}
           </span>
         </p>
       )}
+
+      {/* Winners */}
+      {winners.map((w) => (
+        <p key={w._id} className="text-xs">
+          <span className="inline-block py-1 rounded bg-[color:var(--primary)]/10 text-[color:var(--primary)] font-medium">
+            <span className="font-bold text-md">🏆 Winner : </span>
+            {w.name}
+          </span>
+        </p>
+      ))}
 
       {/* Expand / collapse extra details */}
       <div className="mb-4">
@@ -213,9 +223,6 @@ export default function EventCard({ event }) {
 
             {/* Registered Students */}
             {/* <p>🧑‍🎓 {plural(registeredCount, "Registered Student")}</p> */}
-
-            {/* Winners */}
-            {winnersCount > 0 && <p>🏅 {plural(winnersCount, "Winner")}</p>}
           </div>
         )}
       </div>
@@ -224,17 +231,25 @@ export default function EventCard({ event }) {
       <div className="mt-auto flex flex-col sm:flex-row gap-3">
         <button
           onClick={handleEnroll}
-          disabled={enrolling || isEnrolled}
+          disabled={enrolling || isEnrolled || winnersCount > 0}
           className={`
-            w-full sm:w-auto px-4 py-2 rounded-xl font-medium transition
-            ${
-              isEnrolled
-                ? "bg-green-500 text-white cursor-not-allowed"
-                : "bg-[color:var(--accent)] text-white hover:opacity-90"
-            }
-          `}
+    w-full sm:w-auto px-4 py-2 rounded-xl font-medium transition
+    ${
+      winnersCount > 0
+        ? "bg-gray-400 text-white cursor-not-allowed"
+        : isEnrolled
+        ? "bg-green-500 text-white cursor-not-allowed"
+        : "bg-[color:var(--accent)] text-white hover:opacity-90"
+    }
+  `}
         >
-          {isEnrolled ? "Enrolled ✅" : enrolling ? "Enrolling..." : "Enroll"}
+          {winnersCount > 0
+            ? "Enrollment Closed 🏁"
+            : isEnrolled
+            ? "Enrolled ✅"
+            : enrolling
+            ? "Enrolling..."
+            : "Enroll"}
         </button>
 
         <Link

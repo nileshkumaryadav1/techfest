@@ -132,7 +132,9 @@ export default function AdminHomePage() {
 
       {/* EVENTS SECTION */}
       <section>
-        <h2 className="text-md md:text-2xl font-semibold md:mb-4 mb-1 text-center">📅 Manage Events</h2>
+        <h2 className="text-md md:text-2xl font-semibold md:mb-4 mb-1 text-center">
+          📅 Manage Events
+        </h2>
 
         <ul className="space-y-6">
           {data.events?.map((event) => (
@@ -150,7 +152,9 @@ export default function AdminHomePage() {
                   </h3>
 
                   {event.description && (
-                    <p className="text-sm text-gray-600">{event.description.slice(0, 50) + "..."}</p>
+                    <p className="text-sm text-gray-600">
+                      {event.description.slice(0, 50) + "..."}
+                    </p>
                   )}
 
                   <p className="text-sm">
@@ -196,9 +200,16 @@ export default function AdminHomePage() {
                 <div className="self-end sm:self-start">
                   <button
                     onClick={() => deleteItem("events", event._id)}
-                    className="text-red-600 hover:text-red-800 text-sm font-medium hover:cursor-pointer border rounded p-1"
+                    disabled={event.winners.length > 0}
+                    className={`px-3 py-1 rounded-md border transition hover:cursor-pointer 
+                   ${
+                   event.winners.length > 0
+                   ? "border-gray-400 text-gray-400 bg-gray-100 cursor-not-allowed"
+                     : "border-red-500 text-red-600 hover:bg-red-50"
+                       }
+                    `}
                   >
-                    Delete Event
+                    {event.winners.length > 0 ? "🚫 Locked" : "❌ Delete Event"}
                   </button>
                 </div>
               </div>
@@ -241,7 +252,9 @@ export default function AdminHomePage() {
 
       {/* SPONSORS SECTION */}
       <section>
-        <h2 className="md:text-2xl text-xl font-semibold mb-4 text-center">🎖️ Manage Sponsors</h2>
+        <h2 className="md:text-2xl text-xl font-semibold mb-4 text-center">
+          🎖️ Manage Sponsors
+        </h2>
 
         <ul className="space-y-6">
           {data.sponsors?.map((s) => (

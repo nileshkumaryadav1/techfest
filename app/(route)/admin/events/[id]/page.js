@@ -213,7 +213,7 @@ export default function EventDetailPage() {
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline break-all"
                 >
-                  {event.imageUrl}
+                  {event.imageUrl.slice(0,100)+"..."}
                 </a>
               </p>
 

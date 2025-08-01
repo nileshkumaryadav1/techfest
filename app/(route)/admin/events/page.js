@@ -183,9 +183,16 @@ export default function AdminEvents() {
                   </button>
                   <button
                     onClick={() => handleDelete(event._id)}
-                    className="px-3 py-1 rounded-md border border-red-500 text-red-600 hover:bg-red-50 transition"
+                    disabled={event.winners.length > 0}
+                    className={`px-3 py-1 rounded-md border transition
+                           ${
+                             event.winners.length > 0
+                               ? "border-gray-400 text-gray-400 bg-gray-100 cursor-not-allowed"
+                               : "border-red-500 text-red-600 hover:bg-red-50"
+                           }
+                           `}
                   >
-                    ❌ Delete
+                    {event.winners.length > 0 ? "🚫 Locked" : "❌ Delete"}
                   </button>
                 </div>
               </div>
