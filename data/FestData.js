@@ -4,7 +4,7 @@ export const FestData = {
     theme: "TechYug",
     tagline: "The Era of HUM∆N and M∆CHINE",
     description: "Welcome to TechYug, where tradition meets transformation, and imagination merges with innovation. In this new era, the synergy between human intelligence and artificial intelligence is redefining what's possible.",
-    date: "30th July - 4rd August, 2025",
+    date: "31th July - 3rd August, 2025",
     venue: "H1 & H2, KEC Katihar, Bihar",
     organizers: "Centre Organization, KEC Katihar",
     organizersLink: "https://centreorg.vercel.app/",

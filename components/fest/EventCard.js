@@ -111,7 +111,7 @@ export default function EventCard({ event }) {
       )}
 
       {/* Timer */}
-      <CountdownTimer date={date} time={time} />
+      <CountdownTimer date={date} time={time} winnerDeclared={winnersCount > 0} />
 
       {/* Prizes */}
       {prizes && (

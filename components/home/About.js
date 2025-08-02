@@ -4,6 +4,7 @@ import { CollegeData, FestData } from "@/data/FestData";
 import Link from "next/link";
 import FadeInSection from "../custom/FadeInSection";
 import BlurText from "../custom/ui/BlurText";
+import TextType from "../custom/ui/TextType";
 
 export default function AboutSection() {
   return (
@@ -50,10 +51,19 @@ export default function AboutSection() {
           {/* Description */}
           <p className="flex flex-col items-center">
             <BlurText
-              text={`${FestData.description}`}
+              // text={`${FestData.description}`}
               delay={100}
               animateBy="words"
               direction="top"
+              className="text-base sm:text-lg md:text-xl leading-relaxed text-[color:var(--foreground)] max-w-3xl text-justify"
+            />
+
+            <TextType
+              text={`${FestData.description}`}
+              typingSpeed={80}
+              pauseDuration={1500}
+              showCursor={true}
+              cursorCharacter="|"
               className="text-base sm:text-lg md:text-xl leading-relaxed text-[color:var(--foreground)] max-w-3xl text-justify"
             />
           </p>

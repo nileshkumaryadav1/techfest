@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-export default function CountdownTimer({ date, time }) {
+export default function CountdownTimer({ date, time, winnerDeclared }) {
   const [countdown, setCountdown] = useState("");
 
   useEffect(() => {
@@ -18,9 +18,14 @@ export default function CountdownTimer({ date, time }) {
       const now = new Date();
       const diff = eventDateTime - now;
 
+      if (winnerDeclared) {
+        setCountdown("✅ Event Ended");
+        clearInterval(interval);
+        return;
+      }
+
       if (diff <= 0) {
         setCountdown("🎉 Event Started");
-        clearInterval(interval);
         return;
       }
 
@@ -33,13 +38,13 @@ export default function CountdownTimer({ date, time }) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [date, time]);
+  }, [date, time, winnerDeclared]);
 
   if (!countdown) return null;
 
   return (
     <p className="text-xs text-[color:var(--accent)] font-semibold mb-2 animate-pulse">
-      ⏳ Starts in: {countdown}
+      ⏳ {countdown}
     </p>
   );
 }
