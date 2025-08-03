@@ -10,6 +10,7 @@ export default function AdminEvents() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [form, setForm] = useState({});
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchEvents();
@@ -69,10 +70,12 @@ export default function AdminEvents() {
         Manage Events ({events.length})
       </h1>
 
+      <input type="text" placeholder="Search events..." onChange={(e) => setSearch(e.target.value)} className="border p-1 mx-auto rounded w-full" />
+
       {events.length === 0 ? (
         <p className="text-center text-gray-500 text-sm">No events found.</p>
       ) : (
-        events.map((event) => {
+        events.filter((event) => event.title.toLowerCase().includes(search.toLowerCase())).map((event) => {
           const matched = allEvents.find((e) => e._id === event._id);
 
           return (

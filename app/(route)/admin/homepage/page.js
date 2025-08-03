@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 
 export default function AdminHomePage() {
   const [data, setData] = useState({ events: [], sponsors: [] });
+  const [events, setEvents] = useState(data.events);
+  const [sponsors, setSponsors] = useState(data.sponsors);
+  const [search, setSearch] = useState("");
 
   const [newEvent, setNewEvent] = useState(
     () =>
@@ -133,88 +136,101 @@ export default function AdminHomePage() {
       {/* EVENTS SECTION */}
       <section>
         <h2 className="text-md md:text-2xl font-semibold md:mb-4 mb-1 text-center">
-          📅 Manage Events
+          📅 Manage Events ({data.events.length})
         </h2>
 
-        <ul className="space-y-6">
-          {data.events?.map((event) => (
-            <li
-              key={event._id}
-              className="bg-white rounded-2xl shadow-md border border-gray-200 md:p-6 p-3 transition hover:shadow-lg"
-            >
-              <div className="flex flex-col sm:flex-row justify-between items-start md:gap-6">
-                <div className="md:space-y-2 text-gray-700">
-                  <h3 className="text-md md:text-xl font-semibold text-gray-800 text-center">
-                    {event.title}
-                    <span className="ml-2 text-xs text-gray-500">
-                      ({event.slug})
-                    </span>
-                  </h3>
+        <input
+          type="text"
+          placeholder="Search events..."
+          onChange={(e) => setSearch(e.target.value)}
+          className="md:mb-6 mx-auto p-2 border border-[color:var(--border)] rounded-lg w-full m-1"
+        />
 
-                  {event.description && (
-                    <p className="text-sm text-gray-600">
-                      {event.description.slice(0, 50) + "..."}
-                    </p>
-                  )}
+        <ul className="md:space-y-6 space-y-2">
+          {data.events
+            ?.filter((event) =>
+              event.title.toLowerCase().includes(search.toLowerCase())
+            )
+            .map((event) => (
+              <li
+                key={event._id}
+                className="bg-white rounded-2xl shadow-md border border-gray-200 md:p-6 p-3 transition hover:shadow-lg"
+              >
+                <div className="flex flex-col sm:flex-row justify-between items-start md:gap-6">
+                  <div className="md:space-y-2 text-gray-700">
+                    <h3 className="text-md md:text-xl font-semibold text-gray-800 text-center">
+                      {event.title}
+                      <span className="ml-2 text-xs text-gray-500">
+                        ({event.slug})
+                      </span>
+                    </h3>
 
-                  <p className="text-sm">
-                    📍 <span className="font-medium">{event.venue}</span> | 📅{" "}
-                    <span>{event.date}</span> | ⏰ <span>{event.time}</span>
-                  </p>
+                    {event.description && (
+                      <p className="text-sm text-gray-600">
+                        {event.description.slice(0, 50) + "..."}
+                      </p>
+                    )}
 
-                  {event.ruleBookPdfUrl && (
                     <p className="text-sm">
-                      📘 Rulebook:{" "}
-                      <a
-                        href={event.ruleBookPdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline break-all"
-                      >
-                        {event.ruleBookPdfUrl.slice(0, 20) + "..."}
-                      </a>
+                      📍 <span className="font-medium">{event.venue}</span> | 📅{" "}
+                      <span>{event.date}</span> | ⏰ <span>{event.time}</span>
                     </p>
-                  )}
 
-                  {event.imageUrl && (
-                    <p className="text-sm">
-                      🖼️ Image:{" "}
-                      <a
-                        href={event.imageUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline break-all"
-                      >
-                        {event.imageUrl.slice(0, 20) + "..."}
-                      </a>
-                    </p>
-                  )}
+                    {event.ruleBookPdfUrl && (
+                      <p className="text-sm">
+                        📘 Rulebook:{" "}
+                        <a
+                          href={event.ruleBookPdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline break-all"
+                        >
+                          {event.ruleBookPdfUrl.slice(0, 20) + "..."}
+                        </a>
+                      </p>
+                    )}
 
-                  {event.prizes && (
-                    <p className="text-sm text-green-600 font-medium">
-                      🏆 Prizes: {event.prizes}
-                    </p>
-                  )}
-                </div>
+                    {event.imageUrl && (
+                      <p className="text-sm">
+                        🖼️ Image:{" "}
+                        <a
+                          href={event.imageUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline break-all"
+                        >
+                          {event.imageUrl.slice(0, 20) + "..."}
+                        </a>
+                      </p>
+                    )}
 
-                <div className="self-end sm:self-start">
-                  <button
-                    onClick={() => deleteItem("events", event._id)}
-                    disabled={event.winners.length > 0}
-                    className={`px-3 py-1 rounded-md border transition hover:cursor-pointer 
+                    {event.prizes && (
+                      <p className="text-sm text-green-600 font-medium">
+                        🏆 Prizes: {event.prizes}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="self-end sm:self-start">
+                    <button
+                      onClick={() => deleteItem("events", event._id)}
+                      disabled={event.winners.length > 0}
+                      className={`px-3 py-1 rounded-md border transition hover:cursor-pointer 
                    ${
-                   event.winners.length > 0
-                   ? "border-gray-400 text-gray-400 bg-gray-100 cursor-not-allowed"
-                     : "border-red-500 text-red-600 hover:bg-red-50"
-                       }
+                     event.winners.length > 0
+                       ? "border-gray-400 text-gray-400 bg-gray-100 cursor-not-allowed"
+                       : "border-red-500 text-red-600 hover:bg-red-50"
+                   }
                     `}
-                  >
-                    {event.winners.length > 0 ? "🚫 Locked" : "❌ Delete Event"}
-                  </button>
+                    >
+                      {event.winners.length > 0
+                        ? "🚫 Locked"
+                        : "❌ Delete Event"}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            ))}
         </ul>
 
         {/* Event Input Form */}

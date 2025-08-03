@@ -4,6 +4,7 @@ import axios from 'axios';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     axios.get('/api/admin/users')
@@ -14,8 +15,9 @@ export default function AdminUsers() {
   return (
     <div className="md:p-6 bg-[color:var(--background)] text-[color:var(--foreground)]">
       <h1 className="md:text-2xl text-xl font-bold md:mb-6 mb-2 text-center">Registered Students ({users.length})</h1>
+      <input type='text' onChange={(e) => setSearch(e.target.value)} placeholder='Search by name' className='md:mb-6 mx-auto p-2 border border-[color:var(--border)] rounded-lg w-full m-1' />
       <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 gap-4">
-        {users.map(user => (
+        {users.filter(user => user.name.toLowerCase().includes(search.toLowerCase())).map(user => (
           <div
             key={user._id}
             className="md:p-5 p-3 bg-white border border-gray-200 rounded-lg shadow hover:shadow-md transition"

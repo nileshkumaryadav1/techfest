@@ -68,6 +68,8 @@ export default function EventDetailPage() {
 
   const date = event.date;
   const time = event.time;
+  const winners = event.winners;
+  const winnersCount = winners?.length || 0;
 
   if (!event) {
     return (
@@ -111,8 +113,12 @@ export default function EventDetailPage() {
           <p className="text-sm text-[var(--secondary)]">
             📅 {event.date} | 🕒 {event.time} | 📍 {event.venue}
           </p>
-          {/* Countdown Timer */}
-          <CountdownTimer date={date} time={time} />
+          {/* Timer */}
+          <CountdownTimer
+            date={date}
+            time={time}
+            winnerDeclared={winnersCount > 0}
+          />
         </div>
 
         {/* 📝 Description */}

@@ -6,7 +6,11 @@ import axios from "axios";
 export default function AdminSettings() {
   const [admin, setAdmin] = useState(null);
   const [theme, setTheme] = useState("light");
-  const [newAdmin, setNewAdmin] = useState({ name: "", email: "", password: "" });
+  const [newAdmin, setNewAdmin] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const [allAdmins, setAllAdmins] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -54,18 +58,32 @@ export default function AdminSettings() {
 
   const handleDeleteAdmin = async (id, email) => {
     if (email === admin?.email) {
-      alert("⚠️ You cannot delete yourself.");
+      alert("⚠️ You cannot delete your own admin account.");
       return;
     }
 
-    if (!confirm("Are you sure you want to delete this admin?")) return;
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the admin with email: ${email}?`
+    );
+    if (!confirmDelete) return;
 
     setLoading(true);
     try {
-      await axios.delete(`/api/admin/delete/${id}`);
-      fetchAllAdmins();
+      const response = await axios.delete(`/api/admin/delete/${id}`);
+
+      if (response.data?.success) {
+        alert("✅ Admin deleted successfully.");
+        fetchAllAdmins(); // Refresh the list
+      } else {
+        alert(
+          `❌ Failed to delete admin: ${
+            response.data?.error || "Unknown error"
+          }`
+        );
+      }
     } catch (err) {
-      alert("❌ Failed to delete admin.");
+      console.error("Delete admin error:", err);
+      alert("❌ An unexpected error occurred while deleting the admin.");
     } finally {
       setLoading(false);
     }
@@ -78,20 +96,30 @@ export default function AdminSettings() {
 
   return (
     <div className="md:p-6 md:space-y-8 space-y-3 text-[color:var(--foreground)]">
-      <div className="md:text-3xl text-xl text-center font-bold text-[color:var(--highlight)]">Admin Settings</div>
+      <div className="md:text-3xl text-xl text-center font-bold text-[color:var(--highlight)]">
+        Admin Settings
+      </div>
 
       {/* Admin Details */}
       <div className="border border-[color:var(--border)] md:p-4 p-3 rounded-xl bg-white/5 backdrop-blur">
-        <p><strong>Name:</strong> {admin?.name}</p>
-        <p><strong>Email:</strong> {admin?.email}</p>
-        <p><strong>Role:</strong> {admin?.role}</p>
+        <p>
+          <strong>Name:</strong> {admin?.name}
+        </p>
+        <p>
+          <strong>Email:</strong> {admin?.email}
+        </p>
+        <p>
+          <strong>Role:</strong> {admin?.role}
+        </p>
       </div>
 
       {/* Theme Toggle */}
       <div className="flex items-center gap-4">
         <span className="text-sm">
           Theme:{" "}
-          <span className="font-bold text-xl text-[color:var(--accent)] ml-1">{theme}</span>
+          <span className="font-bold text-xl text-[color:var(--accent)] ml-1">
+            {theme}
+          </span>
         </span>
         <button
           onClick={toggleTheme}
@@ -106,27 +134,35 @@ export default function AdminSettings() {
         <>
           {/* Add Admin */}
           <div className="bg-white/5 border border-[color:var(--border)] md:p-6 p-4 rounded-xl space-y-4">
-            <h2 className="text-lg font-semibold text-[color:var(--accent)]">➕ Add New Admin</h2>
+            <h2 className="text-lg font-semibold text-[color:var(--accent)]">
+              ➕ Add New Admin
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <input
                 type="text"
                 placeholder="Name"
                 value={newAdmin.name}
-                onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, name: e.target.value })
+                }
                 className="p-2 border rounded bg-transparent"
               />
               <input
                 type="email"
                 placeholder="Email"
                 value={newAdmin.email}
-                onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, email: e.target.value })
+                }
                 className="p-2 border rounded bg-transparent"
               />
               <input
                 type="password"
                 placeholder="Password"
                 value={newAdmin.password}
-                onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, password: e.target.value })
+                }
                 className="p-2 border rounded bg-transparent"
               />
             </div>
@@ -141,12 +177,16 @@ export default function AdminSettings() {
 
           {/* List All Admins */}
           <div className="border border-[color:var(--border)] md:p-6 p-2 rounded-xl md:space-y-4 bg-white/5">
-            <h2 className="text-lg text-center font-semibold text-[color:var(--accent)]">👥 All Admins</h2>
+            <h2 className="text-lg text-center font-semibold text-[color:var(--accent)]">
+              👥 All Admins
+            </h2>
             <ul className="divide-y divide-[color:var(--border)]">
               {allAdmins.map((a) => (
                 <li key={a._id} className="py-2">
                   <div>
-                    <p className="font-medium">{a.name} ({a.role})</p>
+                    <p className="font-medium">
+                      {a.name} ({a.role})
+                    </p>
                     <p className="text-sm text-gray-400">{a.email}</p>
                   </div>
                   <button
