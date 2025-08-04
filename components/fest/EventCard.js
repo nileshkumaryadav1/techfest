@@ -25,11 +25,13 @@ export default function EventCard({ event }) {
     coordinators = [],
     registeredStudents = [],
     winners = [],
+    status = "",
   } = event || {};
 
   const coordinatorPrimary = coordinators?.[0];
   const registeredCount = registeredStudents?.length || 0;
   const winnersCount = winners?.length || 0;
+  const isCancelled = status === "cancelled";
 
   useEffect(() => {
     const storedStudent = localStorage.getItem("student");
@@ -41,7 +43,9 @@ export default function EventCard({ event }) {
     fetch(`/api/enrollments?studentId=${parsedStudent._id}`)
       .then((res) => res.json())
       .then((data) => {
-        const alreadyEnrolled = data?.enrolledEvents?.some((e) => e._id === _id);
+        const alreadyEnrolled = data?.enrolledEvents?.some(
+          (e) => e._id === _id
+        );
         setIsEnrolled(alreadyEnrolled);
       })
       .catch(console.error);
@@ -92,7 +96,9 @@ export default function EventCard({ event }) {
       </div>
 
       {/* Title */}
-      <h3 className="text-lg sm:text-xl font-bold text-[color:var(--foreground)] mb-1">{title}</h3>
+      <h3 className="text-lg sm:text-xl font-bold text-[color:var(--foreground)] mb-1">
+        {title}
+      </h3>
 
       {/* Description */}
       {description && (
@@ -111,7 +117,12 @@ export default function EventCard({ event }) {
       )}
 
       {/* Timer */}
-      <CountdownTimer date={date} time={time} winnerDeclared={winnersCount > 0} />
+      <CountdownTimer
+        date={event.date}
+        time={event.time}
+        winnerDeclared={event.winnerDeclared}
+        cancelled={event.status === "cancelled"}
+      />
 
       {/* Prizes */}
       {prizes && (
@@ -126,7 +137,10 @@ export default function EventCard({ event }) {
       {winnersCount > 0 && (
         <div className="text-xs mt-1 space-y-1">
           {winners.map((w) => (
-            <div key={w._id} className="inline-block bg-green-100 text-green-700 px-2 py-1 rounded">
+            <div
+              key={w._id}
+              className="inline-block bg-green-100 text-green-700 px-2 py-1 rounded"
+            >
               🏅 <strong>Winner:</strong> {w.name}
             </div>
           ))}
@@ -161,7 +175,8 @@ export default function EventCard({ event }) {
 
             {coordinatorPrimary?.name && (
               <p>
-                👥 <strong>{plural(coordinators.length, "Coordinator")}:</strong>{" "}
+                👥{" "}
+                <strong>{plural(coordinators.length, "Coordinator")}:</strong>{" "}
                 {coordinatorPrimary.name}
                 {coordinatorPrimary.contact && (
                   <>
@@ -186,16 +201,20 @@ export default function EventCard({ event }) {
       <div className="mt-auto flex flex-col sm:flex-row gap-2 sm:gap-3">
         <button
           onClick={handleEnroll}
-          disabled={enrolling || isEnrolled || winnersCount > 0}
+          disabled={enrolling || isEnrolled || winnersCount > 0 || isCancelled}
           className={`w-full sm:w-auto px-4 py-2 rounded-xl font-semibold transition ${
-            winnersCount > 0
+            isCancelled
+              ? "bg-red-500 text-white cursor-not-allowed"
+              : winnersCount > 0
               ? "bg-gray-400 text-white cursor-not-allowed"
               : isEnrolled
               ? "bg-green-500 text-white cursor-not-allowed"
               : "bg-[color:var(--accent)] text-white hover:opacity-90"
           }`}
         >
-          {winnersCount > 0
+          {isCancelled
+            ? "Event Cancelled ❌"
+            : winnersCount > 0
             ? "Enrollment Closed 🏁"
             : isEnrolled
             ? "Enrolled ✅"

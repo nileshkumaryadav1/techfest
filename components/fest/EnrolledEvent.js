@@ -128,7 +128,12 @@ export default function EnrolledEvents({ studentId }) {
               </p>
 
               {/* Countdown Timer */}
-              <CountdownTimer date={event.date} time={event.time} winnerDeclared={event.winners?.length > 0} />
+              <CountdownTimer
+                date={event.date}
+                time={event.time}
+                winnerDeclared={event.winners?.length > 0}
+                cancelled={event.status === "cancelled"}
+              />
             </div>
 
             <div className="flex gap-3 text-sm font-medium">

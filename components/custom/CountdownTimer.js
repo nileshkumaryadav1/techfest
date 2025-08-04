@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 
-export default function CountdownTimer({ date, time, winnerDeclared }) {
+export default function CountdownTimer({
+  date,
+  time,
+  winnerDeclared,
+  cancelled,
+}) {
   const [countdown, setCountdown] = useState("");
 
   useEffect(() => {
@@ -17,6 +22,12 @@ export default function CountdownTimer({ date, time, winnerDeclared }) {
     const interval = setInterval(() => {
       const now = new Date();
       const diff = eventDateTime - now;
+
+      if (cancelled) {
+        setCountdown("❌ Event Cancelled");
+        clearInterval(interval);
+        return;
+      }
 
       if (winnerDeclared) {
         setCountdown("✅ Event Ended");
@@ -38,7 +49,7 @@ export default function CountdownTimer({ date, time, winnerDeclared }) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [date, time, winnerDeclared]);
+  }, [date, time, winnerDeclared, cancelled]);
 
   if (!countdown) return null;
 

@@ -1,9 +1,12 @@
+// app/(route)/(techfest)/certificate/page.js
 "use client";
 
 import { useRef, useState, useEffect } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { CollegeData, FestData } from "@/data/FestData";
+import WinnerCertificatePage from "@/components/fest/WinnerCertificatePage";
+import FestIdCard from "@/components/fest/FestIdCard";
 
 export default function CertificatePage() {
   const [festId, setFestId] = useState("");
@@ -132,15 +135,15 @@ export default function CertificatePage() {
             <div
               ref={certRef}
               style={{
-                backgroundColor: "#f4ebebff",
+                backgroundColor: "#fffdf7",
                 color: "#1a1a1a",
-                fontFamily: "Georgia, serif",
-                padding: "2rem",
-                maxWidth: "750px",
-                margin: "1rem auto",
-                border: "6px double #aaa",
-                borderRadius: "8px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                fontFamily: "'Times New Roman', serif",
+                padding: "3rem",
+                maxWidth: "850px",
+                margin: "2rem auto",
+                border: "8px solid #0f172a",
+                borderRadius: "12px",
+                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
                 boxSizing: "border-box",
               }}
             >
@@ -150,32 +153,29 @@ export default function CertificatePage() {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  marginBottom: "1.5rem",
                 }}
               >
                 <img
                   src="/college/logo.png"
                   alt="College Logo"
                   style={{
-                    width: "60px",
-                    height: "60px",
+                    width: "70px",
+                    height: "70px",
                     objectFit: "contain",
                   }}
                 />
                 <div style={{ textAlign: "center", flex: 1 }}>
                   <h2
-                    style={{
-                      margin: 0,
-                      fontSize: "1.3rem",
-                      fontWeight: "bold",
-                    }}
+                    style={{ margin: 0, fontSize: "1.5rem", fontWeight: "700" }}
                   >
                     {CollegeData.name}
                   </h2>
                   <h3
                     style={{
-                      margin: "0.25rem 0",
+                      margin: "0.3rem 0",
                       fontSize: "1.1rem",
-                      color: "#555",
+                      color: "#64748b",
                     }}
                   >
                     Presents
@@ -183,10 +183,11 @@ export default function CertificatePage() {
                   <h1
                     style={{
                       margin: 0,
-                      fontSize: "1.6rem",
+                      fontSize: "1.8rem",
                       color: "var(--accent)",
-                      fontWeight: "bold",
+                      fontWeight: "800",
                       letterSpacing: "1px",
+                      textTransform: "uppercase",
                     }}
                   >
                     {FestData.name}
@@ -196,25 +197,28 @@ export default function CertificatePage() {
                   src="/logo.png"
                   alt="Fest Logo"
                   style={{
-                    width: "60px",
-                    height: "60px",
+                    width: "70px",
+                    height: "70px",
                     objectFit: "contain",
                   }}
                 />
               </div>
 
-              <hr style={{ margin: "1.5rem 0", borderTop: "2px solid #ccc" }} />
+              <hr
+                style={{ margin: "1.8rem 0", borderTop: "2px dashed #ccc" }}
+              />
 
               <h2
                 style={{
                   textAlign: "center",
-                  fontSize: "1.4rem",
-                  fontWeight: "bold",
+                  fontSize: "1.7rem",
+                  fontWeight: "700",
                   textTransform: "uppercase",
-                  letterSpacing: "1px",
+                  letterSpacing: "1.5px",
+                  color: "#0f172a",
+                  marginBottom: "1rem",
                   textDecoration: "underline",
                   textDecorationColor: "#4ade80",
-                  marginBottom: "1rem",
                 }}
               >
                 Certificate of Participation
@@ -223,9 +227,9 @@ export default function CertificatePage() {
               <h3
                 style={{
                   textAlign: "center",
-                  fontSize: "1.2rem",
-                  fontWeight: "bold",
-                  marginBottom: "0.25rem",
+                  fontSize: "1.3rem",
+                  fontWeight: "700",
+                  marginBottom: "0.5rem",
                 }}
               >
                 {certificateData.name}
@@ -233,9 +237,9 @@ export default function CertificatePage() {
               <p
                 style={{
                   textAlign: "center",
-                  fontSize: "0.8rem",
-                  color: "#444",
-                  marginBottom: "1rem",
+                  fontSize: "0.9rem",
+                  color: "#555",
+                  marginBottom: "1.5rem",
                 }}
               >
                 Fest ID: <strong>{festId}</strong>
@@ -243,17 +247,18 @@ export default function CertificatePage() {
 
               <p
                 style={{
-                  fontSize: "1rem",
+                  fontSize: "1.05rem",
                   textAlign: "center",
-                  lineHeight: "1.6",
-                  marginBottom: "1.5rem",
+                  lineHeight: "1.75",
+                  marginBottom: "2rem",
+                  color: "#1e293b",
                 }}
               >
                 This is to certify that <strong>{certificateData.name}</strong>{" "}
                 has actively participated in the event(s):{" "}
-                <strong>{certificateData.events}</strong> conducted during the{" "}
-                <strong>TechFest 2026</strong> held on{" "}
-                <strong>{certificateData.dateRange}</strong> organized by{" "}
+                <strong>{certificateData.events}</strong> conducted during{" "}
+                <strong>{FestData.name}</strong> held on{" "}
+                <strong>{certificateData.dateRange}</strong>, organized by{" "}
                 <strong>{CollegeData.name}</strong>.
               </p>
 
@@ -261,17 +266,18 @@ export default function CertificatePage() {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginTop: "2rem",
+                  marginTop: "2.5rem",
+                  alignItems: "flex-end",
                 }}
               >
                 <div>
-                  <p style={{ fontSize: "0.7rem", color: "#666" }}>
+                  <p style={{ fontSize: "0.75rem", color: "#6b7280" }}>
                     Certificate ID:
                   </p>
                   <p
                     style={{
-                      fontSize: "0.85rem",
-                      fontWeight: "bold",
+                      fontSize: "0.95rem",
+                      fontWeight: "600",
                       color: "var(--accent)",
                     }}
                   >
@@ -279,10 +285,16 @@ export default function CertificatePage() {
                   </p>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <p style={{ fontSize: "0.9rem", fontWeight: "bold" }}>
+                  <p
+                    style={{
+                      fontSize: "1rem",
+                      fontWeight: "700",
+                      color: "#0f172a",
+                    }}
+                  >
                     Centre Fest Committee
                   </p>
-                  <p style={{ fontSize: "0.7rem", color: "#4ade80" }}>
+                  <p style={{ fontSize: "0.8rem", color: "#4ade80" }}>
                     Authorized Signatory
                   </p>
                 </div>
@@ -311,7 +323,8 @@ export default function CertificatePage() {
               Download PDF
             </button>
             <p className="mobile-only">
-              Use Desktop to download your Participation & Winner Certificate
+              Use Desktop Mode or Desktop to download your Participation &
+              Winner Certificate
             </p>
 
             <style jsx>{`
@@ -332,6 +345,12 @@ export default function CertificatePage() {
           </div>
         </>
       )}
+
+      {/* Winner certificate download */}
+      <WinnerCertificatePage />
+
+      {/* Student Fest Id Card */}
+      <FestIdCard />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import BlurText from "@/components/custom/ui/BlurText";
 import CountdownTimer from "@/components/custom/CountdownTimer";
+import TextType from "@/components/custom/ui/TextType";
 
 export default function EventDetailPage() {
   const router = useRouter();
@@ -118,14 +119,18 @@ export default function EventDetailPage() {
             date={date}
             time={time}
             winnerDeclared={winnersCount > 0}
+            cancelled={event.status === "cancelled"}
           />
         </div>
 
-        {/* 📝 Description */}
-        <BlurText
+        {/* 📝 Description in type effect */}
+        <TextType
           text={event.description}
-          delay={10}
           className="text-base leading-relaxed whitespace-pre-line"
+          typingSpeed={40}
+          pauseDuration={1500}
+          showCursor={true}
+          cursorCharacter="|"
         />
 
         {/* 📘 Rulebook & Enroll */}
@@ -147,7 +152,14 @@ export default function EventDetailPage() {
 
           <div className="flex flex-wrap gap-4 justify-center">
             {student ? (
-              event?.winners?.length > 0 ? (
+              event?.status === "cancelled" ? (
+                <button
+                  disabled
+                  className="bg-gray-400 text-white px-6 py-2.5 rounded-xl font-semibold cursor-not-allowed"
+                >
+                  🚫 Event Cancelled
+                </button>
+              ) : event?.winners?.length > 0 ? (
                 <button
                   disabled
                   className="bg-gray-400 text-white px-6 py-2.5 rounded-xl font-semibold cursor-not-allowed"

@@ -70,138 +70,150 @@ export default function AdminEvents() {
         Manage Events ({events.length})
       </h1>
 
-      <input type="text" placeholder="Search events..." onChange={(e) => setSearch(e.target.value)} className="border p-1 mx-auto rounded w-full" />
+      <input
+        type="text"
+        placeholder="Search events..."
+        onChange={(e) => setSearch(e.target.value)}
+        className="border p-1 mx-auto rounded w-full"
+      />
 
       {events.length === 0 ? (
         <p className="text-center text-gray-500 text-sm">No events found.</p>
       ) : (
-        events.filter((event) => event.title.toLowerCase().includes(search.toLowerCase())).map((event) => {
-          const matched = allEvents.find((e) => e._id === event._id);
+        events
+          .filter((event) =>
+            event.title.toLowerCase().includes(search.toLowerCase())
+          )
+          .map((event) => {
+            const matched = allEvents.find((e) => e._id === event._id);
 
-          return (
-            <div
-              key={event._id}
-              className="bg-white border border-gray-200 rounded-2xl shadow-md md:p-6 p-3 hover:shadow-lg transition-all duration-300"
-            >
-              <div className="flex flex-col md:flex-row justify-between gap-6">
-                {/* Left - Event Details */}
-                <div className="text-sm text-gray-700 md:space-y-2 flex-1">
-                  <h2 className="md:text-xl text-lg text-center font-semibold text-gray-900">
-                    {event.title}
-                  </h2>
-                  <div className="grid sm:grid-cols-2 gap-x-6 md:gap-y-1">
-                    <p>
-                      <strong>Category:</strong> {event.category}
-                    </p>
-                    <p>
-                      <strong>Event ID:</strong> {event.eventId}
-                    </p>
-                    <p>
-                      <strong>Date & Time:</strong>{" "}
-                      {new Date(event.date).toDateString()} ⏰ {event.time}
-                    </p>
-                    <p>
-                      <strong>Venue:</strong> {event.venue}
-                    </p>
-                    <p>
-                      <strong>Prize:</strong> {event.prizes}
-                    </p>
-                    <p>
-                      <strong>Workshops:</strong> {event.workshops || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Speakers:</strong> {event.speakers || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Enrolled:</strong> {matched?.enrolledCount || 0}
+            return (
+              <div
+                key={event._id}
+                className="bg-white border border-gray-200 rounded-2xl shadow-md md:p-6 p-3 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex flex-col md:flex-row justify-between gap-6">
+                  {/* Left - Event Details */}
+                  <div className="text-sm text-gray-700 md:space-y-2 flex-1">
+                    <h2 className="md:text-xl text-lg text-center font-semibold text-gray-900">
+                      {event.title}
+                    </h2>
+                    <div className="grid sm:grid-cols-2 gap-x-6 md:gap-y-1">
+                      <p>
+                        <strong>Category:</strong> {event.category}
+                      </p>
+                      <p>
+                        <strong>Event ID:</strong> {event.eventId}
+                      </p>
+                      <p>
+                        <strong>Date & Time:</strong>{" "}
+                        {new Date(event.date).toDateString()} ⏰ {event.time}
+                      </p>
+                      <p>
+                        <strong>Venue:</strong> {event.venue}
+                      </p>
+                      <p>
+                        <strong>Prize:</strong> {event.prizes}
+                      </p>
+                      <p>
+                        <strong>Workshops:</strong> {event.workshops || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Speakers:</strong> {event.speakers || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Enrolled:</strong> {matched?.enrolledCount || 0}
+                      </p>
+                      <p>
+                        <strong>Status:</strong> {event?.status || "N/A"}
+                      </p>
+                    </div>
+
+                    <div className="mt-3">
+                      <p className="text-gray-600 leading-relaxed">
+                        <strong>Description:</strong>{" "}
+                        {event.description.slice(0, 100) + "..." || "N/A"}
+                      </p>
+                    </div>
+
+                    <div className="flex sm:flex-row items-center gap-3 mt-2">
+                      {event.ruleBookPdfUrl && (
+                        <a
+                          href={event.ruleBookPdfUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-600 hover:text-blue-800 underline text-sm"
+                        >
+                          📘 Rulebook
+                        </a>
+                      )}
+                      {event.imageUrl && (
+                        <a
+                          href={event.imageUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-600 hover:text-blue-800 underline text-sm"
+                        >
+                          🖼️ Image
+                        </a>
+                      )}
+                    </div>
+
+                    <div className="mt-2">
+                      <strong>Coordinators:</strong>{" "}
+                      <span className="text-gray-700">
+                        {Array.isArray(event.coordinators)
+                          ? event.coordinators
+                              .map((c) =>
+                                typeof c === "string"
+                                  ? c
+                                  : `${c.name} (${c.contact || "No contact"})`
+                              )
+                              .join(", ")
+                          : "N/A"}
+                      </span>
+                    </div>
+
+                    <p className="text-[color:var(--highlight)] font-semibold mt-2">
+                      🏆 Winner:{" "}
+                      {event.winners.length > 0
+                        ? event.winners.map((w) => w.name).join(", ")
+                        : "Not declared"}
                     </p>
                   </div>
 
-                  <div className="mt-3">
-                    <p className="text-gray-600 leading-relaxed">
-                      <strong>Description:</strong>{" "}
-                      {event.description.slice(0, 100) + "..." || "N/A"}
-                    </p>
-                  </div>
-
-                  <div className="flex sm:flex-row items-center gap-3 mt-2">
-                    {event.ruleBookPdfUrl && (
-                      <a
-                        href={event.ruleBookPdfUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-600 hover:text-blue-800 underline text-sm"
-                      >
-                        📘 Rulebook
-                      </a>
-                    )}
-                    {event.imageUrl && (
-                      <a
-                        href={event.imageUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-600 hover:text-blue-800 underline text-sm"
-                      >
-                        🖼️ Image
-                      </a>
-                    )}
-                  </div>
-
-                  <div className="mt-2">
-                    <strong>Coordinators:</strong>{" "}
-                    <span className="text-gray-700">
-                      {Array.isArray(event.coordinators)
-                        ? event.coordinators
-                            .map((c) =>
-                              typeof c === "string"
-                                ? c
-                                : `${c.name} (${c.contact || "No contact"})`
-                            )
-                            .join(", ")
-                        : "N/A"}
-                    </span>
-                  </div>
-
-                  <p className="text-[color:var(--highlight)] font-semibold mt-2">
-                    🏆 Winner:{" "}
-                    {event.winners.length > 0
-                      ? event.winners.map((w) => w.name).join(", ")
-                      : "Not declared"}
-                  </p>
-                </div>
-
-                {/* Right - Action Buttons */}
-                <div className="flex flex-col gap-3 text-sm min-w-[120px]">
-                  <Link
-                    href={`/admin/events/${event._id}`}
-                    className="px-3 py-4 rounded-md border border-[color:var(--accent)] text-[color:var(--accent)] hover:bg-[color:var(--accent)/10] transition text-center"
-                  >
-                    🔍 View
-                  </Link>
-                  <button
-                    onClick={() => handleEditClick(event)}
-                    className="px-3 py-1 rounded-md border border-blue-500 text-blue-600 hover:bg-blue-50 transition"
-                  >
-                    ✏️ Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(event._id)}
-                    disabled={event.winners.length > 0}
-                    className={`px-3 py-1 rounded-md border transition
+                  {/* Right - Action Buttons */}
+                  <div className="flex flex-col gap-3 text-sm min-w-[120px]">
+                    <Link
+                      href={`/admin/events/${event._id}`}
+                      className="px-3 py-4 rounded-md border border-[color:var(--accent)] text-[color:var(--accent)] hover:bg-[color:var(--accent)/10] transition text-center"
+                    >
+                      🔍 View
+                    </Link>
+                    <button
+                      onClick={() => handleEditClick(event)}
+                      className="px-3 py-1 rounded-md border border-blue-500 text-blue-600 hover:bg-blue-50 transition"
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(event._id)}
+                      disabled={event.winners.length > 0}
+                      className={`px-3 py-1 rounded-md border transition
                            ${
                              event.winners.length > 0
                                ? "border-gray-400 text-gray-400 bg-gray-100 cursor-not-allowed"
                                : "border-red-500 text-red-600 hover:bg-red-50"
                            }
                            `}
-                  >
-                    {event.winners.length > 0 ? "🚫 Locked" : "❌ Delete"}
-                  </button>
+                    >
+                      {event.winners.length > 0 ? "🚫 Locked" : "❌ Delete"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })
+            );
+          })
       )}
       {/* Edit Modal */}
       {editingEvent && (
@@ -226,27 +238,45 @@ export default function AdminEvents() {
                 "ruleBookPdfUrl",
                 "workshops",
                 "speakers",
+                "status",
               ].map((field) => (
                 <div key={field} className="flex flex-col">
                   <label className="text-sm font-semibold mb-1 capitalize text-gray-700 dark:text-gray-200">
                     {field}
                   </label>
-                  <input
-                    type={
-                      field === "date"
-                        ? "date"
-                        : field === "time"
-                        ? "time"
-                        : field === "eventId" || field === "number"
-                        ? "number"
-                        : "text"
-                    }
-                    className="rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-2 focus:ring-2 focus:ring-[color:var(--accent)] focus:outline-none bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 w-full"
-                    value={form[field] || ""}
-                    onChange={(e) =>
-                      setForm({ ...form, [field]: e.target.value })
-                    }
-                  />
+
+                  {field === "status" ? (
+                    <select
+                      className="rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-2 focus:ring-2 focus:ring-[color:var(--accent)] focus:outline-none bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 w-full"
+                      value={form.status || ""}
+                      onChange={(e) =>
+                        setForm({ ...form, status: e.target.value })
+                      }
+                    >
+                      <option value="">Select Status</option>
+                      <option value="upcoming">Upcoming</option>
+                      <option value="ongoing">Ongoing</option>
+                      <option value="finished">Finished</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  ) : (
+                    <input
+                      type={
+                        field === "date"
+                          ? "date"
+                          : field === "time"
+                          ? "time"
+                          : field === "eventId" || field === "number"
+                          ? "number"
+                          : "text"
+                      }
+                      className="rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-2 focus:ring-2 focus:ring-[color:var(--accent)] focus:outline-none bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 w-full"
+                      value={form[field] || ""}
+                      onChange={(e) =>
+                        setForm({ ...form, [field]: e.target.value })
+                      }
+                    />
+                  )}
                 </div>
               ))}
             </div>

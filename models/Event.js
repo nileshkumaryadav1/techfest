@@ -40,6 +40,8 @@ const EventSchema = new mongoose.Schema({
       email: String,
     },
   ],
+
+  status: { type: String, enum: ["upcoming", "ongoing", "cancelled", "completed"], default: "upcoming" },
   
 });
 
