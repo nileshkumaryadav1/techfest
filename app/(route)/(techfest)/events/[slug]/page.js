@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import BlurText from "@/components/custom/ui/BlurText";
 import CountdownTimer from "@/components/custom/CountdownTimer";
 import TextType from "@/components/custom/ui/TextType";
+import RegisterButton from "@/components/fest/RegisterInEventBtn";
 
 export default function EventDetailPage() {
   const router = useRouter();
@@ -151,6 +152,10 @@ export default function EventDetailPage() {
           </h2>
 
           <div className="flex flex-wrap gap-4 justify-center">
+            {/* Team Registration */}
+            <RegisterButton eventId={event._id} />
+
+            {/* Single Registration */}
             {student ? (
               event?.status === "cancelled" ? (
                 <button

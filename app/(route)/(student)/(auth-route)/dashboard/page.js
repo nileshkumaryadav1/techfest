@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { LogOut, Pencil, CalendarCheck, Trash2 } from "lucide-react";
 import EnrolledEvents from "@/components/fest/EnrolledEvent";
 import StudentInfo from "@/components/dashboard/StudentInfo";
+import MyTeamCard from "@/components/dashboard/TeamComponent";
+import CreateTeamForm from "@/components/fest/team/CreateTeamForm";
 
 export default function DashboardPage() {
   const [student, setStudent] = useState(null);
@@ -115,6 +117,14 @@ export default function DashboardPage() {
         <section>
           <StudentInfo student={student} />
         </section>
+
+        {/* Team Card */}
+        <p>Teams:</p>
+        <MyTeamCard />
+
+        {/* Create Team */}
+        <p>Create Team:</p>
+        <CreateTeamForm />
 
         {/* Enrolled Events */}
         <section>

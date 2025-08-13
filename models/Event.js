@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const EventSchema = new mongoose.Schema({
-  // at the time of event registration
-  title: String,
-  slug: String,
+  // At the time of event registration
+  title: { type: String, required: true },
+  slug: { type: String, required: true, unique: true },
 
-  eventId: String,
+  eventId: { type: String, required: true },
   category: String,
 
   date: String,
@@ -16,15 +16,14 @@ const EventSchema = new mongoose.Schema({
   ruleBookPdfUrl: String,
 
   imageUrl: String,
-  
   prizes: String,
 
-  // below details will be updated aftre the event registered
+  // After the event is registered
   coordinators: [
     {
       name: { type: String, required: true },
-      contact: { type: String },
-      role: { type: String },
+      contact: String,
+      role: String,
     },
   ],
 
@@ -33,7 +32,7 @@ const EventSchema = new mongoose.Schema({
 
   registeredStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: "Student" }],
 
- winners: [
+  winners: [
     {
       _id: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
       name: String,
@@ -41,8 +40,32 @@ const EventSchema = new mongoose.Schema({
     },
   ],
 
-  status: { type: String, enum: ["upcoming", "ongoing", "cancelled", "completed"], default: "upcoming" },
-  
+  // ✅ New field for Team Events (does not affect old registrations)
+  isTeamEvent: { type: Boolean, default: false },
+  teamSize: {
+    min: { type: Number, default: 1 },
+    max: { type: Number, default: 1 },
+  },
+  registeredTeams: [
+    {
+      teamName: { type: String, required: true },
+      members: [
+        {
+          student: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
+          name: String,
+          email: String,
+        },
+      ],
+      leader: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
+      createdAt: { type: Date, default: Date.now },
+    },
+  ],
+
+  status: {
+    type: String,
+    enum: ["upcoming", "ongoing", "cancelled", "completed"],
+    default: "upcoming",
+  },
 });
 
 export default mongoose.models.Event || mongoose.model("Event", EventSchema);

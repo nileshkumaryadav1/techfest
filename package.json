@@ -12,6 +12,7 @@
     "axios": "^1.10.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
+    "crypto": "^1.0.1",
     "framer-motion": "^12.23.12",
     "gsap": "^3.13.0",
     "html2canvas": "^1.4.1",
@@ -21,14 +22,17 @@
     "jspdf-autotable": "^5.0.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.479.0",
-    "mongoose": "^8.12.1",
+    "mongoose": "^8.17.1",
     "next": "^15.3.4",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",
+    "razorpay": "^2.9.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
-    "react-leaflet": "^5.0.0"
+    "react-leaflet": "^5.0.0",
+    "swr": "^2.3.6",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

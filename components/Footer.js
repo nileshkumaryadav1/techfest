@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Facebook, Github, Instagram, Twitter, Linkedin } from "lucide-react";
+import { Facebook, Github, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
 import { FestData, developersData, footerNavItems } from "@/data/FestData"; // adjust path if needed
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const { facebook, instagram, twitter, linkedin, github } = FestData.socialMedia;
+  const { facebook, instagram, twitter, linkedin, github, youtube } = FestData.socialMedia;
 
   return (
     <footer className="bg-black text-white px-6 py-13 md:py-10 sm:px-16 text-center space-y-6">
@@ -49,6 +49,11 @@ const Footer = () => {
         {github && (
           <Link href={github} target="_blank" aria-label="GitHub" className="text-slate-400 hover:text-gray-300 transition">
             <Github size={24} />
+          </Link>
+        )}
+        {youtube && (
+          <Link href={youtube} target="_blank" aria-label="YouTube" className="text-slate-400 hover:text-red-500 transition">
+            <Youtube size={24} />
           </Link>
         )}
       </div>

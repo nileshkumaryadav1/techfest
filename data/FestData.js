@@ -9,16 +9,17 @@ export const FestData = {
     organizers: "Centre Organization, KEC Katihar",
     organizersLink: "https://centreorg.vercel.app/",
     sponsors: "KEC Katihar, Centre Organization",
-    totalEventCount: "12",
+    totalEventCount: "13",
     totalWorkshopCount: "0",
-    totalNumberOfDays: "6",
-    totalParticipantCount: "17",
+    totalNumberOfDays: "4",
+    totalParticipantCount: "24",
     socialMedia: {
         facebook: "",
-        instagram: "https://www.instagram.com/centre_kec1",
+        instagram: "https://www.instagram.com/CentreOrganization/",
         twitter: "",
         linkedin: "",
         github: "https://github.com/nileshkumaryadav1/techfest",
+        youtube: "https://www.youtube.com/@CentreOrganization",
     }
 };
 
@@ -84,7 +85,7 @@ export const developersData = [
       bio: "Hi! I am passonate about web development. I am a civil engineering student and I have a passion for web development.",
       image: "/developers/nilesh.jpg",
       github: "https://github.com/nileshkumaryadav1",
-      linkedin: "https://www.linkedin.com/in/nileshkumar123/",
+      linkedin: "https://www.linkedin.com/in/nileshkumaryadav1/",
       portfolio: "https://nileshkumar.vercel.app/",
     },
   ];
