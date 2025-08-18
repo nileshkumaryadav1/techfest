@@ -60,56 +60,63 @@ export default function EventListPage() {
   const uniqueCategories = ["All", ...new Set(events.map((e) => e.category))];
 
   return (
-    <main className="min-h-screen px-6 md:px-20 py-10">
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-4">
-        Explore <span className="text-[color:var(--accent)]">Events
-          <span className="text-[color:var(--highlight)] text-sm"> ({filteredEvents.length})</span>
+    <main className="min-h-screen px-6 md:px-20 py-10 bg-[var(--background)] text-[var(--foreground)]">
+      {/* Title */}
+      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
+        Explore{" "}
+        <span className="text-cyan-300">
+          Events{" "}
+          <span className="text-[var(--highlight)] text-sm">
+            ({filteredEvents.length})
+          </span>
         </span>
       </h1>
 
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto space-y-8">
         {/* Filter Bar */}
-       <div className="flex flex-col md:flex-row items-center gap-4">
+        <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row items-center gap-4">
+          {/* Search */}
           <input
             type="text"
-            placeholder="Search events..."
+            placeholder="🔍 Search events..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-1/3 px-4 py-2 rounded-xl border border-[color:var(--border)] bg-transparent text-[color:var(--foreground)]"
+            className="w-full md:w-1/3 px-4 py-2 rounded-xl bg-white/10 border border-white/20 placeholder-gray-300 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-cyan-400"
           />
-        {/* sorting */}
-        <div className="flex gap-5">
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-[color:var(--border)] bg-transparent text-[color:var(--foreground)]"
-          >
-            {uniqueCategories.map((cat) => (
-              <option key={cat} value={cat} className="text-black">
-                {cat}
-              </option>
-            ))}
-          </select>
 
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-[color:var(--border)] bg-transparent text-[color:var(--foreground)]"
-          >
-            {sortOptions.map(({ label, value }) => (
-              <option key={value} value={value} className="text-black">
-                {label}
-              </option>
-            ))}
-          </select>
+          {/* Sorting & Filters */}
+          <div className="flex gap-4 w-full md:w-auto">
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            >
+              {uniqueCategories.map((cat) => (
+                <option key={cat} value={cat} className="text-black">
+                  {cat}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            >
+              {sortOptions.map(({ label, value }) => (
+                <option key={value} value={value} className="text-black">
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-       </div>
 
         {/* Event Grid */}
         {loading ? (
-          <p className="text-center text-[color:var(--foreground)]">Loading events...</p>
+          <p className="text-center text-[var(--foreground)]">Loading events...</p>
         ) : filteredEvents.length === 0 ? (
-          <p className="text-center text-[color:var(--foreground)]">No events found.</p>
+          <p className="text-center text-[var(--foreground)]">No events found.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredEvents.map((event) => (

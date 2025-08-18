@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, Pencil, CalendarCheck, Trash2 } from "lucide-react";
+import { LogOut, Pencil, Trash2 } from "lucide-react";
 import EnrolledEvents from "@/components/fest/EnrolledEvent";
 import StudentInfo from "@/components/dashboard/StudentInfo";
 import MyTeamCard from "@/components/dashboard/TeamComponent";
@@ -39,21 +39,15 @@ export default function DashboardPage() {
   }, [router]);
 
   const handleLogout = () => {
-    const confirmed = confirm("🔒 Are you sure you want to logout?");
-    if (!confirmed) return;
-
-    try {
-      localStorage.removeItem("student");
-      router.replace("/login");
-    } catch (err) {
-      console.error("Logout failed:", err);
-      alert("Something went wrong during logout.");
-    }
+    if (!confirm("🔒 Are you sure you want to logout?")) return;
+    localStorage.removeItem("student");
+    router.replace("/login");
   };
 
   const handleDeleteAccount = async () => {
-    const confirmed = confirm("⚠️ This will permanently delete your account. Continue?");
-    if (!confirmed || !student?._id) return;
+    if (!confirm("⚠️ This will permanently delete your account. Continue?"))
+      return;
+    if (!student?._id) return;
 
     try {
       const res = await fetch(`/api/student/${student._id}`, { method: "DELETE" });
@@ -79,34 +73,29 @@ export default function DashboardPage() {
   }
 
   return (
-    <main
-      className="min-h-screen px-4 py-8 md:px-12 bg-[var(--background)] text-[var(--foreground)]"
-    >
-      <div className="max-w-4xl mx-auto space-y-6">
+    <main className="min-h-screen px-4 py-8 md:px-12 bg-[var(--background)] text-[var(--foreground)]">
+      <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4">
-          <h1 className="text-2xl font-bold text-[var(--highlight)]">
+        <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <h1 className="text-2xl font-bold text-cyan-300">
             Welcome, {student.name || student.email}
           </h1>
-
           <div className="flex flex-wrap gap-3 text-sm">
             <button
               onClick={() => router.push("/edit-profile")}
-              className="flex items-center gap-1 px-3 py-1 rounded-md text-[var(--highlight)] border border-[var(--highlight)] hover:bg-[var(--highlight)] hover:text-[var(--background)] transition"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-200 hover:bg-cyan-500/30 transition"
             >
               <Pencil size={16} /> Edit
             </button>
-
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1 px-3 py-1 rounded-md text-red-500 border border-red-500 hover:bg-red-500 hover:text-white transition"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30 transition"
             >
               <LogOut size={16} /> Logout
             </button>
-
             <button
               onClick={handleDeleteAccount}
-              className="flex items-center gap-1 px-3 py-1 rounded-md text-red-600 border border-red-600 hover:bg-red-600 hover:text-white transition"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 transition"
             >
               <Trash2 size={16} /> Delete
             </button>
@@ -114,23 +103,24 @@ export default function DashboardPage() {
         </div>
 
         {/* Student Info */}
-        <section>
+        <section className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg">
           <StudentInfo student={student} />
         </section>
 
-        {/* Team Card */}
-        <p>Teams:</p>
-        <MyTeamCard />
+        {/* Teams */}
+        <section className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">
+          <h2 className="text-lg font-semibold text-cyan-300">Teams</h2>
+          <MyTeamCard />
+        </section>
 
         {/* Create Team */}
-        <p>Create Team:</p>
-        <CreateTeamForm />
+        <section className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">
+          <h2 className="text-lg font-semibold text-cyan-300">Create Team</h2>
+          <CreateTeamForm />
+        </section>
 
         {/* Enrolled Events */}
         <section>
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <CalendarCheck size={20} /> Registered Events
-          </h2>
           <EnrolledEvents studentId={student._id} />
         </section>
       </div>

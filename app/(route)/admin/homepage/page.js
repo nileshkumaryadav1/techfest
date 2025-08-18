@@ -134,19 +134,24 @@ export default function AdminHomePage() {
       </h1>
 
       {/* EVENTS SECTION */}
-      <section>
-        <h2 className="text-md md:text-2xl font-semibold md:mb-4 mb-1 text-center">
-          📅 Manage Events ({data.events.length})
+      <section className="md:mt-4">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-6 flex items-center justify-center gap-2 text-[color:var(--foreground)]">
+          📅 Manage Events
+          <span className="text-sm font-normal text-[color:var(--secondary)]">
+            ({data.events.length})
+          </span>
         </h2>
 
+        {/* Search Bar */}
         <input
           type="text"
-          placeholder="Search events..."
+          placeholder="🔍 Search events..."
           onChange={(e) => setSearch(e.target.value)}
-          className="md:mb-6 mx-auto p-2 border border-[color:var(--border)] rounded-lg w-full m-1"
+          className="mb-8 block mx-auto w-full max-w-lg px-4 py-2.5 rounded-xl text-sm border border-[color:var(--border)] bg-[color:var(--card)]/60 backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.05)] focus:ring-2 focus:ring-[color:var(--accent)] focus:outline-none transition"
         />
 
-        <ul className="md:space-y-6 space-y-2">
+        {/* Events List */}
+        <ul className="space-y-5 md:space-y-6">
           {data.events
             ?.filter((event) =>
               event.title.toLowerCase().includes(search.toLowerCase())
@@ -154,20 +159,21 @@ export default function AdminHomePage() {
             .map((event) => (
               <li
                 key={event._id}
-                className="bg-white rounded-2xl shadow-md border border-gray-200 md:p-6 p-3 transition hover:shadow-lg"
+                className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-[0_6px_20px_rgba(0,0,0,0.08)] p-5 md:p-6 transition hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)]"
               >
-                <div className="flex flex-col sm:flex-row justify-between items-start md:gap-6">
-                  <div className="md:space-y-2 text-gray-700">
-                    <h3 className="text-md md:text-xl font-semibold text-gray-800 text-center">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-5">
+                  {/* Event Details */}
+                  <div className="space-y-2 text-[color:var(--foreground)] w-full">
+                    <h3 className="text-lg md:text-xl font-semibold flex flex-wrap justify-center sm:justify-start items-center gap-2">
                       {event.title}
-                      <span className="ml-2 text-xs text-gray-500">
+                      <span className="text-xs font-medium text-[color:var(--secondary)]">
                         ({event.slug})
                       </span>
                     </h3>
 
                     {event.description && (
-                      <p className="text-sm text-gray-600">
-                        {event.description.slice(0, 50) + "..."}
+                      <p className="text-sm text-[color:var(--secondary)] line-clamp-2">
+                        {event.description}
                       </p>
                     )}
 
@@ -183,9 +189,9 @@ export default function AdminHomePage() {
                           href={event.ruleBookPdfUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline break-all"
+                          className="text-[color:var(--accent)] hover:underline break-all"
                         >
-                          {event.ruleBookPdfUrl.slice(0, 20) + "..."}
+                          {event.ruleBookPdfUrl.slice(0, 40) + "..."}
                         </a>
                       </p>
                     )}
@@ -197,9 +203,9 @@ export default function AdminHomePage() {
                           href={event.imageUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline break-all"
+                          className="text-[color:var(--accent)] hover:underline break-all"
                         >
-                          {event.imageUrl.slice(0, 20) + "..."}
+                          {event.imageUrl.slice(0, 40) + "..."}
                         </a>
                       </p>
                     )}
@@ -211,21 +217,20 @@ export default function AdminHomePage() {
                     )}
                   </div>
 
-                  <div className="self-end sm:self-start">
+                  {/* Delete Button */}
+                  <div className="sm:self-start self-end">
                     <button
                       onClick={() => deleteItem("events", event._id)}
                       disabled={event.winners.length > 0}
-                      className={`px-3 py-1 rounded-md border transition hover:cursor-pointer 
-                   ${
-                     event.winners.length > 0
-                       ? "border-gray-400 text-gray-400 bg-gray-100 cursor-not-allowed"
-                       : "border-red-500 text-red-600 hover:bg-red-50"
-                   }
-                    `}
+                      className={`px-4 py-1.5 rounded-lg text-sm font-medium transition shadow-sm 
+                  ${
+                    event.winners.length > 0
+                      ? "bg-gray-100 text-gray-400 border border-gray-300 cursor-not-allowed"
+                      : "border border-red-500 text-red-600 hover:bg-red-50"
+                  }
+                `}
                     >
-                      {event.winners.length > 0
-                        ? "🚫 Locked"
-                        : "❌ Delete Event"}
+                      {event.winners.length > 0 ? "🚫 Locked" : "❌ Delete"}
                     </button>
                   </div>
                 </div>
@@ -234,7 +239,7 @@ export default function AdminHomePage() {
         </ul>
 
         {/* Event Input Form */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-8">
           {renderInput("Title", "title", newEvent.title, setNewEvent)}
           {renderInput("Slug", "slug", newEvent.slug, setNewEvent)}
           {renderInput("Event ID", "eventId", newEvent.eventId, setNewEvent)}
@@ -258,59 +263,67 @@ export default function AdminHomePage() {
           {renderInput("Prizes", "prizes", newEvent.prizes, setNewEvent)}
         </div>
 
-        <button
-          onClick={() => addItem("events", newEvent, clearNewEvent)}
-          className="mt-4 bg-[color:var(--accent)] hover:bg-opacity-90 hover:cursor-pointer text-white px-5 py-2 rounded shadow"
-        >
-          ➕ Add Event
-        </button>
+        {/* Add Event Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={() => addItem("events", newEvent, clearNewEvent)}
+            className="mt-8 bg-[color:var(--accent)] hover:bg-opacity-90 text-white font-medium px-6 py-2.5 rounded-xl shadow-md transition-all hover:scale-[1.02]"
+          >
+            ➕ Add Event
+          </button>
+        </div>
       </section>
 
       {/* SPONSORS SECTION */}
-      <section>
-        <h2 className="md:text-2xl text-xl font-semibold mb-4 text-center">
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-6 text-[color:var(--foreground)]">
           🎖️ Manage Sponsors
         </h2>
 
-        <ul className="space-y-6">
+        {/* Sponsors List */}
+        <ul className="space-y-5 md:space-y-6">
           {data.sponsors?.map((s) => (
             <li
               key={s._id}
-              className="bg-white rounded-2xl shadow-md border border-gray-200 md:p-6 p-3 flex flex-col md:gap-4 transition hover:shadow-lg"
+              className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-[0_6px_20px_rgba(0,0,0,0.08)] p-5 md:p-6 flex flex-col gap-4 transition hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)]"
             >
-              <div className="flex items-center md:gap-4">
+              {/* Sponsor Header */}
+              <div className="flex items-center gap-4">
                 {s.image && (
                   <img
                     src={s.image}
                     alt={s.name}
-                    width={50}
-                    height={40}
-                    className="rounded-lg border object-cover"
+                    width={60}
+                    height={50}
+                    className="rounded-lg border border-[color:var(--border)] object-cover shadow-sm"
                   />
                 )}
-                <h3 className="md:text-lg font-semibold text-gray-800">
+                <h3 className="text-lg font-semibold text-[color:var(--foreground)]">
                   {s.name}
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 md:gap-2 text-sm text-gray-600">
+              {/* Sponsor Details */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-[color:var(--secondary)]">
                 {s.email && <p>📧 {s.email}</p>}
                 {s.company && <p>🏢 {s.company}</p>}
                 {s.phone && <p>📞 {s.phone}</p>}
               </div>
 
+              {/* Sponsor Message */}
               {s.message && (
-                <p className="text-sm text-gray-700 italic border-l-4 border-primary pl-3">
+                <p className="text-sm italic text-[color:var(--foreground)]/90 border-l-4 border-[color:var(--accent)] pl-3">
                   “{s.message}”
                 </p>
               )}
 
+              {/* Delete Button */}
               <div className="text-right">
                 <button
                   onClick={() => deleteItem("sponsors", s._id)}
-                  className="text-red-600 hover:text-red-800 text-sm font-medium underline underline-offset-2"
+                  className="text-red-500 hover:text-red-600 text-sm font-medium underline underline-offset-2 transition"
                 >
-                  Delete Sponsor
+                  ❌ Delete Sponsor
                 </button>
               </div>
             </li>
@@ -318,7 +331,7 @@ export default function AdminHomePage() {
         </ul>
 
         {/* Sponsor Input Form */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-8">
           {renderInput("Sponsor Name", "name", newSponsor.name, setNewSponsor)}
           {renderInput("Image URL", "image", newSponsor.image, setNewSponsor)}
           {renderInput("Email", "email", newSponsor.email, setNewSponsor)}
@@ -327,22 +340,28 @@ export default function AdminHomePage() {
           {renderInput("Message", "message", newSponsor.message, setNewSponsor)}
         </div>
 
+        {/* Sponsor Image Preview */}
         {newSponsor.image && (
-          <img
-            src={newSponsor.image}
-            alt="Preview"
-            width={100}
-            height={60}
-            className="mt-2 rounded border"
-          />
+          <div className="flex justify-center mt-4">
+            <img
+              src={newSponsor.image}
+              alt="Preview"
+              width={120}
+              height={70}
+              className="rounded-lg border border-[color:var(--border)] shadow-sm"
+            />
+          </div>
         )}
 
-        <button
-          onClick={() => addItem("sponsors", newSponsor, clearNewSponsor)}
-          className="mt-4 bg-[color:var(--accent)] hover:bg-opacity-90 hover:cursor-pointer text-white px-5 py-2 rounded shadow"
-        >
-          ➕ Add Sponsor
-        </button>
+        {/* Add Sponsor Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={() => addItem("sponsors", newSponsor, clearNewSponsor)}
+            className="mt-6 bg-[color:var(--accent)] hover:bg-opacity-90 text-white font-medium px-6 py-2.5 rounded-xl shadow-md transition-all hover:scale-[1.02]"
+          >
+            ➕ Add Sponsor
+          </button>
+        </div>
       </section>
     </div>
   );

@@ -1,56 +1,51 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import {
-  ShieldCheck,
-  LayoutDashboard,
-  Users,
-  Trophy,
-  Settings,
-  Menu,
-  LogOut,
-  Pencil,
-  User,
-} from "lucide-react";
-
-// Admin Navigation Links
-const adminLinks = [
-  { name: "Dashboard", href: "/admin", icon: <User className="w-5 h-5" /> },
-  { name: "Add New Items", href: "/admin/homepage", icon: <Pencil className="w-5 h-5" /> },
-  { name: "View & Manage All Events", href: "/admin/events", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { name: "Registrated Students", href: "/admin/users", icon: <Users className="w-5 h-5" /> },
-  { name: "Winners List", href: "/admin/winners", icon: <Trophy className="w-5 h-5" /> },
-  { name: "Settings", href: "/admin/settings", icon: <Settings className="w-5 h-5" /> },
-];
+import AdminSidebar from "@/components/AdminSidebar";
+import { Menu } from "lucide-react";
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const [authChecked, setAuthChecked] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adminUser, setAdminUser] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Auth Check
+  // ✅ Auth check
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("admin"));
     if (pathname === "/admin/login") {
       setAuthChecked(true);
       return;
     }
-
     if (!user || (user.role !== "admin" && user.role !== "superadmin")) {
       router.push("/admin/login");
     } else {
       setAdminUser(user);
       setAuthChecked(true);
     }
-  }, [pathname]);
+  }, [pathname, router]);
+
+  // ✅ Close sidebar with ESC
+  useEffect(() => {
+    const handleEsc = (e) => e.key === "Escape" && setSidebarOpen(false);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("admin");
-    router.push("/admin/login");
+    try {
+      // Clear stored session/token
+      localStorage.removeItem("admin");
+
+      // Redirect to login with replace to prevent going back
+      router.replace("/admin/login");
+
+    } catch (error) {
+      console.error("Logout failed:", error);
+      alert("Logout failed. Please try again.");
+    }
   };
 
   if (!authChecked) {
@@ -62,65 +57,54 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen flex bg-[color:var(--background)] text-[color:var(--foreground)]">
+    <div className="flex min-h-screen bg-[color:var(--background)] text-[color:var(--foreground)]">
       {/* Sidebar */}
       <aside
-        className={`${
-          sidebarOpen ? "w-64" : "w-16"
-        } transition-all duration-300 min-h-screen bg-[color:var(--card)] border-r border-[color:var(--border)] shadow-lg p-4 flex flex-col`}
+        className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-[var(--card)] shadow-xl transition-transform duration-300 ease-in-out 
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+        md:translate-x-0 md:static md:shadow-none`}
+        aria-hidden={!sidebarOpen}
       >
-        {/* Toggle + Logo */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-[color:var(--highlight)]" />
-            {sidebarOpen && <h2 className="text-xl font-bold">Admin</h2>}
-          </div>
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-[color:var(--accent)]">
-            <Menu className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 space-y-2">
-          {adminLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-2 md:px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? "bg-[color:var(--accent)]/10 text-[color:var(--accent)]"
-                    : "hover:bg-[color:var(--accent)]/10 hover:text-[color:var(--accent)]"
-                }`}
-              >
-                {link.icon}
-                {sidebarOpen && <span>{link.name}</span>}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Profile & Logout */}
-        <div className="mt-4 border-t pt-4 border-[color:var(--border)]">
-          {sidebarOpen && adminUser && (
-            <div className="mb-2 text-xs">
-              <div className="font-semibold">{adminUser.name}</div>
-              <div className="text-[color:var(--accent)] capitalize">{adminUser.role}</div>
-            </div>
-          )}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 md:px-3 md:py-2 w-full rounded-lg text-sm font-medium text-red-500 hover:bg-red-500/10 transition"
-          >
-            <LogOut className="w-5 h-5" />
-            {sidebarOpen && <span>Logout</span>}
-          </button>
-        </div>
+        <AdminSidebar
+          adminUser={adminUser}
+          handleLogout={handleLogout}
+          closeSidebar={() => setSidebarOpen(false)}
+          sidebarOpen={sidebarOpen}
+        />
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-4">{children}</main>
+      {/* Content area */}
+      <div className="flex-1 flex flex-col min-h-screen">
+        {/* Topbar (mobile only) */}
+        <header className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--background)] md:hidden">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open sidebar"
+            className="p-2 rounded hover:bg-[var(--accent)]/10 transition"
+          >
+            <Menu size={24} />
+          </button>
+          <h1 className="text-lg font-semibold">Admin Dashboard</h1>
+          <button
+            onClick={handleLogout}
+            className="text-red-500 text-sm hover:underline"
+          >
+            Logout
+          </button>
+        </header>
+
+        {/* Page content */}
+        <main className="flex-1 p-4 overflow-y-auto">{children}</main>
+      </div>
+
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden transition-opacity"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
     </div>
   );
 }
