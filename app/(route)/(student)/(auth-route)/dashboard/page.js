@@ -77,19 +77,19 @@ export default function DashboardPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h1 className="text-2xl font-bold text-cyan-300">
+          <h1 className="text-2xl font-bold text-[color:var(--foreground)]">
             Welcome, {student.name || student.email}
           </h1>
           <div className="flex flex-wrap gap-3 text-sm">
             <button
               onClick={() => router.push("/edit-profile")}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-200 hover:bg-cyan-500/30 transition"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-cyan-500/20 text-[var(--secondary)] hover:bg-cyan-500/30 transition"
             >
               <Pencil size={16} /> Edit
             </button>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30 transition"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-600 hover:bg-red-500/30 transition"
             >
               <LogOut size={16} /> Logout
             </button>
@@ -109,13 +109,13 @@ export default function DashboardPage() {
 
         {/* Teams */}
         <section className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">
-          <h2 className="text-lg font-semibold text-cyan-300">Teams</h2>
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">Teams</h2>
           <MyTeamCard />
         </section>
 
         {/* Create Team */}
         <section className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">
-          <h2 className="text-lg font-semibold text-cyan-300">Create Team</h2>
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">Create Team</h2>
           <CreateTeamForm />
         </section>
 

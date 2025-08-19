@@ -8,7 +8,7 @@
   --background: #f8f8f8;        /* Light premium background */
   --foreground: #0b0b0f;        /* Dark text for readability */
   --accent: #f59e0b;            /* Warm yellow-orange accent */
-  --secondary: #a1a1aa;         /* Neutral gray for subtext */
+  --secondary: #696969;         /* Neutral gray for subtext */
   --border: #e5e5e5;            /* Light subtle border */
   --highlight: #84dccf;         /* Soft mint highlight */
 
@@ -38,24 +38,11 @@
   :root:not([data-theme]) {
     --background: #0b0b0f;        /* Deep black-maroon */
     --foreground: #f8f8f8;        /* Light foreground */
-    --accent: #ef626c;            /* Muted warm red accent */
-    --secondary: #84dccf;         /* Mint for secondary */
-    --highlight: #f59e0b;         /* Accent-inspired highlight */
+    --accent: #f59e0b;            /* Muted warm red accent */
+    --secondary: #cccccc;         /* Mint for secondary */
+    --highlight: #84dccf;         /* Accent-inspired highlight */
     --border: #2e2e2e;            /* Dark subtle border */
   }
-}
-
-/* ============================================
-   Dark Mode Theme Override (Manual Toggle)
-   Apply by adding data-theme="dark" to <html>
-============================================ */
-[data-theme="dark"] {
-  --background: #0b0b0f;
-  --foreground: #f8f8f8;
-  --accent: #ef626c;
-  --secondary: #84dccf;
-  --highlight: #f59e0b;
-  --border: #2e2e2e;
 }
 
 /* ============================================

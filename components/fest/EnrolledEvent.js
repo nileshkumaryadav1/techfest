@@ -82,11 +82,11 @@ export default function EnrolledEvents({ studentId }) {
     return <p className="text-gray-400">No enrolled events yet.</p>;
 
   return (
-    <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-2xl border border-white/20 shadow-xl">
+    <div className="p-6 rounded-3xl bg-[var(--background)] backdrop-blur-2xl border border-[var(--border)] shadow-xl">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-semibold text-cyan-300">Enrolled Events</h2>
-        <span className="px-3 py-1 text-xs font-medium rounded-full bg-white/10 text-cyan-200 border border-white/20">
+        <h2 className="text-lg font-semibold text-[color:var(--foreground)]">Enrolled Events</h2>
+        <span className="px-3 py-1 text-xs font-medium rounded-full bg-[color:var(--background)] text-[color:var(--foreground)] border border-[color:var(--border)]">
           {events.length}
         </span>
       </div>
@@ -96,17 +96,17 @@ export default function EnrolledEvents({ studentId }) {
         {events.map((event) => (
           <li
             key={event._id}
-            className="p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 hover:border-cyan-300/40 transition-all group"
+            className="p-4 rounded-2xl bg-[color:var(--background)] backdrop-blur-xl border border-[color:var(--border)] hover:border-cyan-300/40 transition-all group"
           >
             {/* Top Row */}
             <div className="flex justify-between items-center mb-2">
-              <h3 className="text-base font-bold text-cyan-200 group-hover:text-cyan-100 transition">
+              <h3 className="text-base font-bold text-[color:var(--foreground)] group-hover:text-[color:var(--accent)] transition">
                 {event.title}
               </h3>
               <div className="flex gap-2">
                 <Link
                   href={`/events/${event.slug || ""}`}
-                  className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-200 text-xs hover:bg-cyan-500/30 transition"
+                  className="px-3 py-1 rounded-lg bg-cyan-500/20 text-[color:var(--foreground)] text-xs hover:bg-cyan-500/30 transition"
                 >
                   View
                 </Link>
@@ -115,8 +115,8 @@ export default function EnrolledEvents({ studentId }) {
                   disabled={event.winners?.length > 0}
                   className={`px-3 py-1 rounded-lg text-xs transition ${
                     event.winners?.length > 0
-                      ? "bg-gray-500/20 text-gray-400 cursor-not-allowed"
-                      : "bg-red-500/20 text-red-300 hover:bg-red-500/30 hover:text-red-200"
+                      ? "bg-gray-500/20 text-[color:var(--secondary)] cursor-not-allowed"
+                      : "bg-red-500/20 text-[color:var(--foreground)] hover:bg-red-500/30 hover:text-[color:var(--secondary)]"
                   }`}
                 >
                   {event.winners?.length > 0 ? "Locked 🏅" : "Remove"}
@@ -125,7 +125,7 @@ export default function EnrolledEvents({ studentId }) {
             </div>
 
             {/* Date / Time */}
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-[color:var(--secondary)]">
               📅 {formatDate(event.date)} • ⏰ {formatTime(event.time)}
             </p>
 
