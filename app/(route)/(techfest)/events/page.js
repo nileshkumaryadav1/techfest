@@ -74,14 +74,14 @@ export default function EventListPage() {
 
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Filter Bar */}
-        <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row items-center gap-4">
+        <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-[color:var(--border)] shadow-lg flex flex-col md:flex-row items-center gap-4">
           {/* Search */}
           <input
             type="text"
             placeholder="🔍 Search events..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-1/3 px-4 py-2 rounded-xl bg-white/10 border border-white/20 placeholder-gray-300 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            className="w-full md:w-1/3 px-4 py-2 rounded-xl bg-white/10 border border-[color:var(--border)] placeholder-[color:var(--foreground)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-cyan-400"
           />
 
           {/* Sorting & Filters */}
@@ -89,7 +89,7 @@ export default function EventListPage() {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="px-4 py-2 rounded-xl bg-white/10 border border-[color:var(--border)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-cyan-400"
             >
               {uniqueCategories.map((cat) => (
                 <option key={cat} value={cat} className="text-black">
@@ -101,7 +101,7 @@ export default function EventListPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="px-4 py-2 rounded-xl bg-white/10 border border-[color:var(--border)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-cyan-400"
             >
               {sortOptions.map(({ label, value }) => (
                 <option key={value} value={value} className="text-black">

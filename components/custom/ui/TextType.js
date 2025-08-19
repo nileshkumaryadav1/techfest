@@ -1,23 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState, createElement } from "react";
-import { gsap } from "gsap";
 
 const TextType = ({
   text,
   as: Component = "div",
   typingSpeed = 50,
+  deletingSpeed = 30,
   initialDelay = 0,
   pauseDuration = 2000,
-  deletingSpeed = 30,
   loop = true,
   className = "",
   showCursor = true,
   hideCursorWhileTyping = false,
   cursorCharacter = "|",
   cursorClassName = "",
-  cursorBlinkDuration = 0.5,
-  textColors = [],
+  cursorBlinkDuration = 0.7,
+  textColors = ["var(--secondary)"],
   variableSpeed,
   onSentenceComplete,
   startOnVisible = false,
@@ -29,7 +28,7 @@ const TextType = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(!startOnVisible);
-  const cursorRef = useRef(null);
+
   const containerRef = useRef(null);
 
   const textArray = Array.isArray(text) ? text : [text];
@@ -40,21 +39,15 @@ const TextType = ({
     return Math.random() * (max - min) + min;
   };
 
-  const getCurrentTextColor = () => {
-    if (textColors.length === 0) return "#ffffff";
-    return textColors[currentTextIndex % textColors.length];
-  };
+  const getCurrentTextColor = () => textColors[currentTextIndex % textColors.length];
 
+  // Intersection observer to start animation on visibility
   useEffect(() => {
     if (!startOnVisible || !containerRef.current) return;
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          }
-        });
+      ([entry]) => {
+        if (entry.isIntersecting) setIsVisible(true);
       },
       { threshold: 0.1 }
     );
@@ -63,117 +56,92 @@ const TextType = ({
     return () => observer.disconnect();
   }, [startOnVisible]);
 
-  useEffect(() => {
-    if (showCursor && cursorRef.current) {
-      gsap.set(cursorRef.current, { opacity: 1 });
-      gsap.to(cursorRef.current, {
-        opacity: 0,
-        duration: cursorBlinkDuration,
-        repeat: -1,
-        yoyo: true,
-        ease: "power2.inOut",
-      });
-    }
-  }, [showCursor, cursorBlinkDuration]);
-
+  // Typing logic
   useEffect(() => {
     if (!isVisible) return;
-
     let timeout;
     const currentText = textArray[currentTextIndex];
-    const processedText = reverseMode
-      ? currentText.split("").reverse().join("")
-      : currentText;
+    const processedText = reverseMode ? currentText.split("").reverse().join("") : currentText;
 
-    const executeTypingAnimation = () => {
+    const type = () => {
       if (isDeleting) {
         if (displayedText === "") {
           setIsDeleting(false);
-          if (currentTextIndex === textArray.length - 1 && !loop) {
-            return;
-          }
-
-          if (onSentenceComplete) {
-            onSentenceComplete(textArray[currentTextIndex], currentTextIndex);
-          }
-
-          setCurrentTextIndex((prev) => (prev + 1) % textArray.length);
+          const nextIndex = (currentTextIndex + 1) % textArray.length;
+          setCurrentTextIndex(nextIndex);
           setCurrentCharIndex(0);
-          timeout = setTimeout(() => { }, pauseDuration);
+          if (onSentenceComplete) onSentenceComplete(currentText, currentTextIndex);
+          if (!loop && nextIndex === 0) return;
+          timeout = setTimeout(() => {}, pauseDuration);
         } else {
-          timeout = setTimeout(() => {
-            setDisplayedText((prev) => prev.slice(0, -1));
-          }, deletingSpeed);
+          timeout = setTimeout(() => setDisplayedText((prev) => prev.slice(0, -1)), deletingSpeed);
         }
       } else {
         if (currentCharIndex < processedText.length) {
-          timeout = setTimeout(
-            () => {
-              setDisplayedText(
-                (prev) => prev + processedText[currentCharIndex]
-              );
-              setCurrentCharIndex((prev) => prev + 1);
-            },
-            variableSpeed ? getRandomSpeed() : typingSpeed
-          );
-        } else if (textArray.length > 1) {
           timeout = setTimeout(() => {
-            setIsDeleting(true);
-          }, pauseDuration);
+            setDisplayedText((prev) => prev + processedText[currentCharIndex]);
+            setCurrentCharIndex((prev) => prev + 1);
+          }, variableSpeed ? getRandomSpeed() : typingSpeed);
+        } else {
+          timeout = setTimeout(() => setIsDeleting(true), pauseDuration);
         }
       }
     };
 
-    if (currentCharIndex === 0 && !isDeleting && displayedText === "") {
-      timeout = setTimeout(executeTypingAnimation, initialDelay);
-    } else {
-      executeTypingAnimation();
-    }
-
+    timeout = setTimeout(type, initialDelay);
     return () => clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     currentCharIndex,
     displayedText,
     isDeleting,
+    currentTextIndex,
+    textArray,
     typingSpeed,
     deletingSpeed,
     pauseDuration,
-    textArray,
-    currentTextIndex,
-    loop,
     initialDelay,
+    loop,
     isVisible,
-    reverseMode,
     variableSpeed,
+    reverseMode,
     onSentenceComplete,
   ]);
 
   const shouldHideCursor =
-    hideCursorWhileTyping &&
-    (currentCharIndex < textArray[currentTextIndex].length || isDeleting);
+    hideCursorWhileTyping && (currentCharIndex < textArray[currentTextIndex].length || isDeleting);
 
   return createElement(
     Component,
     {
       ref: containerRef,
-      className: `text-type ${className}`,
+      className: `relative inline-block ${className}`,
       ...props,
     },
-    <span
-      className="text-type__content"
-      style={{ color: getCurrentTextColor() }}
-    >
-      {displayedText}
-    </span>,
-    showCursor && (
+    <>
       <span
-        ref={cursorRef}
-        className={`text-type__cursor ${cursorClassName} ${shouldHideCursor ? "text-type__cursor--hidden" : ""}`}
+        className="transition-colors duration-300"
+        style={{ color: getCurrentTextColor() }}
       >
-        {cursorCharacter}
+        {displayedText}
       </span>
-    )
+      {showCursor && (
+        <span
+          className={`ml-1 animate-blink ${cursorClassName} ${shouldHideCursor ? "opacity-0" : ""}`}
+          style={{ color: "var(--accent)" }}
+        >
+          {cursorCharacter}
+        </span>
+      )}
+      <style jsx>{`
+        @keyframes blink {
+          0%, 50%, 100% { opacity: 1; }
+          25%, 75% { opacity: 0; }
+        }
+        .animate-blink {
+          animation: blink ${cursorBlinkDuration}s infinite;
+        }
+      `}</style>
+    </>
   );
 };
 

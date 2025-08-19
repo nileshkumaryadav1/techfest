@@ -5,11 +5,11 @@
 ============================================ */
 :root {
   /* Colors */
-  --background: #0b0b0f;        /* Deep black-maroon background */
-  --foreground: #f8f8f8;        /* Light foreground text */
+  --background: #f8f8f8;        /* Light premium background */
+  --foreground: #0b0b0f;        /* Dark text for readability */
   --accent: #f59e0b;            /* Warm yellow-orange accent */
   --secondary: #a1a1aa;         /* Neutral gray for subtext */
-  --border: #2e2e2e;            /* Subtle dark border */
+  --border: #e5e5e5;            /* Light subtle border */
   --highlight: #84dccf;         /* Soft mint highlight */
 
   /* Fonts */
@@ -32,17 +32,30 @@
 }
 
 /* ============================================
-   Dark Mode Theme Override (Auto)
+   Dark Mode Theme Override (Auto System Preference)
 ============================================ */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #22181c;        /* Rich maroon-toned dark */
-    --foreground: #f6e8ea;        /* Soft light-pinkish text */
+  :root:not([data-theme]) {
+    --background: #0b0b0f;        /* Deep black-maroon */
+    --foreground: #f8f8f8;        /* Light foreground */
     --accent: #ef626c;            /* Muted warm red accent */
-    --secondary: #84dccf;         /* Mint tone for secondary */
-    --highlight: #f6e8ea;         /* Match foreground highlight */
-    --border: #2e2e2e;            /* Consistent dark border */
+    --secondary: #84dccf;         /* Mint for secondary */
+    --highlight: #f59e0b;         /* Accent-inspired highlight */
+    --border: #2e2e2e;            /* Dark subtle border */
   }
+}
+
+/* ============================================
+   Dark Mode Theme Override (Manual Toggle)
+   Apply by adding data-theme="dark" to <html>
+============================================ */
+[data-theme="dark"] {
+  --background: #0b0b0f;
+  --foreground: #f8f8f8;
+  --accent: #ef626c;
+  --secondary: #84dccf;
+  --highlight: #f59e0b;
+  --border: #2e2e2e;
 }
 
 /* ============================================
@@ -52,10 +65,41 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* ============================================ */
-/* globals.css */
+/* ============================================
+   Input Styling
+============================================ */
 .input {
-  @apply w-full p-2 border border-gray-300 rounded-md mb-2;
+  @apply w-full p-2 rounded-md mb-2;
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ============================================
+   Buttons / Accent Colors
+============================================ */
+.button {
+  background-color: var(--accent);
+  color: var(--foreground);
+  @apply px-4 py-2 rounded-md font-semibold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button:hover {
+  opacity: 0.9;
+}
+
+/* ============================================
+   Card Example Styling
+============================================ */
+.card {
+  background-color: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  @apply rounded-xl p-4 shadow-md;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }

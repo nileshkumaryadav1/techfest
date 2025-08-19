@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { Facebook, Github, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
-import { FestData, developersData, footerNavItems } from "@/data/FestData"; // adjust path if needed
+import { FestData, developersData, footerNavItems } from "@/data/FestData";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { facebook, instagram, twitter, linkedin, github, youtube } = FestData.socialMedia;
 
   return (
-    <footer className="bg-black text-white px-6 py-13 md:py-10 sm:px-16 text-center space-y-6">
+    <footer className="px-6 py-10 md:py-12 sm:px-16 text-center space-y-6"
+      style={{ backgroundColor: "var(--background)", color: "var(--foreground)" }}
+    >
       {/* 📌 Navigation Links */}
       <nav aria-label="Footer navigation">
         <ul className="flex justify-center flex-wrap gap-4">
@@ -15,9 +17,10 @@ const Footer = () => {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="text-sm text-slate-400 hover:text-[color:var(--accent)] transition"
+                className="text-sm transition"
+                style={{ color: "var(--secondary)" }}
               >
-                {link.label}
+                <span className="hover:text-[var(--accent)] transition">{link.label}</span>
               </Link>
             </li>
           ))}
@@ -27,44 +30,47 @@ const Footer = () => {
       {/* 🌐 Social Icons */}
       <div className="flex justify-center gap-6">
         {facebook && (
-          <Link href={facebook} target="_blank" aria-label="Facebook" className="text-slate-400 hover:text-blue-400 transition">
-            <Facebook size={24} />
+          <Link href={facebook} target="_blank" aria-label="Facebook" style={{ color: "var(--secondary)" }}>
+            <Facebook size={24} className="hover:text-[var(--accent)] transition" />
           </Link>
         )}
         {instagram && (
-          <Link href={instagram} target="_blank" aria-label="Instagram" className="text-slate-400 hover:text-pink-400 transition">
-            <Instagram size={24} />
+          <Link href={instagram} target="_blank" aria-label="Instagram" style={{ color: "var(--secondary)" }}>
+            <Instagram size={24} className="hover:text-[var(--highlight)] transition" />
           </Link>
         )}
         {twitter && (
-          <Link href={twitter} target="_blank" aria-label="Twitter" className="text-slate-400 hover:text-sky-400 transition">
-            <Twitter size={24} />
+          <Link href={twitter} target="_blank" aria-label="Twitter" style={{ color: "var(--secondary)" }}>
+            <Twitter size={24} className="hover:text-[var(--accent)] transition" />
           </Link>
         )}
         {linkedin && (
-          <Link href={linkedin} target="_blank" aria-label="LinkedIn" className="text-slate-400 hover:text-blue-500 transition">
-            <Linkedin size={24} />
+          <Link href={linkedin} target="_blank" aria-label="LinkedIn" style={{ color: "var(--secondary)" }}>
+            <Linkedin size={24} className="hover:text-[var(--highlight)] transition" />
           </Link>
         )}
         {github && (
-          <Link href={github} target="_blank" aria-label="GitHub" className="text-slate-400 hover:text-gray-300 transition">
-            <Github size={24} />
+          <Link href={github} target="_blank" aria-label="GitHub" style={{ color: "var(--secondary)" }}>
+            <Github size={24} className="hover:text-[var(--foreground)] transition" />
           </Link>
         )}
         {youtube && (
-          <Link href={youtube} target="_blank" aria-label="YouTube" className="text-slate-400 hover:text-red-500 transition">
-            <Youtube size={24} />
+          <Link href={youtube} target="_blank" aria-label="YouTube" style={{ color: "var(--secondary)" }}>
+            <Youtube size={24} className="hover:text-[var(--accent)] transition" />
           </Link>
         )}
       </div>
 
       {/* 🚀 Copyright */}
       <div className="pb-4">
-        <p className="text-sm text-slate-400 md:flex justify-center items-center gap-2">
-          <img src="/logo.png" alt="Logo" className="w-5 h-5 inline-block" /> {" "}
-          &copy; {currentYear} {FestData.name} ·
-          <p> Built with ❤️ by{" "}</p>
-          <Link href={developersData[0].portfolio} target="_blank" className="hover:text-[color:var(--accent)] underline">
+        <p className="text-sm md:flex justify-center items-center gap-2" style={{ color: "var(--secondary)" }}>
+          <img src="/logo.png" alt="Logo" className="w-5 h-5 inline-block" />{" "}
+          &copy; {currentYear} {FestData.name} · Built with ❤️ by{" "}
+          <Link
+            href={developersData[0].portfolio}
+            target="_blank"
+            className="underline hover:text-[var(--accent)] transition"
+          >
             {developersData[0].name}
           </Link>
         </p>
