@@ -1,34 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Moon, Sun } from "lucide-react";
-import { FestData, navItems } from "@/data/FestData";
+import { Menu, X } from "lucide-react";
+import { FestData, CollegeData, navItems } from "@/data/FestData";
 
 const Navbar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState(
-    typeof window !== "undefined" && document.documentElement.dataset.theme
-      ? document.documentElement.dataset.theme
-      : "light"
-  );
-
-  // Sync theme with data-theme attribute
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-[color:var(--background)] border-b border-[color:var(--border)] z-50 shadow-lg backdrop-blur-md">
       <div className="flex justify-between items-center mx-auto px-5 md:px-20 py-3">
         {/* Logo */}
-        <Link href="/" className="text-xl font-extrabold tracking-tight text-[color:var(--accent)]">
+        <Link
+          href="/"
+          className="text-xl font-extrabold tracking-tight text-[color:var(--accent)]"
+        >
           <img
             src="/logo.png"
             alt="Logo"
@@ -40,17 +29,12 @@ const Navbar = () => {
         {/* Desktop Nav */}
         <div className="hidden sm:flex space-x-2 items-center">
           {navItems.map((item) => (
-            <NavItem key={item.href} {...item} active={pathname === item.href} />
+            <NavItem
+              key={item.href}
+              {...item}
+              active={pathname === item.href}
+            />
           ))}
-
-          {/* Dark/Light Mode Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-md hover:bg-[color:var(--border)] transition-colors text-[color:var(--accent)]"
-            aria-label="Toggle dark/light mode"
-          >
-            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-          </button>
         </div>
 
         {/* Hamburger Icon */}
@@ -91,16 +75,9 @@ const Navbar = () => {
               onClick={() => setIsOpen(false)}
             />
           ))}
-
-          {/* Dark/Light Mode Toggle in Mobile */}
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-2 px-4 py-3 rounded-md text-[color:var(--accent)] hover:bg-[color:var(--border)] transition-colors"
-          >
-            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-            {theme === "light" ? "Dark Mode" : "Light Mode"}
-          </button>
         </div>
+
+        <div className="h-50 flex flex-col px-4 py-6 space-y-2 bg-[color:var(--background)] bg-opacity-90"></div>
       </div>
     </nav>
   );
