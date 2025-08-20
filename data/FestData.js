@@ -9,6 +9,7 @@ export const FestData = {
     "Welcome to TechYug — where tradition meets transformation, and imagination merges with innovation. In this new era, the synergy between human intelligence and artificial intelligence is redefining the boundaries of possibility.",
   date: "31st July - 3rd August, 2025",
   venue: "H1 & H2, KEC Katihar, Bihar",
+  brochure: "https://www.google.com/",
   organizers: "Centre Organization, KEC Katihar",
   organizersLink: "https://centreorg.vercel.app/",
   sponsors: "KEC Katihar, Centre Organization",
@@ -17,6 +18,7 @@ export const FestData = {
   totalNumberOfDays: 4,
   totalParticipantCount: 24,
   socialMedia: {
+    whatsapp:"https://chat.whatsapp.com/JSrqwbsqGz3BnB7zUNrfOE",
     facebook: "",
     instagram: "https://www.instagram.com/CentreOrganization/",
     twitter: "",
@@ -71,6 +73,9 @@ export const footerNavItems = [
   { href: "/certificate", label: "Certificate" },
   { href: "/developers", label: "Developers" },
   { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+  { href: "/schedule", label: "Schedule" },
+  { href: "/hof", label: "Hall of Fame" },
 ];
 
 export const mobileNavItems = [

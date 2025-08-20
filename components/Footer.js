@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Facebook, Github, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
+import { Facebook, Github, Instagram, Twitter, Linkedin, Youtube, Phone } from "lucide-react";
+ import { FaWhatsapp } from 'react-icons/fa';
 import { FestData, developersData, footerNavItems } from "@/data/FestData";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const { facebook, instagram, twitter, linkedin, github, youtube } = FestData.socialMedia;
+  const { whatsapp, facebook, instagram, twitter, linkedin, github, youtube } = FestData.socialMedia;
 
   return (
     <footer className="px-6 py-10 md:py-12 sm:px-16 text-center space-y-6"
@@ -29,6 +30,13 @@ const Footer = () => {
 
       {/* 🌐 Social Icons */}
       <div className="flex justify-center gap-6">
+        {
+          whatsapp && (
+            <Link href={whatsapp} target="_blank" aria-label="WhatsApp" style={{ color: "var(--secondary)" }}>
+              <FaWhatsapp size={24} className="hover:text-[var(--accent)] transition" />
+            </Link>
+          )
+        }
         {facebook && (
           <Link href={facebook} target="_blank" aria-label="Facebook" style={{ color: "var(--secondary)" }}>
             <Facebook size={24} className="hover:text-[var(--accent)] transition" />
@@ -49,11 +57,11 @@ const Footer = () => {
             <Linkedin size={24} className="hover:text-[var(--highlight)] transition" />
           </Link>
         )}
-        {github && (
+        {/* {github && (
           <Link href={github} target="_blank" aria-label="GitHub" style={{ color: "var(--secondary)" }}>
             <Github size={24} className="hover:text-[var(--foreground)] transition" />
           </Link>
-        )}
+        )} */}
         {youtube && (
           <Link href={youtube} target="_blank" aria-label="YouTube" style={{ color: "var(--secondary)" }}>
             <Youtube size={24} className="hover:text-[var(--accent)] transition" />
@@ -62,10 +70,11 @@ const Footer = () => {
       </div>
 
       {/* 🚀 Copyright */}
-      <div className="pb-4">
+      <div className="pb-8">
         <p className="text-sm md:flex justify-center items-center gap-2" style={{ color: "var(--secondary)" }}>
-          <img src="/logo.png" alt="Logo" className="w-5 h-5 inline-block" />{" "}
-          &copy; {currentYear} {FestData.name} · Built with ❤️ by{" "}
+          <img src="/logo.png" alt="Logo" className="w-5 h-5 inline-block border rounded-full" />{" "}
+          &copy; {currentYear} {FestData.name} ·
+          <p className="py-1"> Built with ❤️ by{" "}
           <Link
             href={developersData[0].portfolio}
             target="_blank"
@@ -73,6 +82,7 @@ const Footer = () => {
           >
             {developersData[0].name}
           </Link>
+          </p>
         </p>
       </div>
     </footer>

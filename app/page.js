@@ -7,6 +7,7 @@ import GallerySection from "@/components/home/Gallery";
 import HeroSection from "@/components/home/Hero";
 import SponsorsSection from "@/components/home/Sponsors";
 import TimelineSection from "@/components/home/Timeline";
+import AfterMovie from "@/components/home/AfterMovie";
 
 export default function Home() {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -41,16 +42,17 @@ export default function Home() {
       <GallerySection /> {/* Events Carousel */}
       <TimelineSection />
       <EventHighlightsSection /> {/* Fest Highlight */}
+      <AfterMovie />
       <ContactSection />
       <SponsorsSection />
-
+      
       {/* Scroll to Top Button (only visible at bottom) */}
       {showScrollTop && (
         <button
           onClick={scrollToTop}
           className="fixed md:bottom-6 md:right-6 bottom-17 right-4 px-4 py-3 text-sm font-semibold rounded-full z-50 shadow-lg transition duration-300 border rounded-full hover:cursor-pointer"
         >
-          ↑ Back to Top
+          ↑ Top
         </button>
       )}
     </>
