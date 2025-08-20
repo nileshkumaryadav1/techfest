@@ -13,6 +13,7 @@
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "crypto": "^1.0.1",
+    "dotenv": "^17.2.1",
     "framer-motion": "^12.23.12",
     "gsap": "^3.13.0",
     "html2canvas": "^1.4.1",

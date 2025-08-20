@@ -7,7 +7,11 @@ import { Loader2, LogOut, UserPlus, Trash2, SunMoon } from "lucide-react";
 export default function AdminSettings() {
   const [admin, setAdmin] = useState(null);
   const [theme, setTheme] = useState("light");
-  const [newAdmin, setNewAdmin] = useState({ name: "", email: "", password: "" });
+  const [newAdmin, setNewAdmin] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const [allAdmins, setAllAdmins] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -91,14 +95,21 @@ export default function AdminSettings() {
 
       {/* Admin Details */}
       <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)]/60 backdrop-blur-xl p-5 shadow-md space-y-2">
-        <p><strong>Name:</strong> {admin?.name}</p>
-        <p><strong>Email:</strong> {admin?.email}</p>
-        <p><strong>Role:</strong> {admin?.role}</p>
+        <p>
+          <strong>Name:</strong> {admin?.name}
+        </p>
+        <p>
+          <strong>Email:</strong> {admin?.email}
+        </p>
+        <p>
+          <strong>Role:</strong> {admin?.role}
+        </p>
       </div>
 
       {/* Theme Toggle */}
       <div className="flex items-center justify-between rounded-xl border border-[color:var(--border)] bg-[color:var(--card)]/50 backdrop-blur p-4">
-        <span className="font-medium">Theme: 
+        <span className="font-medium">
+          Theme:
           <span className="ml-2 text-[color:var(--accent)]">{theme}</span>
         </span>
         <button
@@ -123,21 +134,27 @@ export default function AdminSettings() {
                 type="text"
                 placeholder="Name"
                 value={newAdmin.name}
-                onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, name: e.target.value })
+                }
                 className="p-2 border border-[color:var(--border)] rounded-lg bg-transparent focus:ring-2 focus:ring-[color:var(--accent)] outline-none"
               />
               <input
                 type="email"
                 placeholder="Email"
                 value={newAdmin.email}
-                onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, email: e.target.value })
+                }
                 className="p-2 border border-[color:var(--border)] rounded-lg bg-transparent focus:ring-2 focus:ring-[color:var(--accent)] outline-none"
               />
               <input
                 type="password"
                 placeholder="Password"
                 value={newAdmin.password}
-                onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, password: e.target.value })
+                }
                 className="p-2 border border-[color:var(--border)] rounded-lg bg-transparent focus:ring-2 focus:ring-[color:var(--accent)] outline-none"
               />
             </div>
@@ -146,7 +163,11 @@ export default function AdminSettings() {
               disabled={loading}
               className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:scale-105 transition disabled:opacity-60"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <UserPlus className="w-4 h-4" />
+              )}
               {loading ? "Adding..." : "Add Admin"}
             </button>
           </div>
@@ -158,10 +179,17 @@ export default function AdminSettings() {
             </h2>
             <ul className="divide-y divide-[color:var(--border)]">
               {allAdmins.map((a) => (
-                <li key={a._id} className="flex items-center justify-between py-3">
+                <li
+                  key={a._id}
+                  className="flex items-center justify-between py-3"
+                >
                   <div>
-                    <p className="font-medium">{a.name} ({a.role})</p>
-                    <p className="text-sm text-[color:var(--secondary)]">{a.email}</p>
+                    <p className="font-medium">
+                      {a.name} ({a.role})
+                    </p>
+                    <p className="text-sm text-[color:var(--secondary)]">
+                      {a.email}
+                    </p>
                   </div>
                   <button
                     onClick={() => handleDeleteAdmin(a._id, a.email)}
@@ -176,6 +204,30 @@ export default function AdminSettings() {
             </ul>
           </div>
         </>
+      )}
+
+      {/* Generate Next Year Events */}
+      {admin?.role === "superadmin" && (
+        <button
+          onClick={async () => {
+            const confirm = window.confirm("Generate events for next year?");
+            if (!confirm) return;
+
+            try {
+              const res = await fetch("/api/admin/generate-next-year-events", {
+                method: "POST",
+              });
+              const data = await res.json();
+              if (data.success) alert("Events generated successfully!");
+            } catch (err) {
+              console.error(err);
+              alert("Failed to generate events");
+            }
+          }}
+          className="px-4 py-2 rounded-xl bg-[color:var(--background)] text-[color:var(--foreground)] hover:bg-primary-dark transition border border-[color:var(--border)] cursor-pointer hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+        >
+          Generate Next Year Events
+        </button>
       )}
 
       {/* Logout */}

@@ -79,66 +79,86 @@ export default function EnrolledEvents({ studentId }) {
   if (loading) return <LoadingState text="Loading your events..." />;
 
   if (events.length === 0)
-    return <p className="text-gray-400">No enrolled events yet.</p>;
+    return (
+      <p className="text-center text-[color:var(--secondary)] italic">
+        No enrolled events yet 🚀
+      </p>
+    );
 
   return (
-    <div className="p-6 rounded-3xl bg-[var(--background)] backdrop-blur-2xl border border-[var(--border)] shadow-xl">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-semibold text-[color:var(--foreground)]">Enrolled Events</h2>
-        <span className="px-3 py-1 text-xs font-medium rounded-full bg-[color:var(--background)] text-[color:var(--foreground)] border border-[color:var(--border)]">
-          {events.length}
-        </span>
+    <section className="relative py-12 px-4 sm:px-6 md:px-12">
+      {/* Container */}
+      <div className="max-w-5xl mx-auto relative z-10">
+        {/* Title */}
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-center mb-8 drop-shadow-md">
+          🎟️ Your Enrolled Events
+        </h2>
+
+        {/* Card Container */}
+        <div className="p-6 rounded-3xl bg-white/10 backdrop-blur-2xl border border-[color:var(--border)] shadow-xl">
+          {/* Header Row */}
+          <div className="flex justify-between items-center mb-8">
+            <h3 className="text-lg sm:text-xl font-bold text-[color:var(--foreground)]">
+              Active Enrollments
+            </h3>
+            <span className="px-4 py-1 text-sm font-semibold rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-[color:var(--border)] text-[color:var(--foreground)] shadow-sm">
+              {events.length} Enrolled
+            </span>
+          </div>
+
+          {/* Event List */}
+          <ul className="grid gap-6 sm:grid-cols-2">
+            {events.map((event) => (
+              <li
+                key={event._id}
+                className="group relative p-5 rounded-2xl bg-[color:var(--background)] backdrop-blur-xl border border-[color:var(--border)] shadow-lg hover:scale-[1.03] hover:shadow-[color:var(--accent)]/10 transition-all"
+              >
+                {/* Glow effect */}
+                <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition bg-gradient-to-tr from-purple-500 via-pink-500 to-cyan-500 blur-2xl"></div>
+
+                {/* Top Row */}
+                <div className="relative flex justify-between items-center mb-3">
+                  <h4 className="text-lg font-semibold text-[color:var(--foreground)] group-hover:text-[color:var(--accent)] transition">
+                    {event.title}
+                  </h4>
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/events/${event.slug || ""}`}
+                      className="px-3 py-1 rounded-lg bg-cyan-500/20 text-[color:var(--foreground)] text-xs hover:bg-cyan-500/30 transition"
+                    >
+                      View
+                    </Link>
+                    <button
+                      onClick={() => handleDeEnroll(event._id)}
+                      disabled={event.winners?.length > 0}
+                      className={`px-3 py-1 rounded-lg text-xs transition ${
+                        event.winners?.length > 0
+                          ? "bg-gray-500/20 text-[color:var(--secondary)] cursor-not-allowed"
+                          : "bg-red-500/20 text-[color:var(--foreground)] hover:bg-red-500/30 hover:text-[color:var(--secondary)]"
+                      }`}
+                    >
+                      {event.winners?.length > 0 ? "Event ended 🎉" : "Remove"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Date & Time */}
+                <p className="relative text-sm text-[color:var(--secondary)] mb-3">
+                  📅 {formatDate(event.date)} • ⏰ {formatTime(event.time)}
+                </p>
+
+                {/* Countdown */}
+                <CountdownTimer
+                  date={event.date}
+                  time={event.time}
+                  winnerDeclared={event.winners?.length > 0}
+                  cancelled={event.status === "cancelled"}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-
-      {/* Event List */}
-      <ul className="space-y-4">
-        {events.map((event) => (
-          <li
-            key={event._id}
-            className="p-4 rounded-2xl bg-[color:var(--background)] backdrop-blur-xl border border-[color:var(--border)] hover:border-cyan-300/40 transition-all group"
-          >
-            {/* Top Row */}
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-base font-bold text-[color:var(--foreground)] group-hover:text-[color:var(--accent)] transition">
-                {event.title}
-              </h3>
-              <div className="flex gap-2">
-                <Link
-                  href={`/events/${event.slug || ""}`}
-                  className="px-3 py-1 rounded-lg bg-cyan-500/20 text-[color:var(--foreground)] text-xs hover:bg-cyan-500/30 transition"
-                >
-                  View
-                </Link>
-                <button
-                  onClick={() => handleDeEnroll(event._id)}
-                  disabled={event.winners?.length > 0}
-                  className={`px-3 py-1 rounded-lg text-xs transition ${
-                    event.winners?.length > 0
-                      ? "bg-gray-500/20 text-[color:var(--secondary)] cursor-not-allowed"
-                      : "bg-red-500/20 text-[color:var(--foreground)] hover:bg-red-500/30 hover:text-[color:var(--secondary)]"
-                  }`}
-                >
-                  {event.winners?.length > 0 ? "Locked 🏅" : "Remove"}
-                </button>
-              </div>
-            </div>
-
-            {/* Date / Time */}
-            <p className="text-sm text-[color:var(--secondary)]">
-              📅 {formatDate(event.date)} • ⏰ {formatTime(event.time)}
-            </p>
-
-            {/* Countdown */}
-            <CountdownTimer
-              date={event.date}
-              time={event.time}
-              winnerDeclared={event.winners?.length > 0}
-              cancelled={event.status === "cancelled"}
-            />
-          </li>
-        ))}
-      </ul>
-    </div>
+    </section>
   );
 }
