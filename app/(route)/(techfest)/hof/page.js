@@ -140,22 +140,27 @@ function HallOfFame() {
                   <h2 className="text-lg sm:text-xl font-bold text-[color:var(--foreground)] mb-4">
                     {event.eventName}
                   </h2>
-                  <ul className="space-y-2">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {event.winners.map((w, i) => (
                       <li
                         key={i}
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 border border-white/10"
+                        className="flex flex-col p-4 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 shadow hover:shadow-[color:var(--accent)]/40 transition-all"
                       >
-                        <span className="text-lg sm:text-xl">
-                          {w.rank === 1 ? "🥇" : w.rank === 2 ? "🥈" : "🥉"}
-                        </span>
-                        <span className="text-[color:var(--foreground)] font-medium">
-                          {w.name}
-                        </span>
-                        {w.team && (
-                          <span className="text-xs sm:text-sm text-[color:var(--secondary)] ml-auto">
-                            👥 {w.team}
+                        {/* Medal & Name */}
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-xl">
+                            {w.rank === 1 ? "🥇" : w.rank === 2 ? "🥈" : "🥉"}
                           </span>
+                          <h3 className="text-[color:var(--foreground)] font-semibold">
+                            {w.name}
+                          </h3>
+                        </div>
+
+                        {/* Team (if any) */}
+                        {w.team && (
+                          <p className="text-sm text-[color:var(--secondary)]">
+                            👥 {w.team}
+                          </p>
                         )}
                       </li>
                     ))}

@@ -1,14 +1,12 @@
-// /api/(fest)/certificate/route.js
 import { NextResponse } from "next/server";
 import connectDB from "@/utils/db";
 import Student from "@/models/Student";
 import Enrollment from "@/models/Enrollment";
-import Event from "@/models/Event";
 
 export async function GET(req) {
   try {
-    const { searchParams } = new URL(req.url);
-    const festId = searchParams.get("festId");
+    const url = new URL(req.url, process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000");
+    const festId = url.searchParams.get("festId");
 
     if (!festId) {
       return NextResponse.json({ error: "Missing festId" }, { status: 400 });
@@ -16,41 +14,43 @@ export async function GET(req) {
 
     await connectDB();
 
-    // 1. Find student by festId
-    const student = await Student.findOne({ festId });
+    // 1. Find student
+    const student = await Student.findOne({ festId: festId.toLowerCase() });
     if (!student) {
       return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
 
-    // 2. Get all enrolled events (with event data populated)
+    // 2. Find enrollments + populate
     const enrollments = await Enrollment.find({ studentId: student._id }).populate("eventId");
     if (!enrollments.length) {
       return NextResponse.json({ error: "No enrolled events found" }, { status: 404 });
     }
 
-    // 3. Collect event details
-    const eventTitles = enrollments
-      .map((enroll) => enroll.eventId?.title)
-      .filter(Boolean); // skip if any event is missing
+    // 3. Event titles
+    const eventTitles = enrollments.map(e => e.eventId?.title).filter(Boolean);
+    if (!eventTitles.length) {
+      return NextResponse.json({ error: "No event titles found" }, { status: 404 });
+    }
 
     const festName = enrollments[0].eventId?.festName || "TechFest 2025";
 
-    // 4. Find the range of event dates
+    // 4. Event dates
     const validDates = enrollments
-      .map((e) => new Date(e.eventId?.date))
-      .filter((d) => !isNaN(d));
+      .map(e => new Date(e.eventId?.date))
+      .filter(d => !isNaN(d));
 
-    const minDate = new Date(Math.min(...validDates));
-    const maxDate = new Date(Math.max(...validDates));
+    let dateRange = "Date not available";
+    if (validDates.length > 0) {
+      const minDate = new Date(Math.min(...validDates));
+      const maxDate = new Date(Math.max(...validDates));
+      dateRange = minDate.toDateString() === maxDate.toDateString()
+        ? minDate.toDateString()
+        : `${minDate.toDateString()} - ${maxDate.toDateString()}`;
+    }
 
-    const dateRange = minDate.toDateString() === maxDate.toDateString()
-      ? minDate.toDateString()
-      : `${minDate.toDateString()} - ${maxDate.toDateString()}`;
-
-    // 5. Generate certificate ID
+    // 5. Certificate ID
     const certId = `CF-${festId.toUpperCase()}-${student._id.toString().slice(-5)}`;
 
-    // 6. Return certificate details
     return NextResponse.json({
       name: student.name,
       festName,
@@ -59,6 +59,7 @@ export async function GET(req) {
       certId,
       issuedOn: new Date().toDateString(),
     });
+
   } catch (error) {
     console.error("❌ Certificate Generation Error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

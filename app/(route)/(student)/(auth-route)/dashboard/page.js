@@ -73,55 +73,60 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-8 md:px-12 bg-[var(--background)] text-[var(--foreground)]">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <main className="min-h-screen px-4 py-6 sm:px-6 md:px-12 bg-[var(--background)] text-[var(--foreground)]">
+      <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
+        
         {/* Header */}
-        <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h1 className="text-2xl font-bold text-[color:var(--foreground)]">
+        <div className="p-5 sm:p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-[color:var(--foreground)] break-words">
             Welcome, {student.name || student.email}
           </h1>
-          <div className="flex flex-wrap gap-3 text-sm">
+          <div className="flex flex-wrap w-full md:w-auto gap-2 sm:gap-3 text-sm">
             <button
               onClick={() => router.push("/edit-profile")}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-cyan-500/20 text-[var(--secondary)] hover:bg-cyan-500/30 transition"
+              className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg w-full sm:w-auto bg-cyan-500/20 text-[var(--secondary)] hover:bg-cyan-500/30 transition"
             >
-              <Pencil size={16} /> Edit
+              <Pencil size={16} /> Edit Profile
             </button>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-600 hover:bg-red-500/30 transition"
+              className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg w-full sm:w-auto bg-red-500/20 text-red-600 hover:bg-red-500/30 transition"
             >
               <LogOut size={16} /> Logout
             </button>
             <button
               onClick={handleDeleteAccount}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 transition"
+              className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg w-full sm:w-auto bg-red-600/20 text-red-400 hover:bg-red-600/30 transition"
             >
-              <Trash2 size={16} /> Delete
+              <Trash2 size={16} /> Delete Account Permanently
             </button>
           </div>
         </div>
 
         {/* Student Info */}
-        <section className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg">
+        <section>
           <StudentInfo student={student} />
-        </section>
-
-        {/* Teams */}
-        <section className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">
-          <h2 className="text-lg font-semibold text-[var(--foreground)]">Teams</h2>
-          <MyTeamCard />
-        </section>
-
-        {/* Create Team */}
-        <section className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">
-          <h2 className="text-lg font-semibold text-[var(--foreground)]">Create Team</h2>
-          <CreateTeamForm />
         </section>
 
         {/* Enrolled Events */}
         <section>
           <EnrolledEvents studentId={student._id} />
+        </section>
+
+        {/* Teams */}
+        <section className="p-5 sm:p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">
+          <h2 className="text-base sm:text-lg font-semibold text-[var(--foreground)]">
+            Teams
+          </h2>
+          <MyTeamCard />
+        </section>
+
+        {/* Create Team */}
+        <section className="p-5 sm:p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">
+          <h2 className="text-base sm:text-lg font-semibold text-[var(--foreground)]">
+            Create Team
+          </h2>
+          <CreateTeamForm />
         </section>
       </div>
     </main>

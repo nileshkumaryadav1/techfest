@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import logo from "@/public/logo.png";
-import { FestData } from "@/data/FestData";
+import { CollegeData, FestData } from "@/data/FestData";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -12,8 +12,16 @@ export default function FestIdCardPage() {
   const cardRef = useRef(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem("student");
-    if (stored) setStudent(JSON.parse(stored));
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("student");
+      if (stored) {
+        try {
+          setStudent(JSON.parse(stored));
+        } catch (err) {
+          console.error("Invalid student data in localStorage", err);
+        }
+      }
+    }
   }, []);
 
   // Student Data
@@ -21,99 +29,159 @@ export default function FestIdCardPage() {
   const name = student?.name || "Participant Name";
   const college = student?.college || "Your College";
   const role = student?.role || "Participant";
-  const eventName = student?.event || "Registered Event";
-  const contact = student?.contact || "+91-XXXXXXXXXX";
+  const eventName = student?.event || "N/A";
+  const contact = student?.phone || "+91-XXXXXXXXXX";
+  const photoUrl = student?.photo || null;
 
   // Fest Data
-  const { name: festName, date: festDate, venue: festVenue, tagline: festTagline, sponsors } = FestData;
+  const { name: festName, venue: festVenue, sponsors } = FestData;
+
+  // College Data
+  const { name: collegeName, address: collegeAddress, logo: collegeLogo } =
+    CollegeData;
 
   // Download PDF Handler
   const downloadPDF = async () => {
     if (!cardRef.current) return;
-    const canvas = await html2canvas(cardRef.current, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "pt",
-      format: [canvas.width, canvas.height],
-    });
-    pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
-    pdf.save(`FestID_${festId}.pdf`);
+
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        scale: 4,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        onclone: (doc) => {
+          // Fix oklch() color issues for Next.js Tailwind
+          doc.querySelectorAll("*").forEach((el) => {
+            const style = window.getComputedStyle(el);
+            if (style.backgroundColor.includes("oklch")) {
+              el.style.backgroundColor = "#ffffff";
+            }
+            if (style.color.includes("oklch")) {
+              el.style.color = "#000000";
+            }
+            if (style.borderColor.includes("oklch")) {
+              el.style.borderColor = "#000000";
+            }
+          });
+        },
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: [54, 86], // CR80 ID card size
+      });
+
+      pdf.addImage(imgData, "PNG", 0, 0, 86, 54);
+      pdf.save(`FestID_${festId}.pdf`);
+    } catch (err) {
+      console.error("PDF generation failed", err);
+    }
   };
 
   return (
-    <main className="min-h-screen flex flex-col bg-[#f8f9fa] dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100">
-      
-      {/* Top App Bar */}
-      <header className="bg-[#001F3F] text-white px-4 py-3 flex items-center justify-between shadow-md">
-        <div className="flex items-center gap-2">
-          <Image src={logo} alt="Fest Logo" width={32} height={32} />
-          <span className="font-semibold text-base">{festName}</span>
-        </div>
-        <span className="text-xs opacity-80">{festDate}</span>
-      </header>
-
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-4 py-5">
-        
-        {/* ID Card */}
-        <div className="max-w-sm mx-auto" ref={cardRef}>
-          <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#101010]">
-            
-            {/* Pattern Header */}
-            <div className="relative p-4 bg-[#001F3F] text-white">
-              <div className="absolute inset-0 opacity-[0.07] bg-[radial-gradient(circle,_#00CFFF_1px,_transparent_1px)] [background-size:18px_18px]" />
-              <div className="relative z-10 text-center">
-                <Image src={logo} alt="Fest Logo" width={48} height={48} className="mx-auto mb-1" />
-                <h2 className="text-lg font-bold">{festName}</h2>
-                <p className="text-xs">{festVenue}</p>
-                <p className="text-[10px] italic opacity-80">{festTagline}</p>
-              </div>
+    <main className="min-h-screen flex flex-col items-center justify-center bg-[#f3f4f6] px-4 py-6">
+      {/* ID Card */}
+      <div
+        ref={cardRef}
+        className="w-[340px] h-[215px] bg-white border-2 border-[#374151] rounded-xl shadow-xl overflow-hidden flex flex-col"
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-[#001F3F] to-[#004080] text-white px-3 py-2 flex items-center justify-between">
+          {/* Fest Info */}
+          <div className="flex items-center gap-2">
+            <div>
+              <h2 className="text-sm font-bold uppercase tracking-wide">
+                {festName}
+              </h2>
+              <p className="text-[9px] opacity-80">{festVenue}</p>
             </div>
+            <Image
+              src={logo}
+              alt="Fest Logo"
+              width={28}
+              height={28}
+              className="rounded-full border border-white"
+              priority
+            />
+          </div>
 
-            {/* Details */}
-            <div className="p-5 flex flex-col items-center">
-              <p className="text-[10px] text-gray-500">FEST ID</p>
-              <h1 className="text-2xl font-extrabold text-[#00CFFF]">{festId}</h1>
-
-              <p className="mt-2 text-lg font-semibold">{name}</p>
-              <p className="text-sm text-gray-500 text-center">{college}</p>
-              <p className="text-[12px] font-medium text-[#00CFFF] mt-1 uppercase">{role}</p>
-              <p className="text-[11px] text-gray-500 mt-1 italic">Event: {eventName}</p>
-
-              {/* QR */}
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-2 shadow-inner border border-gray-300 dark:border-gray-700 my-4">
-                <div className="h-24 w-24 bg-gray-300 dark:bg-gray-700 rounded-lg flex items-center justify-center text-[10px] text-gray-600 dark:text-gray-300">
-                  QR / Barcode
-                </div>
-              </div>
-
-              <p className="text-[10px] text-gray-400">Contact: {contact}</p>
-            </div>
-
-            {/* Sponsors */}
-            <div className="bg-gray-50 dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-800 text-center">
-              <p className="text-[10px] text-gray-500 mb-2">Sponsored by</p>
-              <div className="flex flex-wrap justify-center gap-3">{sponsors}</div>
+          {/* College Info */}
+          <div className="flex items-center gap-2">
+            <Image
+              src={collegeLogo}
+              alt="College Logo"
+              width={28}
+              height={28}
+              className="rounded-full border border-white"
+              priority
+            />
+            <div>
+              <h2 className="text-xs font-medium">{collegeName}</h2>
+              <p className="text-[8px] opacity-80">{collegeAddress}</p>
             </div>
           </div>
         </div>
 
-        {/* Download Button */}
-        <div className="mt-5 flex justify-center">
-          <button
-            onClick={downloadPDF}
-            className="bg-[#00CFFF] text-white px-5 py-2 rounded-lg font-semibold shadow-md hover:bg-[#00b3e6] transition"
-          >
-            Download PDF
-          </button>
+        {/* Middle */}
+        <div className="flex-1 flex px-3 py-2 gap-3">
+          {/* Photo */}
+          <div className="w-[75px] h-[95px] border-2 border-[#00CFFF] rounded-md bg-[#f3f4f6] flex items-center justify-center text-[8px] font-medium">
+            {photoUrl ? (
+              <Image
+                src={photoUrl}
+                alt="Student"
+                width={75}
+                height={95}
+                className="object-cover w-full h-full rounded-sm"
+              />
+            ) : (
+              "PHOTO"
+            )}
+          </div>
+
+          {/* Info */}
+          <div className="flex-1 flex flex-col justify-center text-[9px] leading-snug">
+            <p className="text-[8px] text-[#6b7280] font-medium">FEST ID</p>
+            <h1 className="text-lg font-extrabold text-[#00CFFF] tracking-wide">
+              {festId}
+            </h1>
+            <p className="font-semibold text-[12px]">{name}</p>
+            <p className="text-[8.5px] text-[#4b5563]">{college}</p>
+            <p className="text-[9px] text-[#001F3F] font-bold uppercase mt-1">
+              {role}
+            </p>
+            <p className="text-[8px] italic text-[#6b7280]">
+              Event: {eventName}
+            </p>
+            <p className="text-[7px] text-[#9ca3af] mt-1">Contact: {contact}</p>
+          </div>
+
+          {/* QR */}
+          <div className="flex flex-col items-center justify-center">
+            <div className="w-14 h-14 rounded bg-[#e5e7eb] text-[7px] flex items-center justify-center shadow-inner">
+              QR
+            </div>
+          </div>
+        </div>
+
+        {/* Sponsors */}
+        <div className="bg-[#f9fafb] border-t border-[#e5e7eb] px-2 py-1 text-center">
+          <p className="text-[7px] text-[#6b7280] font-medium">Sponsored by</p>
+          <div className="text-[6.5px] flex flex-wrap justify-center gap-1">
+            {sponsors}
+          </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="px-4 py-3 text-center text-[10px] text-gray-500 border-t border-gray-200 dark:border-gray-800">
-        &copy; {new Date().getFullYear()} {festName}
-      </footer>
+      {/* Download Button */}
+      <button
+        onClick={downloadPDF}
+        className="mt-5 bg-[#00CFFF] hover:bg-[#009FCC] transition-colors text-white px-5 py-2 rounded-lg text-xs font-semibold shadow-md"
+      >
+        Download ID Card (PDF)
+      </button>
     </main>
   );
 }

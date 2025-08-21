@@ -23,17 +23,22 @@ export default function ParticipationCertificatePage() {
 
   async function fetchCertificate() {
     try {
-      const res = await fetch(`/api/certificate?festId=${festId.trim()}`);
-      if (!res.ok) throw new Error("Invalid Fest ID");
-
+      const res = await fetch(
+        `/api/certificate?festId=${encodeURIComponent(festId.trim())}`
+      );
       const data = await res.json();
 
-      if (!data?.name || !data?.events || !data?.dateRange) {
+      if (!res.ok) {
+        throw new Error(data.error || "Invalid Fest ID");
+      }
+
+      if (!data?.name || !Array.isArray(data.events) || !data.dateRange) {
         throw new Error("Incomplete certificate data");
       }
 
       setCertificateData(data);
     } catch (err) {
+      console.error("Certificate fetch error:", err.message);
       alert(
         "Certificate not found or incomplete. Please enter a valid Fest ID."
       );
@@ -47,25 +52,45 @@ export default function ParticipationCertificatePage() {
       return;
     }
 
-    const canvas = await html2canvas(certRef.current, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-    });
+    try {
+      const canvas = await html2canvas(certRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        onclone: (doc) => {
+          // Sanitize CSS to remove unsupported oklch() colors
+          doc.querySelectorAll("*").forEach((el) => {
+            const style = window.getComputedStyle(el);
+            if (style.backgroundColor.includes("oklch")) {
+              el.style.backgroundColor = "#ffffff";
+            }
+            if (style.color.includes("oklch")) {
+              el.style.color = "#000000";
+            }
+            if (style.borderColor.includes("oklch")) {
+              el.style.borderColor = "#000000";
+            }
+          });
+        },
+      });
 
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF({
-      orientation: "landscape",
-      unit: "mm",
-      format: "a4",
-    });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
 
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`Certificate_${certificateData?.name || "Participant"}.pdf`);
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Certificate_${certificateData?.name || "Participant"}.pdf`);
+    } catch (err) {
+      console.error("PDF generation failed", err);
+      alert("Failed to generate PDF. Please try again.");
+    }
   }
 
   return (
@@ -85,9 +110,7 @@ export default function ParticipationCertificatePage() {
           marginBottom: "2rem",
         }}
       >
-        🎓
-        Participation
-        Certificate
+        🎓 Participation Certificate
       </h1>
 
       {/* Input Area */}
