@@ -1,17 +1,20 @@
 "use client";
 import { FestData } from "@/data/FestData";
 import React, { useEffect, useState, useMemo } from "react";
+import { Users, MapPin, Calendar, Star } from "lucide-react";
 
 function HallOfFame() {
-  const [winners, setWinners] = useState([]);
+  const [events, setEvents] = useState([]);
   const [years, setYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("name"); // new: sorting
+  const [category, setCategory] = useState("all"); // new: category filter
 
   useEffect(() => {
-    async function fetchWinners() {
+    async function fetchEvents() {
       try {
         setLoading(true);
         setError("");
@@ -24,9 +27,16 @@ function HallOfFame() {
           throw new Error("Invalid data format");
         }
 
+        // Group and enrich
         const grouped = events.map((event) => ({
           eventName: event.title,
-          year: new Date(event.date).getFullYear(),
+          category: event.category || "General",
+          eventId: event.eventId || "TBD",
+          venue: event.venue || "TBD",
+          date: event.date ? new Date(event.date) : null,
+          prizePool: event.prizes || 0,
+          coordinators: event.coordinators || [],
+          year: event.date ? new Date(event.date).getFullYear() : null,
           winners: (event.winners || []).map((w, i) => ({
             name: w.name,
             team: w.team || null,
@@ -34,7 +44,7 @@ function HallOfFame() {
           })),
         }));
 
-        setWinners(grouped);
+        setEvents(grouped);
 
         const uniqueYears = [...new Set(grouped.map((e) => e.year))].sort(
           (a, b) => b - a
@@ -42,54 +52,47 @@ function HallOfFame() {
         setYears(uniqueYears);
         if (uniqueYears.length > 0) setSelectedYear(uniqueYears[0]);
       } catch (err) {
-        console.error("Error fetching winners:", err);
+        console.error("Error fetching events:", err);
         setError("⚠️ Failed to load winners. Please try again later.");
       } finally {
         setLoading(false);
       }
     }
-    fetchWinners();
+    fetchEvents();
   }, []);
 
   const filteredEvents = useMemo(() => {
-    return winners
+    return events
       .filter((e) => e.year === Number(selectedYear))
+      .filter((e) => (category === "all" ? true : e.category === category))
       .filter(
         (e) =>
           e.eventName.toLowerCase().includes(search.toLowerCase()) ||
           e.winners.some((w) =>
             w.name.toLowerCase().includes(search.toLowerCase())
           )
-      );
-  }, [winners, selectedYear, search]);
+      )
+      .sort((a, b) => {
+        if (sortBy === "name") return a.eventName.localeCompare(b.eventName);
+        if (sortBy === "prize") return b.prizePool - a.prizePool;
+        if (sortBy === "date") return b.date - a.date;
+        return 0;
+      });
+  }, [events, selectedYear, search, sortBy, category]);
 
   return (
-    <section className="relative py-16 px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-[color:var(--background)] pointer-events-none"></div>
-
-      <div className="max-w-7xl mx-auto relative z-10 text-center">
-        {/* Title */}
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold mb-3 bg-gradient-to-r from-[color:var(--accent)] via-[color:var(--highlight)] to-[color:var(--accent)] bg-clip-text text-transparent drop-shadow-lg">
+    <section className="relative py-16 px-4 sm:px-8 lg:px-16">
+      <div className="max-w-7xl mx-auto relative z-10">
+        <h1 className="text-4xl font-extrabold mb-6 text-center">
           🏆 Hall Of Fame
         </h1>
-        <p className="text-[color:var(--secondary)] text-base sm:text-lg mb-10 sm:mb-12">
-          Celebrating the champions of {FestData.name}.
-        </p>
-
-        {/* Event Count */}
-        <div className="mb-10">
-          <span className="inline-block px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg text-[color:var(--foreground)] text-sm sm:text-base font-medium tracking-wide">
-            🎉 {filteredEvents.length} Events Recorded in {selectedYear}
-          </span>
-        </div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-12">
+        <div className="flex flex-wrap gap-4 mb-10 justify-center">
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="w-full sm:w-auto px-5 py-3 rounded-xl bg-white/10 backdrop-blur-lg border border-[color:var(--accent)]/30 shadow-md text-[color:var(--foreground)] font-medium focus:outline-none"
+            className="px-4 py-2 rounded-lg bg-white/10"
           >
             {years.map((year) => (
               <option key={year} value={year} className="text-black">
@@ -98,125 +101,86 @@ function HallOfFame() {
             ))}
           </select>
 
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-white/10"
+          >
+            <option value="all">All Categories</option>
+            {[...new Set(events.map((e) => e.category))].map((c) => (
+              <option key={c} value={c} className="text-black">
+                {c}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-white/10"
+          >
+            <option value="name">Sort by Name</option>
+            <option value="prize">Sort by Prize</option>
+            <option value="date">Sort by Date</option>
+          </select>
+
           <input
             type="text"
             placeholder="🔍 Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full sm:w-80 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-lg border border-[color:var(--highlight)]/30 shadow-md text-[color:var(--foreground)] font-medium focus:outline-none"
+            className="px-4 py-2 rounded-lg bg-white/10"
           />
         </div>
 
-        {/* Loading */}
-        {loading && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="h-32 rounded-2xl bg-white/10 backdrop-blur-md animate-pulse"
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <p className="text-red-400 text-lg font-medium mt-6">{error}</p>
-        )}
-
-        {/* Winners Grid */}
-        {!loading && !error && (
-          <div className="grid gap-8 sm:gap-10 sm:grid-cols-2 lg:grid-cols-3 text-left">
-            {filteredEvents.length === 0 ? (
-              <p className="col-span-full text-[color:var(--secondary)] text-lg">
-                No results found for {search} in {selectedYear}.
+        {/* Cards */}
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredEvents.map((event, idx) => (
+            <div
+              key={idx}
+              className="p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg"
+            >
+              <h2 className="text-xl font-bold mb-2">{event.eventName}</h2>
+              <p className="text-sm text-gray-400 mb-1">
+                {event.category} {event.eventId}
               </p>
-            ) : (
-              filteredEvents.map((event, idx) => (
-                <div
-                  key={idx}
-                  className="group relative p-5 sm:p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg hover:shadow-[color:var(--accent)]/40 hover:scale-[1.03] transition-all"
-                >
-                  <h2 className="text-lg sm:text-xl font-bold text-[color:var(--foreground)] mb-4">
-                    {event.eventName}
-                  </h2>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {event.winners.map((w, i) => (
-                      <li
-                        key={i}
-                        className="flex flex-col p-4 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 shadow hover:shadow-[color:var(--accent)]/40 transition-all"
-                      >
-                        {/* Medal & Name */}
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="text-xl">
-                            {w.rank === 1 ? "🥇" : w.rank === 2 ? "🥈" : "🥉"}
-                          </span>
-                          <h3 className="text-[color:var(--foreground)] font-semibold">
-                            {w.name}
-                          </h3>
-                        </div>
+              <p className="text-sm text-gray-400 flex items-center gap-2 mb-1">
+                <Calendar size={14} /> {event.date?.toDateString() || "TBD"}
+              </p>
+              <p className="text-sm text-gray-400 flex items-center gap-2 mb-1">
+                <MapPin size={14} /> {event.venue}
+              </p>
+              <p className="text-sm text-gray-400 flex items-center gap-2 mb-4">
+                <Star size={14} /> Prize Pool: ₹{event.prizePool}
+              </p>
 
-                        {/* Team (if any) */}
-                        {w.team && (
-                          <p className="text-sm text-[color:var(--secondary)]">
-                            👥 {w.team}
-                          </p>
-                        )}
-                      </li>
+              <ul className="space-y-2 mb-4">
+                {event.winners.map((w, i) => (
+                  <li key={i} className="flex items-center gap-2">
+                    <span>
+                      {w.rank === 1 ? "🥇" : w.rank === 2 ? "🥈" : "🥉"}
+                    </span>
+                    <span>{w.name}</span>
+                    {w.team && <span className="text-xs">({w.team})</span>}
+                  </li>
+                ))}
+              </ul>
+
+              {event.coordinators?.length > 0 && (
+                <div className="mt-3">
+                  <p className="font-medium text-sm mb-1 flex items-center gap-2">
+                    <Users size={14} /> Coordinators
+                  </p>
+                  <ul className="text-xs text-gray-300 space-y-1">
+                    {event.coordinators.map((c, i) => (
+                      <li key={i}>{c.name}</li>
                     ))}
                   </ul>
                 </div>
-              ))
-            )}
-          </div>
-        )}
-
-        {/* Prize Highlights */}
-        <div className="mt-20 sm:mt-28">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[color:var(--foreground)] mb-8">
-            🎁 Prize Highlights
-          </h2>
-          <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              "🏆 Exclusive trophies & medals",
-              "💰 Cash prizes & scholarships",
-              "💼 Internship & placement offers",
-              "🎒 Premium swag kits",
-              "🌍 Recognition on our global stage",
-              "🎁 Special sponsor goodies",
-            ].map((prize, i) => (
-              <div
-                key={i}
-                className="p-4 sm:p-5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-[color:var(--foreground)] shadow-md hover:shadow-[color:var(--highlight)]/40 transition"
-              >
-                {prize}
-              </div>
-            ))}
-          </div>
+              )}
+            </div>
+          ))}
         </div>
-
-        {/* Call to Actions */}
-        <div className="mt-16 sm:mt-24 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-          <a
-            href="/register"
-            className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 rounded-xl bg-gradient-to-r from-[color:var(--accent)] to-[color:var(--highlight)] text-white font-bold shadow-lg hover:scale-[1.05] hover:shadow-[color:var(--accent)]/50 transition-all text-center"
-          >
-            🚀 Register Now
-          </a>
-          <a
-            href={`/events`}
-            className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 text-[color:var(--foreground)] font-semibold hover:scale-[1.05] transition-all text-center"
-          >
-            🎯 Explore Events
-          </a>
-        </div>
-
-        {/* Fallback */}
-        {!loading && !error && years.length === 0 && (
-          <p className="text-[color:var(--secondary)] mt-6">
-            No winners data available yet. 🚀
-          </p>
-        )}
       </div>
     </section>
   );

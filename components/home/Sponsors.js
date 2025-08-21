@@ -39,7 +39,7 @@ export default function Sponsors() {
                 <img
                   src={sponsor.image}
                   alt={sponsor.name}
-                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-3 transition-transform group-hover:scale-110"
+                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-3 transition-transform group-hover:scale-110 rounded-full"
                 />
                 <span className="text-sm sm:text-base font-medium text-[color:var(--foreground)]">
                   {sponsor.name}

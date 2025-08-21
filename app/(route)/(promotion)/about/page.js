@@ -13,6 +13,25 @@ export default function AboutPage() {
           About {FestData.name}
         </h1>
 
+        {/* Brochure Section */}
+        <div className="border-t border-white/20 space-y-4">
+          {/* <h2 className="text-2xl sm:text-3xl font-bold text-[color:var(--accent)]">
+            Brochure of {FestData.name}
+          </h2> */}
+          <Link
+            href={FestData.brochure}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-6 py-3 rounded-xl bg-[color:var(--accent)]/20 
+                       text-[color:var(--accent)] font-medium text-sm sm:text-base 
+                       border border-[color:var(--accent)]/40 
+                       hover:bg-[color:var(--accent)] hover:text-white 
+                       shadow-md transition-all duration-300 backdrop-blur-md"
+          >
+            📄 View Brochure (PDF)
+          </Link>
+        </div>
+
         {/* Description */}
         <div className="space-y-5 text-[color:var(--secondary)]">
           <p className="text-base sm:text-lg leading-relaxed">
@@ -28,25 +47,6 @@ export default function AboutPage() {
           <p className="text-sm sm:text-base text-[color:var(--border)] italic">
             Empowering the next generation of tech leaders.
           </p>
-        </div>
-
-        {/* Brochure Section */}
-        <div className="pt-6 border-t border-white/20 space-y-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[color:var(--accent)]">
-            Brochure of {FestData.name}
-          </h2>
-          <Link
-            href={FestData.brochure}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block px-6 py-3 rounded-xl bg-[color:var(--accent)]/20 
-                       text-[color:var(--accent)] font-medium text-sm sm:text-base 
-                       border border-[color:var(--accent)]/40 
-                       hover:bg-[color:var(--accent)] hover:text-white 
-                       shadow-md transition-all duration-300 backdrop-blur-md"
-          >
-            📄 View Brochure (PDF)
-          </Link>
         </div>
       </div>
     </section>

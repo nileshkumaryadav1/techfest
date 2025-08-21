@@ -7,9 +7,7 @@ export default function CampusAmbassadors() {
   const [ambSearch, setAmbSearch] = useState("");
 
   const campusAmbassadors = [
-    { name: "Aarav Sharma", college: "IIT Delhi" },
-    { name: "Priya Patel", college: "NIT Trichy" },
-    { name: "Rahul Verma", college: "VIT Vellore" },
+    { name: "N/A", college: "N/A" },
   ];
 
   const filteredAmbassadors = campusAmbassadors.filter((amb) =>

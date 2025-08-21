@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 
 const afterMovies = [
-  { year: "2025", videoId: "dQw4w9WgXcQ" }, // replace with your fest 2025 video
-  { year: "2024", videoId: "ysz5S6PUM-U" },
-  { year: "2023", videoId: "ScMzIvxBSi4" },
+  { year: "2025", videoId: "BdsJAMHC_z4" },
+  { year: "2024", videoId: "NLh4gUvtdPY" },
+  { year: "2023", videoId: "2F1O3Pyvwdc" },
 ];
 
 function AfterMovie() {

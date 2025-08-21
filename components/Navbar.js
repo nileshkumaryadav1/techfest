@@ -5,36 +5,53 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { FestData } from "@/data/FestData";
-import { FaTrophy, FaCalendarAlt, FaUser, FaHome, FaCertificate } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Nav Data
+// Import Icons
+import {
+  FaTrophy,
+  FaCalendarAlt,
+  FaUser,
+  FaHome,
+  FaCertificate,
+  FaClock,
+  FaHistory,
+  FaListAlt,
+  FaMedal,
+  FaUsers,
+  FaBuilding,
+  FaHandshake,
+  FaInfoCircle,
+  FaCode,
+} from "react-icons/fa";
+
+// Nav Data with individual sub-icons
 const navCategories = [
   { href: "/", label: "Home", icon: <FaHome className="text-[color:var(--accent)]" /> },
   {
     label: "Events",
     icon: <FaCalendarAlt className="text-[color:var(--accent)]" />,
     items: [
-      { href: "/events", label: "All Events" },
-      { href: "/events/upcoming/events", label: "Upcoming Events" },
-      { href: "/events/past/events", label: "Past Events" },
-      { href: "/registered-event", label: "Enrolled Events" },
-      { href: "/schedule", label: "Schedule" },
-      { href: "/hof", label: "Hall of Fame" },
+      { href: "/events", label: "All Events", icon: <FaListAlt className="text-sm" /> },
+      { href: "/events/upcoming/events", label: "Upcoming Events", icon: <FaClock className="text-sm" /> },
+      { href: "/events/past/events", label: "Past Events", icon: <FaHistory className="text-sm" /> },
+      { href: "/registered-event", label: "Enrolled Events", icon: <FaUsers className="text-sm" /> },
+      { href: "/schedule", label: "Schedule", icon: <FaCalendarAlt className="text-sm" /> },
+      { href: "/hof", label: "Hall of Fame", icon: <FaMedal className="text-sm" /> },
     ],
   },
   { href: "/certificate", label: "Certificate", icon: <FaCertificate className="text-[color:var(--accent)]" /> },
   { href: "/dashboard", label: "Profile", icon: <FaUser className="text-[color:var(--accent)]" /> },
   {
     label: "Management",
-    icon: <FaUser className="text-[color:var(--accent)]" />,
+    icon: <FaUsers className="text-[color:var(--accent)]" />,
     items: [
-      { href: "/contact", label: "Organizers" },
-      { href: "/campus-ambassadors", label: "Campus Ambassadors" },
-      { href: "/coordinators", label: "Coordinators" },
-      { href: "/sponsors", label: "Sponsors" },
-      { href: "/about", label: "About Fest" },
-      { href: "/developers", label: "Developers" },
+      { href: "/contact", label: "Organizers", icon: <FaUser className="text-sm" /> },
+      { href: "/campus-ambassadors", label: "Campus Ambassadors", icon: <FaUsers className="text-sm" /> },
+      { href: "/coordinators", label: "Coordinators", icon: <FaUser className="text-sm" /> },
+      { href: "/sponsors", label: "Sponsors", icon: <FaHandshake className="text-sm" /> },
+      { href: "/about", label: "About Fest", icon: <FaInfoCircle className="text-sm" /> },
+      { href: "/developers", label: "Developers", icon: <FaCode className="text-sm" /> },
     ],
   },
 ];
@@ -106,7 +123,7 @@ const Navbar = () => {
                               : "text-[color:var(--secondary)] hover:bg-[color:var(--accent)] hover:text-[color:var(--background)]"
                           }`}
                         >
-                          <FaTrophy className="text-xs" /> {item.label}
+                          {item.icon} {item.label}
                         </Link>
                       ))}
                     </motion.div>
@@ -139,7 +156,7 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Fullscreen Drawer */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -149,7 +166,7 @@ const Navbar = () => {
             transition={{ duration: 0.35 }}
             className="fixed inset-0 z-50 h-screen w-screen bg-[color:var(--background)]/95 backdrop-blur-2xl flex flex-col"
           >
-            {/* Drawer Header */}
+            {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-[color:var(--border)]">
               <span className="text-lg font-bold text-[color:var(--accent)]">
                 {FestData.name}
@@ -207,7 +224,7 @@ const Navbar = () => {
                                   : "text-[color:var(--secondary)] hover:bg-[color:var(--accent)] hover:text-[color:var(--background)]"
                               }`}
                             >
-                              <FaTrophy className="text-sm" /> {item.label}
+                              {item.icon} {item.label}
                             </Link>
                           ))}
                         </motion.div>

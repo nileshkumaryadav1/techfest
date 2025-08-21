@@ -31,13 +31,13 @@ export const FestData = {
 export const sponsorsData = [
   {
     name: "Katihar Engineering College",
-    image: "/college/logo.png",
+    image: "/sponsors/kec-logo.png",
     companyUrl: "http://keck.ac.in/",
     tier: "Platinum",
   },
   {
     name: "Centre Organization",
-    image: "/logo.png",
+    image: "/sponsors/centre-logo.png",
     companyUrl: "https://centreorg.vercel.app/",
     tier: "Gold",
   },
@@ -69,7 +69,7 @@ export const navItems = [
 export const footerNavItems = [
   { href: "/", label: "Home" },
   { href: "/events", label: "Events" },
-  { href: "/registered-event", label: "Enrolled" },
+  // { href: "/registered-event", label: "Enrolled" },
   { href: "/certificate", label: "Certificate" },
   { href: "/developers", label: "Developers" },
   { href: "/about", label: "About" },

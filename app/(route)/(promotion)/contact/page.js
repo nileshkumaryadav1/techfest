@@ -1,30 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FestData } from "@/data/FestData";
 import { Search, Users, HelpCircle } from "lucide-react";
+import CoordinatorCard from "@/components/management/CoordinatorCard";
 
 export default function Contact() {
   const [ambSearch, setAmbSearch] = useState("");
   const [coordSearch, setCoordSearch] = useState("");
   const [openFAQ, setOpenFAQ] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const campusAmbassadors = [
-    { name: "Aarav Sharma", college: "IIT Delhi" },
-    { name: "Priya Patel", college: "NIT Trichy" },
-    { name: "Rahul Verma", college: "VIT Vellore" },
+    { name: "N/A", college: "N/A" },
   ];
 
-  const eventCoordinators = [
-    { name: "Sanya Kapoor", event: "Hackathon" },
-    { name: "Aditya Singh", event: "Robotics Challenge" },
-    { name: "Neha Gupta", event: "Gaming Tournament" },
-  ];
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("/api/homepage");
+        const data = await res.json();
+
+        if (res.ok && data.events) {
+          setEvents(data.events);
+        } else {
+          console.error("Failed to fetch events:", data?.error);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   const faqs = [
     {
       q: "When is the fest happening?",
-      a: "The fest is scheduled from 14th - 16th March 2025 at the main campus.",
+      a: "The fest is scheduled from 10th - 13th January 2025 at the main campus.",
     },
     {
       q: "How can I register for events?",
@@ -44,7 +60,7 @@ export default function Contact() {
     },
     {
       q: "How do I contact support?",
-      a: "You can reach out to fest@collegefinder.site or use the Contact section in the dashboard.",
+      a: "You can reach out to keccentreorg@gmail.com or use the Contact section in the dashboard.",
     },
   ];
 
@@ -63,22 +79,19 @@ export default function Contact() {
         </div>
 
         {/* Fest Management Section */}
-        <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-lg p-6 space-y-6">
-          <h2 className="text-xl font-semibold text-[color:var(--accent)]">
-            Fest Management Team
-          </h2>
+        <CardSection title="Fest Management Team">
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <MemberCard name="Nilesh Kumar" role="Backend Developer" contact="nilesh@centre.com" />
-            <MemberCard name="Ananya Gupta" role="Fest Lead" contact="ananya@centre.com" />
-            <MemberCard name="Rohit Sharma" role="PR Head" contact="rohit@centre.com" />
+            <MemberCard name="Nilesh Kumar" role="Full Stack Developer" contact="nilesh@centre.com" />
+            <MemberCard name="Shubham Sagar" role="PR Head" contact="shubham@centre.com" />
+            <MemberCard name="Shivam Kumar" role="Fest Lead" contact="shivam@centre.com" />
+            <MemberCard name="Nikhil Raj" role="Fest Lead" contact="nikhil@centre.com" />
+            <MemberCard name="Vikash Kumar" role="Campus Ambassador" contact="vikash@centre.com" />
+            <MemberCard name="Rishu Anand" role="Account Lead" contact="rishu@centre.com" />
           </div>
-        </div>
+        </CardSection>
 
         {/* Campus Ambassador Section */}
-        <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-lg p-6 space-y-6">
-          <h2 className="text-xl font-semibold flex items-center gap-2 text-[color:var(--accent)]">
-            <Users className="w-5 h-5" /> Campus Ambassadors
-          </h2>
+        <CardSection title="Campus Ambassadors" icon={<Users className="w-5 h-5" />}>
           <SearchBox value={ambSearch} setValue={setAmbSearch} placeholder="Search Ambassador..." />
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
             {campusAmbassadors
@@ -89,30 +102,32 @@ export default function Contact() {
                 <MemberCard key={i} name={amb.name} role="Campus Ambassador" contact={amb.college} />
               ))}
           </div>
-        </div>
+        </CardSection>
 
         {/* Event Coordinators Section */}
-        <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-lg p-6 space-y-6">
-          <h2 className="text-xl font-semibold flex items-center gap-2 text-[color:var(--accent)]">
-            <Users className="w-5 h-5" /> Event Coordinators
-          </h2>
-          <SearchBox value={coordSearch} setValue={setCoordSearch} placeholder="Search by event..." />
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {eventCoordinators
-              .filter((c) =>
-                c.event.toLowerCase().includes(coordSearch.toLowerCase())
-              )
-              .map((coord, i) => (
-                <MemberCard key={i} name={coord.name} role={coord.event} contact="coordinator@centre.com" />
-              ))}
-          </div>
-        </div>
+        <CardSection title="Event Coordinators" icon={<Users className="w-5 h-5" />}>
+          <SearchBox value={coordSearch} setValue={setCoordSearch} placeholder="Search by event or name..." />
+          {loading ? (
+            <p className="text-sm text-[color:var(--secondary)]">Loading coordinators...</p>
+          ) : (
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {events
+                .filter(
+                  (event) =>
+                    event.title.toLowerCase().includes(coordSearch.toLowerCase()) ||
+                    event.coordinators?.some((c) =>
+                      c.name.toLowerCase().includes(coordSearch.toLowerCase())
+                    )
+                )
+                .map((event) => (
+                  <CoordinatorCard key={event.slug} event={event} />
+                ))}
+            </div>
+          )}
+        </CardSection>
 
         {/* FAQs */}
-        <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-lg p-6 space-y-6">
-          <h2 className="text-xl font-semibold flex items-center gap-2 text-[color:var(--accent)]">
-            <HelpCircle className="w-5 h-5" /> Frequently Asked Questions
-          </h2>
+        <CardSection title="Frequently Asked Questions" icon={<HelpCircle className="w-5 h-5" />}>
           <div className="space-y-4">
             {faqs.map((faq, idx) => (
               <div
@@ -122,25 +137,32 @@ export default function Contact() {
               >
                 <h3 className="font-medium flex justify-between items-center">
                   {faq.q}
-                  <span className="text-[color:var(--accent)]">
-                    {openFAQ === idx ? "−" : "+"}
-                  </span>
+                  <span className="text-[color:var(--accent)]">{openFAQ === idx ? "−" : "+"}</span>
                 </h3>
                 {openFAQ === idx && (
-                  <p className="mt-2 text-sm text-[color:var(--secondary)] leading-relaxed">
-                    {faq.a}
-                  </p>
+                  <p className="mt-2 text-sm text-[color:var(--secondary)] leading-relaxed">{faq.a}</p>
                 )}
               </div>
             ))}
           </div>
-        </div>
+        </CardSection>
       </div>
     </section>
   );
 }
 
 /* 🔹 Reusable Components */
+function CardSection({ title, icon, children }) {
+  return (
+    <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-lg p-6 space-y-6">
+      <h2 className="text-xl font-semibold flex items-center gap-2 text-[color:var(--accent)]">
+        {icon} {title}
+      </h2>
+      {children}
+    </div>
+  );
+}
+
 function MemberCard({ name, role, contact }) {
   return (
     <div className="rounded-xl p-4 bg-white/10 border border-white/20 shadow-md hover:scale-[1.02] transition transform duration-200">

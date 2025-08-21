@@ -1,70 +1,95 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FestData } from "@/data/FestData";
 import { Search, Users } from "lucide-react";
+import CoordinatorCard from "@/components/management/CoordinatorCard";
 
-export default function EventCoordinatorsPage() {
-  const [search, setSearch] = useState("");
+export default function Contact() {
+  const [coordSearch, setCoordSearch] = useState("");
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const eventCoordinators = [
-    { name: "Sanya Kapoor", event: "Hackathon" },
-    { name: "Aditya Singh", event: "Robotics Challenge" },
-    { name: "Neha Gupta", event: "Gaming Tournament" },
-  ];
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("/api/homepage");
+        const data = await res.json();
 
-  const filteredCoordinators = eventCoordinators.filter(
-    (c) =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.event.toLowerCase().includes(search.toLowerCase())
-  );
+        if (res.ok && data.events) {
+          setEvents(data.events);
+        } else {
+          console.error("Failed to fetch events:", data?.error);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
-    <section className="w-full max-w-6xl mx-auto p-4">
-      <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-lg p-6 space-y-6">
+    <section className="py-16 px-6 sm:px-12 lg:px-24 bg-[color:var(--background)] text-[color:var(--foreground)]">
+      <div className="max-w-5xl mx-auto space-y-12">
         {/* Header */}
-        <h2 className="text-xl font-semibold flex items-center gap-2 text-[color:var(--accent)]">
-          <Users className="w-5 h-5" /> Event Coordinators
-        </h2>
+        {/* <div className="text-center space-y-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-[color:var(--accent)] drop-shadow-lg">
+            Contact the {FestData.name} Coordinators
+          </h1>
+        </div> */}
 
-        {/* Search Box */}
-        <SearchBox
-          value={search}
-          setValue={setSearch}
-          placeholder="Search by coordinator or event..."
-        />
-
-        {/* Coordinators Grid */}
-        {filteredCoordinators.length > 0 ? (
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mt-4">
-            {filteredCoordinators.map((coord, idx) => (
-              <MemberCard
-                key={idx}
-                name={coord.name}
-                role={coord.event}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-[color:var(--secondary)] mt-4">
-            No coordinators found.
-          </p>
-        )}
+        {/* Event Coordinators Section */}
+        <CardSection
+          title="Event Coordinators"
+          icon={<Users className="w-5 h-5" />}
+        >
+          <SearchBox
+            value={coordSearch}
+            setValue={setCoordSearch}
+            placeholder="Search by event or name..."
+          />
+          {loading ? (
+            <p className="text-sm text-[color:var(--secondary)]">
+              Loading coordinators...
+            </p>
+          ) : (
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {events
+                .filter(
+                  (event) =>
+                    event.title
+                      .toLowerCase()
+                      .includes(coordSearch.toLowerCase()) ||
+                    event.coordinators?.some((c) =>
+                      c.name.toLowerCase().includes(coordSearch.toLowerCase())
+                    )
+                )
+                .map((event) => (
+                  <CoordinatorCard key={event.slug} event={event} />
+                ))}
+            </div>
+          )}
+        </CardSection>
       </div>
     </section>
   );
 }
 
-/* 🔹 Member Card Component */
-function MemberCard({ name, role }) {
+/* 🔹 Reusable Components */
+function CardSection({ title, icon, children }) {
   return (
-    <div className="rounded-xl p-4 bg-white/10 border border-white/20 shadow-md hover:scale-[1.02] transition transform duration-200">
-      <h3 className="font-semibold text-[color:var(--foreground)]">{name}</h3>
-      <p className="text-sm text-[color:var(--secondary)]">{role}</p>
+    <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-lg p-6 space-y-6">
+      <h2 className="text-xl font-semibold flex items-center gap-2 text-[color:var(--accent)]">
+        {icon} {title}
+      </h2>
+      {children}
     </div>
   );
 }
 
-/* 🔹 Search Box Component */
 function SearchBox({ value, setValue, placeholder }) {
   return (
     <div className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/20 rounded-lg backdrop-blur-md">
