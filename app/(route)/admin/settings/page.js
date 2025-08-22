@@ -206,30 +206,6 @@ export default function AdminSettings() {
         </>
       )}
 
-      {/* Generate Next Year Events */}
-      {admin?.role === "superadmin" && (
-        <button
-          onClick={async () => {
-            const confirm = window.confirm("Generate events for next year?");
-            if (!confirm) return;
-
-            try {
-              const res = await fetch("/api/admin/generate-next-year-events", {
-                method: "POST",
-              });
-              const data = await res.json();
-              if (data.success) alert("Events generated successfully!");
-            } catch (err) {
-              console.error(err);
-              alert("Failed to generate events");
-            }
-          }}
-          className="px-4 py-2 rounded-xl bg-[color:var(--background)] text-[color:var(--foreground)] hover:bg-primary-dark transition border border-[color:var(--border)] cursor-pointer hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
-        >
-          Generate Next Year Events
-        </button>
-      )}
-
       {/* Logout */}
       <div className="pt-4 flex justify-center">
         <button
