@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import { Menu } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
@@ -36,12 +37,17 @@ export default function AdminLayout({ children }) {
 
   const handleLogout = () => {
     try {
+      // Confirm logout
+      if (!confirm("Are you sure you want to logout?")) return;
+
       // Clear stored session/token
       localStorage.removeItem("admin");
 
+      // Clear adminUser state
+      setAdminUser(null);
+
       // Redirect to login with replace to prevent going back
       router.replace("/admin/login");
-
     } catch (error) {
       console.error("Logout failed:", error);
       alert("Logout failed. Please try again.");
@@ -85,12 +91,22 @@ export default function AdminLayout({ children }) {
             <Menu size={24} />
           </button>
           <h1 className="text-lg font-semibold">Admin Dashboard</h1>
-          <button
-            onClick={handleLogout}
-            className="text-red-500 text-sm hover:underline"
-          >
-            Logout
-          </button>
+          {/* Logout button */}
+          {!adminUser ? (
+            <Link
+              href="/admin/login"
+              className="text-sm border border-[var(--border)] rounded px-2 py-1"
+            >
+              Login
+            </Link>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="text-red-500 text-sm border border-[var(--border)] rounded px-2 py-1"
+            >
+              Logout
+            </button>
+          )}
         </header>
 
         {/* Page content */}
@@ -100,7 +116,7 @@ export default function AdminLayout({ children }) {
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden transition-opacity"
+          className="fixed inset-0 bg-[color:var(--background)] backdrop-blur-sm z-30 md:hidden transition-opacity"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />

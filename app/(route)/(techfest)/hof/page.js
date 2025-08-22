@@ -1,5 +1,4 @@
 "use client";
-import { FestData } from "@/data/FestData";
 import React, { useEffect, useState, useMemo } from "react";
 import { Users, MapPin, Calendar, Star } from "lucide-react";
 
@@ -10,8 +9,8 @@ function HallOfFame() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("name"); // new: sorting
-  const [category, setCategory] = useState("all"); // new: category filter
+  const [sortBy, setSortBy] = useState("name");
+  const [category, setCategory] = useState("all");
 
   useEffect(() => {
     async function fetchEvents() {
@@ -27,7 +26,6 @@ function HallOfFame() {
           throw new Error("Invalid data format");
         }
 
-        // Group and enrich
         const grouped = events.map((event) => ({
           eventName: event.title,
           category: event.category || "General",
@@ -81,21 +79,21 @@ function HallOfFame() {
   }, [events, selectedYear, search, sortBy, category]);
 
   return (
-    <section className="relative py-16 px-4 sm:px-8 lg:px-16">
-      <div className="max-w-7xl mx-auto relative z-10">
-        <h1 className="text-4xl font-extrabold mb-6 text-center">
+    <section className="relative py-12 px-4 sm:px-6 lg:px-12">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-8 tracking-tight">
           🏆 Hall Of Fame
         </h1>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-4 mb-10 justify-center">
+        <div className="flex flex-wrap gap-3 mb-6 justify-center">
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-white/10"
+            className="px-3 py-2 rounded-lg bg-white shadow border border-gray-200 text-sm focus:ring-2 focus:ring-[color:var(--highlight)] transition"
           >
             {years.map((year) => (
-              <option key={year} value={year} className="text-black">
+              <option key={year} value={year}>
                 {year}
               </option>
             ))}
@@ -104,11 +102,11 @@ function HallOfFame() {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-white/10"
+            className="px-3 py-2 rounded-lg bg-white shadow border border-gray-200 text-sm focus:ring-2 focus:ring-[color:var(--highlight)] transition"
           >
             <option value="all">All Categories</option>
             {[...new Set(events.map((e) => e.category))].map((c) => (
-              <option key={c} value={c} className="text-black">
+              <option key={c} value={c}>
                 {c}
               </option>
             ))}
@@ -117,7 +115,7 @@ function HallOfFame() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-white/10"
+            className="px-3 py-2 rounded-lg bg-white shadow border border-gray-200 text-sm focus:ring-2 focus:ring-[color:var(--highlight)] transition"
           >
             <option value="name">Sort by Name</option>
             <option value="prize">Sort by Prize</option>
@@ -129,49 +127,64 @@ function HallOfFame() {
             placeholder="🔍 Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-white/10"
+            className="px-3 py-2 rounded-lg bg-white shadow border border-gray-200 text-sm placeholder-gray-400 focus:ring-2 focus:ring-[color:var(--highlight)] transition"
           />
         </div>
 
+        {/* Count */}
+        <p className="text-sm text-center text-gray-600 mb-6">
+          Showing{" "}
+          <span className="font-semibold text-[color:var(--highlight)]">
+            {filteredEvents.length}
+          </span>{" "}
+          Event Winners
+        </p>
+
         {/* Cards */}
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredEvents.map((event, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg"
+              className="p-5 rounded-xl bg-white shadow-md hover:shadow-xl border border-gray-100 transition"
             >
-              <h2 className="text-xl font-bold mb-2">{event.eventName}</h2>
-              <p className="text-sm text-gray-400 mb-1">
-                {event.category} {event.eventId}
+              <h2 className="text-lg font-bold mb-1 text-gray-900">
+                {event.eventName}
+              </h2>
+              <p className="text-xs text-gray-500 mb-2">
+                {event.category} · {event.eventId}
               </p>
-              <p className="text-sm text-gray-400 flex items-center gap-2 mb-1">
-                <Calendar size={14} /> {event.date?.toDateString() || "TBD"}
-              </p>
-              <p className="text-sm text-gray-400 flex items-center gap-2 mb-1">
-                <MapPin size={14} /> {event.venue}
-              </p>
-              <p className="text-sm text-gray-400 flex items-center gap-2 mb-4">
-                <Star size={14} /> Prize Pool: ₹{event.prizePool}
-              </p>
+              <div className="space-y-1 text-sm text-gray-600 mb-3">
+                <p className="flex items-center gap-2">
+                  <Calendar size={14} /> {event.date?.toDateString() || "TBD"}
+                </p>
+                <p className="flex items-center gap-2">
+                  <MapPin size={14} /> {event.venue}
+                </p>
+                <p className="flex items-center gap-2">
+                  <Star size={14} /> Prize Pool: ₹{event.prizePool}
+                </p>
+              </div>
 
-              <ul className="space-y-2 mb-4">
+              <ul className="space-y-1 mb-3 text-sm">
                 {event.winners.map((w, i) => (
                   <li key={i} className="flex items-center gap-2">
                     <span>
                       {w.rank === 1 ? "🥇" : w.rank === 2 ? "🥈" : "🥉"}
                     </span>
-                    <span>{w.name}</span>
-                    {w.team && <span className="text-xs">({w.team})</span>}
+                    <span className="font-medium">{w.name}</span>
+                    {w.team && (
+                      <span className="text-xs text-gray-500">({w.team})</span>
+                    )}
                   </li>
                 ))}
               </ul>
 
               {event.coordinators?.length > 0 && (
-                <div className="mt-3">
-                  <p className="font-medium text-sm mb-1 flex items-center gap-2">
+                <div>
+                  <p className="font-medium text-xs mb-1 flex items-center gap-2 text-gray-700">
                     <Users size={14} /> Coordinators
                   </p>
-                  <ul className="text-xs text-gray-300 space-y-1">
+                  <ul className="text-xs text-gray-500 space-y-1">
                     {event.coordinators.map((c, i) => (
                       <li key={i}>{c.name}</li>
                     ))}

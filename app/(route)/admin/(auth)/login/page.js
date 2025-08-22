@@ -10,6 +10,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   // ✅ Redirect if already logged in
   useEffect(() => {
@@ -20,6 +21,8 @@ export default function AdminLoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
       const res = await fetch("/api/admin/login", {
@@ -32,6 +35,7 @@ export default function AdminLoginPage() {
 
       if (!res.ok) {
         setError(data.error || "Login failed");
+        setLoading(false);
         return;
       }
 
@@ -39,32 +43,31 @@ export default function AdminLoginPage() {
       router.replace("/admin");
     } catch (err) {
       setError("Something went wrong. Please try again.");
+      setLoading(false);
     }
   };
 
   return (
-    <div className="md:min-h-screen p-10 flex-col space-y-4 flex items-center justify-center bg-[var(--background)] px-4">
+    <div className="md:min-h-screen flex flex-col items-center justify-center px-4 py-10 bg-[var(--background)] text-[var(--foreground)]">
+      {/* Back to Home */}
       <Link
-        // onClick={() => router.push("/")}
         href="/"
-        className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-lg border border-white/20 shadow-md transition-all duration-200 active:scale-95 w-full sm:w-auto"
+        className="mb-6 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 text-[var(--foreground)]/80 hover:text-[var(--foreground)] border border-[var(--border)] shadow transition-all active:scale-95"
       >
         <Home className="w-4 h-4" />
-        <span>Go to User Home</span>
+        <span>User Home</span>
       </Link>
 
-      <div className="w-full max-w-md rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl p-8">
+      {/* Card */}
+      <div className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/5 backdrop-blur-xl shadow-xl p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-white drop-shadow-md">
+          <h1 className="text-3xl font-bold text-[var(--foreground)]">
             Admin Login
           </h1>
-          <button
-            // onClick={() => router.push("/")}
-            className="flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-all"
-          >
+          <button className="flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-[var(--accent)]/10 text-[var(--accent)] hover:bg-[var(--accent)]/20 border border-[var(--accent)]/30 transition">
             <ShieldCheck className="w-4 h-4" />
-            Shield
+            Secure
           </button>
         </div>
 
@@ -80,14 +83,14 @@ export default function AdminLoginPage() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium mb-1 text-white/90"
+              className="block text-sm font-medium mb-1 text-[var(--foreground)]/90"
             >
               Email
             </label>
             <input
               id="email"
               type="email"
-              className="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/10 backdrop-blur-md text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)]/40 backdrop-blur-md text-[var(--foreground)] placeholder-[var(--foreground)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -98,14 +101,14 @@ export default function AdminLoginPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium mb-1 text-white/90"
+              className="block text-sm font-medium mb-1 text-[var(--foreground)]/90"
             >
               Password
             </label>
             <input
               id="password"
               type="password"
-              className="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/10 backdrop-blur-md text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)]/40 backdrop-blur-md text-[var(--foreground)] placeholder-[var(--foreground)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -115,9 +118,9 @@ export default function AdminLoginPage() {
 
           <button
             type="submit"
-            className="w-full py-2 rounded-lg bg-[var(--accent)] hover:bg-[var(--highlight)] text-white font-semibold shadow-lg transition-transform transform hover:scale-[1.02] active:scale-95"
+            className="w-full py-2 rounded-lg bg-[var(--accent)] hover:bg-[var(--highlight)] text-white font-semibold shadow-lg transition-transform hover:scale-[1.02] active:scale-95"
           >
-            Log In
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

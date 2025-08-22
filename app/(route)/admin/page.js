@@ -37,7 +37,7 @@ export default function AdminPage() {
         <Link
           // onClick={() => router.push("/")}
           href={"/"}
-          className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-lg border border-white/20 shadow-md transition-all duration-200 active:scale-95 w-full sm:w-auto"
+          className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-[color:var(--foreground)] hover:text-white bg-[color:var(--background)] hover:bg-[var(--accent)] backdrop-blur-lg border border-[color:var(--border)] shadow-md transition-all duration-200 active:scale-95 w-full sm:w-auto"
         >
           <Home className="w-4 h-4" />
           <span>Go to User Home</span>
