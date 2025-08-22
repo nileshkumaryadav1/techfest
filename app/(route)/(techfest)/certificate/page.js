@@ -31,7 +31,7 @@ export default function CertificateTabsPage() {
             className={`w-full sm:w-auto px-4 py-3 rounded-xl text-base sm:text-lg font-semibold border shadow-sm transition-all duration-300 ${
               activeTab === tab.id
                 ? "bg-[color:var(--accent)] text-white border-[color:var(--accent)] shadow-lg"
-                : "bg-[color:var(--surface)] text-[color:var(--foreground)] border-[color:var(--border)] hover:bg-[color:var(--accent-light)] hover:text-white"
+                : "bg-[color:var(--surface)] text-[color:var(--foreground)] border-[color:var(--border)] hover:bg-[color:var(--accent)] hover:text-white cursor-pointer"
             }`}
           >
             {tab.label}

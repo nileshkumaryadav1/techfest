@@ -2,21 +2,30 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FaCalendarAlt, FaSearch, FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaSearch,
+  FaSortAmountDown,
+  FaSortAmountUp,
+} from "react-icons/fa";
 import EventCard from "@/components/fest/EventCard";
+import LoadingState from "@/components/custom/myself/LoadingState";
 
 export default function PastEvents() {
   const [search, setSearch] = useState("");
   const [events, setEvents] = useState([]);
   const [pastEvents, setPastEvents] = useState([]);
   const [sortOrder, setSortOrder] = useState("newest"); // newest | oldest
+  const [loading, setLoading] = useState(true);
 
   // Fetch events
   useEffect(() => {
+    setLoading(true);
     fetch("/api/homepage")
       .then((res) => res.json())
       .then((data) => setEvents(data.events)) // ✅ only events
       .catch((err) => console.error("Error fetching events:", err));
+    setLoading(false);
   }, []);
 
   // Helper: normalize to local "date only"
@@ -49,9 +58,7 @@ export default function PastEvents() {
   // Search + Sort filter
   const filteredEvents = pastEvents
     .filter((ev) =>
-      (ev.name || ev.eventId || "")
-        .toLowerCase()
-        .includes(search.toLowerCase())
+      (ev.name || ev.eventId || "").toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
       const dateA = parseDate(a.date);
@@ -61,11 +68,17 @@ export default function PastEvents() {
       return dateA - dateB;
     });
 
-  console.log("📌 All events:", events);
-  console.log("📌 Past events:", pastEvents);
+  if (loading)
+    return (
+      <div className="p-10">
+        <LoadingState text="Loading upcoming events..." />
+      </div>
+    );
 
   return (
-    <section className="flex flex-col gap-6 items-center w-full py-8">
+    <section className="flex flex-col gap-6 items-center w-full py-8 px-4">
+      {/* Title */}
+      <h1 className="text-3xl font-bold text-primary mb-2">🎉 Past Events</h1>
       {/* Search & Controls */}
       <div className="flex flex-col sm:flex-row items-center justify-between w-full max-w-4xl gap-4">
         {/* Search Box */}
@@ -98,12 +111,8 @@ export default function PastEvents() {
           )}
         </button>
       </div>
-
-      {/* Title + Count */}
+      {/* Count */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-primary mb-2">
-          🎉 Past Events
-        </h1>
         <p className="text-muted-foreground">
           Showing <span className="font-semibold">{filteredEvents.length}</span>{" "}
           events

@@ -6,6 +6,7 @@ import logo from "@/public/logo.png";
 import { CollegeData, FestData } from "@/data/FestData";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function FestIdCardPage() {
   const [student, setStudent] = useState(null);
@@ -31,14 +32,17 @@ export default function FestIdCardPage() {
   const role = student?.role || "Participant";
   const eventName = student?.event || "N/A";
   const contact = student?.phone || "+91-XXXXXXXXXX";
-  const photoUrl = student?.photo || null;
+  const photoUrl = student?.photo || "/icons8-user-100.png";
 
   // Fest Data
   const { name: festName, venue: festVenue, sponsors } = FestData;
 
   // College Data
-  const { name: collegeName, address: collegeAddress, logo: collegeLogo } =
-    CollegeData;
+  const {
+    name: collegeName,
+    address: collegeAddress,
+    logo: collegeLogo,
+  } = CollegeData;
 
   // Download PDF Handler
   const downloadPDF = async () => {
@@ -79,6 +83,8 @@ export default function FestIdCardPage() {
       console.error("PDF generation failed", err);
     }
   };
+
+  const qrData = JSON.stringify({ festId, name, college, event: eventName });
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-[#f3f4f6] px-4 py-6">
@@ -161,7 +167,7 @@ export default function FestIdCardPage() {
           {/* QR */}
           <div className="flex flex-col items-center justify-center">
             <div className="w-14 h-14 rounded bg-[#e5e7eb] text-[7px] flex items-center justify-center shadow-inner">
-              QR
+              <QRCodeSVG value={qrData} size={54} />
             </div>
           </div>
         </div>

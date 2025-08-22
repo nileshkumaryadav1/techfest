@@ -76,7 +76,7 @@ export default function EnrolledEvents({ studentId }) {
 
   // Loading state
   if (!studentId) return null;
-  if (loading) return <LoadingState text="Loading your events..." />;
+  if (loading) return <LoadingState text="Fetching enrolled events..." />;
 
   if (events.length === 0)
     return (

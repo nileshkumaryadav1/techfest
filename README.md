@@ -1,48 +1,48 @@
-# 🎉 TechFest System - College Annual Technical Fest Platform
+# 🎉 CentreFest - Centre Org. Technical + Cultural Fest Platform
 
-A powerful and modern web application built using **Next.js 15 App Router** to manage the end-to-end activities of your **college’s annual tech fest** and **technical workshops**.
+A modern and **fully-featured web application** built with **Next.js 15 App Router**, designed to manage **all activities of your college’s annual technical fest and workshops**.  
 
-> 🔧 Designed for organizing events, handling registrations, managing speakers and workshops, and showcasing fest updates — all in one place!
+> 🔧 Organize events, handle registrations, manage speakers, post announcements, and showcase your fest — all from a single platform!
 
 ---
 
 ## 🚀 Features
 
-* 🎪 **Event Management:** Add, edit, and view technical fest events with detailed pages.
-* 📝 **Workshop Registrations:** Seamless registration and confirmation system for tech workshops.
-* 🎤 **Speaker/Guest Section:** Highlight keynote speakers and invited guests.
-* 🗕️ **Dynamic Schedule:** Real-time event and workshop schedule.
-* 🧽 **Certificate Generator (Optional):** Auto-generate certificates post-event.
-* 📢 **Announcements Section:** Post live updates, notices, and promotions.
-* 📸 **Gallery:** Upload photos from previous fests.
-* 👩‍💻 **Admin Panel:** Secure, role-based panel for organizing committee to manage content.
-* 🌙 **Dark Mode:** Fully responsive with light/dark theme toggle.
+* 🎪 **Event Management:** Add, edit, and display all technical fest events with detailed pages.
+* 📝 **Workshop Registrations:** Smooth registration flow for workshops with confirmation emails.
+* 🎤 **Speakers & Guests:** Showcase keynote speakers and special guests.
+* 🗕️ **Dynamic Schedule:** Real-time event and workshop schedule view.
+* 🧽 **Certificate Generator (Optional):** Auto-generate certificates for participants and winners.
+* 📢 **Announcements:** Post live updates, notices, and promotions.
+* 📸 **Gallery:** Upload and showcase photos from past fests.
+* 👩‍💻 **Admin Panel:** Role-based secure panel for organizers to manage content.
+* 🌙 **Dark Mode:** Fully responsive UI with light/dark theme toggle.
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Framework:** [Next.js 15](https://nextjs.org/) with App Router
-* **Styling:** Tailwind CSS, Framer Motion for animations
-* **Database:** MongoDB (via Mongoose or Prisma)
-* **Authentication:** NextAuth.js or custom JWT-based
-* **Media:** Cloudinary/ImageKit for images
-* **Email:** Nodemailer for event/workshop confirmations
-* **Deployment:** Vercel / Render / Railway
+* **Framework:** [Next.js 15](https://nextjs.org/) (App Router)  
+* **Styling & Animations:** Tailwind CSS, Framer Motion  
+* **Database:** MongoDB (via Mongoose or Prisma)  
+* **Authentication:** NextAuth.js or custom JWT system  
+* **Media:** Cloudinary / ImageKit  
+* **Email Notifications:** Nodemailer (for registrations and announcements)  
+* **Deployment:** Vercel / Railway / Render  
 
 ---
 
-## 📁 Project Structure (App Router)
+## 📁 Project Structure
 
 ```
 /app
-  /events          - All tech fest events
-  /workshops       - Tech workshops with registration
-  /admin           - Admin panel (protected route)
-  /api             - API routes for backend logic
-  /gallery         - Fest images
-  /about           - About the fest, team, and vision
-  /contact         - Contact form and map
+  /events          - All CentreFest events
+  /workshops       - Workshops with registration flow
+  /admin           - Admin dashboard (protected)
+  /api             - Backend API routes
+  /gallery         - Fest images and media
+  /about           - About the fest, team, vision
+  /contact         - Contact form and location map
 ```
 
 ---
@@ -59,7 +59,7 @@ A powerful and modern web application built using **Next.js 15 App Router** to m
 
 ## 🔒 Admin Credentials
 
-You can manually create admin accounts via database or registration logic with a role field.
+Admins can be added manually via database or during registration with a `role` field:
 
 ```js
 role: "admin"
@@ -76,31 +76,31 @@ npm install
 npm run dev
 ```
 
-Make sure to add your `.env.local` with the following variables:
+Add your `.env.local`:
 
 ```env
 MONGODB_URI=your_mongodb_url
 CLOUDINARY_API_KEY=your_cloudinary_key
 CLOUDINARY_SECRET=your_cloudinary_secret
 JWT_SECRET=your_jwt_secret
-EMAIL_SERVER=...
-NEXTAUTH_SECRET=...
+EMAIL_SERVER=your_email_server_config
+NEXTAUTH_SECRET=your_nextauth_secret
 ```
 
 ---
 
 ## 🥉 Possible Extensions
 
-* Payment integration (for paid workshops)
-* Live chat or help desk support
-* Fest leaderboard system
-* QR code check-in for events
+* Payment gateway for paid workshops  
+* Live chat / helpdesk support  
+* Leaderboards for competitions  
+* QR code check-in system  
 
 ---
 
 ## 🙌 Contributing
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome! For major changes, open an issue first to discuss your ideas.
 
 ---
 
@@ -112,7 +112,7 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 ## 💡 Built For
 
-> This platform was built to streamline the management of our **College Annual Technical Fest** and **Tech Workshops**, aiming to provide an engaging and organized digital experience to students, organizers, and guests.
+> This platform was created to streamline **CentreFest**, the **annual technical + cultural fest**, offering a seamless digital experience for students, organizers, and guests.
 
 ---
 
@@ -120,4 +120,3 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 Developed by [Nilesh Kumar](https://github.com/nileshkumaryadav1)
 
----

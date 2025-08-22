@@ -1,169 +1,205 @@
 "use client";
 
-import { useState, useRef } from "react";
-import axios from "axios";
-import { Loader2, Search, Download } from "lucide-react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { QRCodeSVG } from "qrcode.react";
+import Image from "next/image";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-export default function WinnerCertComponent() {
-  const [festId, setFestId] = useState("");
-  const [certData, setCertData] = useState(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const certRef = useRef(null);
+import { FestData, CollegeData } from "@/data/FestData";
 
-  const fetchCertificate = async () => {
-    if (!festId.trim()) {
-      setError("Please enter a valid Fest ID");
+export default function WinnerCertificate() {
+  const [student, setStudent] = useState(null);
+  const [certificateData, setCertificateData] = useState(null);
+  const router = useRouter();
+  const cardRef = useRef(null);
+
+  // ✅ Load student from localStorage and fetch certificate
+  useEffect(() => {
+    const stored = localStorage.getItem("student");
+    if (!stored) {
+      router.push("/login");
       return;
     }
 
     try {
-      setLoading(true);
-      setError("");
-      setCertData(null);
+      const parsed = JSON.parse(stored);
+      setStudent(parsed);
 
-      const res = await axios.get(`/api/certificate/winner?festId=${festId.trim()}`);
-      setCertData(res.data);
+      fetch(`/api/certificate/winner?festId=${parsed.festId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) {
+            alert("⚠️ " + data.error);
+            setCertificateData(null);
+            return;
+          }
+          setCertificateData(data);
+        })
+        .catch((err) => {
+          console.error("Error fetching certificate:", err);
+          alert("⚠️ Unable to fetch certificate. Try again later.");
+        });
     } catch (err) {
-      setCertData(null);
-      setError(err.response?.data?.error || "Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+      console.error("Invalid student data:", err);
+      localStorage.removeItem("student");
+      router.push("/login");
+    }
+  }, [router]);
+
+  // ✅ Download PDF
+  const downloadPDF = async () => {
+    if (!cardRef.current) return;
+
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        onclone: (doc) => {
+          doc.querySelectorAll("*").forEach((el) => {
+            const style = window.getComputedStyle(el);
+            if (style.backgroundColor.includes("oklch"))
+              el.style.backgroundColor = "#ffffff";
+            if (style.color.includes("oklch")) el.style.color = "#000000";
+            if (style.borderColor.includes("oklch"))
+              el.style.borderColor = "#000000";
+          });
+        },
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4", // A4 for certificates
+      });
+
+      pdf.addImage(imgData, "PNG", 0, 0, 297, 210);
+      pdf.save(`WinnerCertificate_${certificateData?.certId || "fest"}.pdf`);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      alert("⚠️ PDF generation failed. Try again.");
     }
   };
 
-  const downloadPDF = async () => {
-    if (!certRef.current) return;
-    const canvas = await html2canvas(certRef.current, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF("landscape", "pt", "a4");
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`Winner_Certificate_${festId}.pdf`);
-  };
+  // ✅ Loading state
+  if (!student) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-[var(--background)] text-[var(--foreground)]">
+        <p className="text-sm">Loading your dashboard...</p>
+      </main>
+    );
+  }
 
   return (
-    <div className="p-4 sm:p-8 max-w-4xl mx-auto">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center"
-      >
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-accent mb-2">
-          🏆 Winner Certificate
-        </h2>
-        <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm sm:text-base">
-          Enter your Fest ID to view and download your award
-        </p>
-      </motion.div>
-
-      {/* Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-        <input
-          type="text"
-          placeholder="Enter your Fest ID"
-          value={festId}
-          onChange={(e) => setFestId(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg 
-                     focus:outline-none focus:ring-2 focus:ring-accent 
-                     bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100"
-        />
-        <button
-          onClick={fetchCertificate}
-          disabled={loading}
-          className="bg-accent hover:opacity-90 text-white px-4 py-2 rounded-lg 
-                     flex items-center justify-center gap-1 font-semibold transition"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="animate-spin h-5 w-5" /> Loading...
-            </>
-          ) : (
-            <>
-              <Search className="h-5 w-5" /> Fetch
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* Error Message */}
-      {error && (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-red-600 mt-4 text-center font-medium"
-        >
-          {error}
-        </motion.p>
-      )}
-
-      {/* Certificate View */}
-      {certData && (
-        <motion.div
-          ref={certRef}
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="mt-10 border-4 border-yellow-500 bg-gradient-to-br from-white to-yellow-50 
-                     dark:from-gray-900 dark:to-yellow-900 rounded-2xl shadow-2xl p-6 sm:p-10 relative"
-        >
-          {/* Decorative corners */}
-          <div className="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-yellow-500"></div>
-          <div className="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-yellow-500"></div>
-          <div className="absolute bottom-4 left-4 w-8 h-8 border-b-4 border-l-4 border-yellow-500"></div>
-          <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-yellow-500"></div>
-
-          <h3 className="text-2xl sm:text-3xl font-bold text-center text-yellow-700 mb-3">
-            Certificate of Achievement
-          </h3>
-          <p className="text-center text-gray-700 dark:text-gray-300 italic mb-5 text-sm sm:text-base">
-            This is to certify that
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-center text-accent mb-3">
-            {certData.name}
+    <main className="min-h-screen px-4 py-6 sm:px-6 md:px-12 bg-[var(--background)] text-[var(--foreground)]">
+      <div className="max-w-5xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <h1 className="text-2xl font-bold">
+            🏆 Congratulations, {student.name || student.email}!
           </h1>
-          <p className="text-center text-gray-700 dark:text-gray-300 mb-5 text-sm sm:text-base">
-            has secured a winning position in{" "}
-            <strong>{Array.isArray(certData.events) ? certData.events.join(", ") : certData.events}</strong>{" "}
-            at <strong>{certData.festName}</strong>
-          </p>
-          <p className="text-center text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
-            Date: {certData.dateRange} &nbsp;|&nbsp; Certificate ID: {certData.certId}
-          </p>
-          <p className="text-center text-gray-600 dark:text-gray-400 mb-8 text-xs sm:text-sm">
-            Issued On: {certData.issuedOn}
-          </p>
+          <p className="text-sm text-gray-300">Your winner certificate is ready</p>
+        </div>
 
-          {/* Signature section */}
-          <div className="flex justify-between mt-8 px-4 sm:px-8">
-            <div className="text-center">
-              <div className="w-24 sm:w-32 border-b border-gray-600 mx-auto"></div>
-              <p className="mt-2 text-xs sm:text-sm">Organizer</p>
+        {/* Certificate */}
+        {certificateData ? (
+          <div
+            ref={cardRef}
+            className="w-[740px] h-[520px] bg-white border-2 border-gray-700 rounded-xl shadow-2xl overflow-hidden flex flex-col mx-auto"
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#001F3F] to-[#004080] text-white px-4 py-3 flex items-center justify-between">
+              {/* Fest Info */}
+              <div className="flex items-center gap-2">
+                <div>
+                  <h2 className="text-lg font-bold uppercase">
+                    {certificateData.festName || FestData.name}
+                  </h2>
+                  <p className="text-xs opacity-80">{FestData.venue}</p>
+                </div>
+                <Image
+                  src="/logo.png"
+                  alt="Fest Logo"
+                  width={32}
+                  height={32}
+                  className="rounded-full border border-white"
+                  priority
+                />
+              </div>
+
+              {/* College Info */}
+              <div className="flex items-center gap-2">
+                <Image
+                  src={CollegeData.logo}
+                  alt="College Logo"
+                  width={32}
+                  height={32}
+                  className="rounded-full border border-white"
+                  priority
+                />
+                <div>
+                  <h2 className="text-sm font-medium">{CollegeData.name}</h2>
+                  <p className="text-[10px] opacity-80">{CollegeData.address}</p>
+                </div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="w-24 sm:w-32 border-b border-gray-600 mx-auto"></div>
-              <p className="mt-2 text-xs sm:text-sm">Head of Fest</p>
+
+            {/* Certificate Body */}
+            <div className="flex flex-col items-center text-center flex-1 px-6 py-6">
+              <p className="text-xl font-semibold text-gray-700">
+                Certificate of Achievement
+              </p>
+              <p className="text-sm text-gray-500">This is to certify that</p>
+              <h1 className="text-3xl font-bold text-[#004080] mt-2">
+                {certificateData.name}
+              </h1>
+              <p className="text-sm text-gray-600 mt-2">{student.college}</p>
+
+              <div className="mt-4">
+                <p className="text-lg">has secured a winning position in</p>
+                <ul className="mt-2 text-base font-medium text-gray-700">
+                  {certificateData.events.map((event, idx) => (
+                    <li key={idx}>🏅 {event}</li>
+                  ))}
+                </ul>
+                <p className="text-sm text-gray-500 mt-4">
+                  Held on {certificateData.dateRange} at {FestData.venue}
+                </p>
+              </div>
+            </div>
+
+            {/* Footer with QR + Sponsors */}
+            <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
+              <div className="flex flex-col items-center">
+                <QRCodeSVG value={JSON.stringify(certificateData)} size={64} />
+                <p className="text-[10px] text-gray-500 mt-1">Verify</p>
+              </div>
+              <div className="text-[10px] text-gray-500 text-center">
+                Sponsored by <br /> {FestData.sponsors}
+              </div>
             </div>
           </div>
-        </motion.div>
-      )}
+        ) : (
+          <p className="text-center text-gray-400">
+            ⚠️ No certificate data found
+          </p>
+        )}
 
-      {/* Download Button */}
-      {certData && (
-        <div className="text-center mt-6">
-          <button
-            onClick={downloadPDF}
-            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg flex items-center gap-2 mx-auto font-semibold transition"
-          >
-            <Download className="h-5 w-5" /> Download PDF
-          </button>
-        </div>
-      )}
-    </div>
+        {/* Download PDF */}
+        {certificateData && (
+          <div className="flex justify-center">
+            <button
+              onClick={downloadPDF}
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#001F3F] to-[#004080] text-white text-sm font-semibold shadow-md hover:scale-105 transition"
+            >
+              📥 Download Certificate (PDF)
+            </button>
+          </div>
+        )}
+      </div>
+    </main>
   );
 }

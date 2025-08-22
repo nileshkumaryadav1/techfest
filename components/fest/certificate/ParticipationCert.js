@@ -1,75 +1,70 @@
-// app/(route)/(techfest)/certificate/page.js
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { QRCodeSVG } from "qrcode.react";
+import Image from "next/image";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { CollegeData, FestData } from "@/data/FestData";
-// import WinnerCertificatePage from "@/components/fest/WinnerCertificatePage";
-// import FestIdCard from "@/components/fest/FestIdCard";
 
-export default function ParticipationCertificatePage() {
-  const [festId, setFestId] = useState("");
+import { FestData, CollegeData } from "@/data/FestData";
+
+export default function ParticipationCertificate() {
+  const [student, setStudent] = useState(null);
   const [certificateData, setCertificateData] = useState(null);
-  const certRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const router = useRouter();
+  const cardRef = useRef(null);
 
+  // ✅ Load student from localStorage and fetch certificate
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  async function fetchCertificate() {
-    try {
-      const res = await fetch(
-        `/api/certificate?festId=${encodeURIComponent(festId.trim())}`
-      );
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Invalid Fest ID");
-      }
-
-      if (!data?.name || !Array.isArray(data.events) || !data.dateRange) {
-        throw new Error("Incomplete certificate data");
-      }
-
-      setCertificateData(data);
-    } catch (err) {
-      console.error("Certificate fetch error:", err.message);
-      alert(
-        "Certificate not found or incomplete. Please enter a valid Fest ID."
-      );
-      setCertificateData(null);
-    }
-  }
-
-  async function downloadPDF() {
-    if (!certRef.current) {
-      alert("Certificate not loaded.");
+    const stored = localStorage.getItem("student");
+    if (!stored) {
+      router.push("/login");
       return;
     }
 
     try {
-      const canvas = await html2canvas(certRef.current, {
-        scale: 2,
+      const parsed = JSON.parse(stored);
+      setStudent(parsed);
+
+      fetch(`/api/certificate?festId=${parsed.festId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) {
+            alert("⚠️ " + data.error);
+            setCertificateData(null);
+            return;
+          }
+          setCertificateData(data);
+        })
+        .catch((err) => {
+          console.error("Error fetching certificate:", err);
+          alert("⚠️ Unable to fetch certificate. Try again later.");
+        });
+    } catch (err) {
+      console.error("Invalid student data:", err);
+      localStorage.removeItem("student");
+      router.push("/login");
+    }
+  }, [router]);
+
+  // ✅ Download PDF
+  const downloadPDF = async () => {
+    if (!cardRef.current) return;
+
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        scale: 3,
         useCORS: true,
         backgroundColor: "#ffffff",
         onclone: (doc) => {
-          // Sanitize CSS to remove unsupported oklch() colors
           doc.querySelectorAll("*").forEach((el) => {
             const style = window.getComputedStyle(el);
-            if (style.backgroundColor.includes("oklch")) {
+            if (style.backgroundColor.includes("oklch"))
               el.style.backgroundColor = "#ffffff";
-            }
-            if (style.color.includes("oklch")) {
-              el.style.color = "#000000";
-            }
-            if (style.borderColor.includes("oklch")) {
+            if (style.color.includes("oklch")) el.style.color = "#000000";
+            if (style.borderColor.includes("oklch"))
               el.style.borderColor = "#000000";
-            }
           });
         },
       });
@@ -81,299 +76,130 @@ export default function ParticipationCertificatePage() {
         format: "a4",
       });
 
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`Certificate_${certificateData?.name || "Participant"}.pdf`);
+      pdf.addImage(imgData, "PNG", 0, 0, 297, 210);
+      pdf.save(`ParticipationCertificate_${certificateData?.certId || "fest"}.pdf`);
     } catch (err) {
-      console.error("PDF generation failed", err);
-      alert("Failed to generate PDF. Please try again.");
+      console.error("PDF generation failed:", err);
+      alert("⚠️ PDF generation failed. Try again.");
     }
+  };
+
+  // ✅ Loading state
+  if (!student) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-[var(--background)] text-[var(--foreground)]">
+        <p className="text-sm">Loading your dashboard...</p>
+      </main>
+    );
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        padding: "2rem",
-        backgroundColor: "var(--background)",
-        color: "var(--foreground)",
-      }}
-    >
-      <h1
-        style={{
-          textAlign: "center",
-          fontSize: "2rem",
-          fontWeight: "bold",
-          marginBottom: "2rem",
-        }}
-      >
-        🎓 Participation Certificate
-      </h1>
+    <main className="min-h-screen px-4 py-6 sm:px-6 md:px-12 bg-[var(--background)] text-[var(--foreground)]">
+      <div className="max-w-5xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <h1 className="text-2xl font-bold">
+            🎉 Congratulations, {student.name || student.email}!
+          </h1>
+          <p className="text-sm text-gray-300">Your participation certificate is ready</p>
+        </div>
 
-      {/* Input Area */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "1rem",
-          marginBottom: "2rem",
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Enter Fest ID"
-          value={festId}
-          onChange={(e) => setFestId(e.target.value.toLowerCase())}
-          style={{
-            padding: "0.5rem 1rem",
-            width: "300px",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-          }}
-        />
-        <button
-          onClick={fetchCertificate}
-          style={{
-            backgroundColor: "var(--accent)",
-            color: "white",
-            padding: "0.5rem 1.2rem",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Get Certificate
-        </button>
-      </div>
-
-      {/* Certificate Preview (Desktop Only) */}
-      {certificateData && (
-        <>
-          {!isMobile && (
-            <div
-              ref={certRef}
-              style={{
-                backgroundColor: "#fffdf7",
-                color: "#1a1a1a",
-                fontFamily: "'Times New Roman', serif",
-                padding: "3rem",
-                maxWidth: "850px",
-                margin: "2rem auto",
-                border: "8px solid #0f172a",
-                borderRadius: "12px",
-                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
-                boxSizing: "border-box",
-              }}
-            >
-              {/* Header */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                <img
-                  src="/college/logo.png"
-                  alt="College Logo"
-                  style={{
-                    width: "70px",
-                    height: "70px",
-                    objectFit: "contain",
-                  }}
-                />
-                <div style={{ textAlign: "center", flex: 1 }}>
-                  <h2
-                    style={{ margin: 0, fontSize: "1.5rem", fontWeight: "700" }}
-                  >
-                    {CollegeData.name}
+        {/* Certificate */}
+        {certificateData ? (
+          <div
+            ref={cardRef}
+            className="w-[740px] h-[520px] bg-white border-2 border-gray-700 rounded-xl shadow-2xl overflow-hidden flex flex-col mx-auto"
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#004d00] to-[#008000] text-white px-4 py-3 flex items-center justify-between">
+              {/* Fest Info */}
+              <div className="flex items-center gap-2">
+                <div>
+                  <h2 className="text-lg font-bold uppercase">
+                    {certificateData.festName || FestData.name}
                   </h2>
-                  <h3
-                    style={{
-                      margin: "0.3rem 0",
-                      fontSize: "1.1rem",
-                      color: "#64748b",
-                    }}
-                  >
-                    Presents
-                  </h3>
-                  <h1
-                    style={{
-                      margin: 0,
-                      fontSize: "1.8rem",
-                      color: "var(--accent)",
-                      fontWeight: "800",
-                      letterSpacing: "1px",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {FestData.name}
-                  </h1>
+                  <p className="text-xs opacity-80">{FestData.venue}</p>
                 </div>
-                <img
+                <Image
                   src="/logo.png"
                   alt="Fest Logo"
-                  style={{
-                    width: "70px",
-                    height: "70px",
-                    objectFit: "contain",
-                  }}
+                  width={32}
+                  height={32}
+                  className="rounded-full border border-white"
+                  priority
                 />
               </div>
 
-              <hr
-                style={{ margin: "1.8rem 0", borderTop: "2px dashed #ccc" }}
-              />
-
-              <h2
-                style={{
-                  textAlign: "center",
-                  fontSize: "1.7rem",
-                  fontWeight: "700",
-                  textTransform: "uppercase",
-                  letterSpacing: "1.5px",
-                  color: "#0f172a",
-                  marginBottom: "1rem",
-                  textDecoration: "underline",
-                  textDecorationColor: "#4ade80",
-                }}
-              >
-                Certificate of Participation
-              </h2>
-
-              <h3
-                style={{
-                  textAlign: "center",
-                  fontSize: "1.3rem",
-                  fontWeight: "700",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                {certificateData.name}
-              </h3>
-              <p
-                style={{
-                  textAlign: "center",
-                  fontSize: "0.9rem",
-                  color: "#555",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                Fest ID: <strong>{festId}</strong>
-              </p>
-
-              <p
-                style={{
-                  fontSize: "1.05rem",
-                  textAlign: "center",
-                  lineHeight: "1.75",
-                  marginBottom: "2rem",
-                  color: "#1e293b",
-                }}
-              >
-                This is to certify that <strong>{certificateData.name}</strong>{" "}
-                has actively participated in the event(s):{" "}
-                <strong>{certificateData.events}</strong> conducted during{" "}
-                <strong>{FestData.name}</strong> held on{" "}
-                <strong>{certificateData.dateRange}</strong>, organized by{" "}
-                <strong>{CollegeData.name}</strong>.
-              </p>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "2.5rem",
-                  alignItems: "flex-end",
-                }}
-              >
+              {/* College Info */}
+              <div className="flex items-center gap-2">
+                <Image
+                  src={CollegeData.logo}
+                  alt="College Logo"
+                  width={32}
+                  height={32}
+                  className="rounded-full border border-white"
+                  priority
+                />
                 <div>
-                  <p style={{ fontSize: "0.75rem", color: "#6b7280" }}>
-                    Certificate ID:
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "0.95rem",
-                      fontWeight: "600",
-                      color: "var(--accent)",
-                    }}
-                  >
-                    {certificateData.certId}
-                  </p>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <p
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: "700",
-                      color: "#0f172a",
-                    }}
-                  >
-                    Centre Fest Committee
-                  </p>
-                  <p style={{ fontSize: "0.8rem", color: "#4ade80" }}>
-                    Authorized Signatory
-                  </p>
+                  <h2 className="text-sm font-medium">{CollegeData.name}</h2>
+                  <p className="text-[10px] opacity-80">{CollegeData.address}</p>
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Download Button (Mobile & Desktop) */}
-          <div style={{ textAlign: "center", marginTop: "1rem" }}>
+            {/* Certificate Body */}
+            <div className="flex flex-col items-center text-center flex-1 px-6 py-6">
+              <p className="text-xl font-semibold text-gray-700">
+                Certificate of Participation
+              </p>
+              <p className="text-sm text-gray-500">This is to certify that</p>
+              <h1 className="text-3xl font-bold text-green-700 mt-2">
+                {certificateData.name}
+              </h1>
+              <p className="text-sm text-gray-600 mt-2">{student.college}</p>
+
+              <div className="mt-4">
+                <p className="text-lg">has participated in</p>
+                <ul className="mt-2 text-base font-medium text-gray-700">
+                  {certificateData.events.map((event, idx) => (
+                    <li key={idx}>🎯 {event}</li>
+                  ))}
+                </ul>
+                <p className="text-sm text-gray-500 mt-4">
+                  Held on {certificateData.dateRange} at {FestData.venue}
+                </p>
+              </div>
+            </div>
+
+            {/* Footer with QR + Sponsors */}
+            <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
+              <div className="flex flex-col items-center">
+                <QRCodeSVG value={JSON.stringify(certificateData)} size={64} />
+                <p className="text-[10px] text-gray-500 mt-1">Verify</p>
+              </div>
+              <div className="text-[10px] text-gray-500 text-center">
+                Sponsored by <br /> {FestData.sponsors}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p className="text-center text-gray-400">
+            ⚠️ No certificate data found
+          </p>
+        )}
+
+        {/* Download PDF */}
+        {certificateData && (
+          <div className="flex justify-center">
             <button
               onClick={downloadPDF}
-              disabled={!certificateData || isMobile}
-              style={{
-                backgroundColor: "var(--accent)",
-                color: "white",
-                padding: "0.6rem 1.25rem",
-                border: "none",
-                borderRadius: "4px",
-                fontSize: "0.9rem",
-                cursor:
-                  !certificateData || isMobile ? "not-allowed" : "pointer",
-                opacity: !certificateData || isMobile ? 0 : 1,
-                transition: "opacity 0.3s ease",
-              }}
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#004d00] to-[#008000] text-white text-sm font-semibold shadow-md hover:scale-105 transition"
             >
-              Download PDF
+              📥 Download Participation Certificate (PDF)
             </button>
-            <p className="mobile-only">
-              Use Desktop Mode or Desktop to download your Participation &
-              Winner Certificate
-            </p>
-
-            <style jsx>{`
-              .mobile-only {
-                display: none;
-              }
-
-              @media (max-width: 768px) {
-                .mobile-only {
-                  display: block;
-                  font-size: 0.9rem;
-                  color: #e63946;
-                  text-align: center;
-                  margin-top: 1rem;
-                }
-              }
-            `}</style>
           </div>
-        </>
-      )}
-
-      {/* Winner certificate download */}
-      {/* <WinnerCertificatePage /> */}
-
-      {/* Student Fest Id Card */}
-      {/* <FestIdCard /> */}
-    </div>
+        )}
+      </div>
+    </main>
   );
 }

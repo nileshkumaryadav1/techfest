@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
 import { Users, MapPin, Calendar, Star } from "lucide-react";
+import LoadingState from "@/components/custom/myself/LoadingState";
 
 function HallOfFame() {
   const [events, setEvents] = useState([]);
@@ -77,6 +78,14 @@ function HallOfFame() {
         return 0;
       });
   }, [events, selectedYear, search, sortBy, category]);
+
+  if (loading)
+    return (
+      <div className="p-10">
+        <LoadingState text="Loading Winners..." />
+      </div>
+    );
+  if (error) return <div>{error}</div>;
 
   return (
     <section className="relative py-12 px-4 sm:px-6 lg:px-12">

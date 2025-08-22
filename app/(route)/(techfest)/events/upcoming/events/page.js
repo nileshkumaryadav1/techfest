@@ -4,19 +4,23 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FaSearch, FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
 import EventCard from "@/components/fest/EventCard";
+import LoadingState from "@/components/custom/myself/LoadingState";
 
 export default function UpcomingEvents() {
   const [search, setSearch] = useState("");
   const [events, setEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [sortOrder, setSortOrder] = useState("oldest"); // default: soonest first
+  const [loading, setLoading] = useState(true);
 
   // Fetch events
   useEffect(() => {
+    setLoading(true);
     fetch("/api/homepage")
       .then((res) => res.json())
       .then((data) => setEvents(data.events)) // ✅ only events
       .catch((err) => console.error("Error fetching events:", err));
+    setLoading(false);
   }, []);
 
   // Helper: normalize to local "date only"
@@ -49,9 +53,7 @@ export default function UpcomingEvents() {
   // Search + Sort filter
   const filteredEvents = upcomingEvents
     .filter((ev) =>
-      (ev.name || ev.eventId || "")
-        .toLowerCase()
-        .includes(search.toLowerCase())
+      (ev.name || ev.eventId || "").toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
       const dateA = parseDate(a.date);
@@ -61,8 +63,19 @@ export default function UpcomingEvents() {
       return dateA - dateB;
     });
 
+  if (loading)
+    return (
+      <div className="p-10">
+        <LoadingState text="Loading upcoming events..." />
+      </div>
+    );
+
   return (
-    <section className="flex flex-col gap-6 items-center w-full py-8">
+    <section className="flex flex-col gap-6 items-center w-full py-8 px-4">
+      {/* Title */}
+      <h1 className="text-3xl font-bold text-primary mb-2">
+        🚀 Upcoming Events
+      </h1>
       {/* Search & Controls */}
       <div className="flex flex-col sm:flex-row items-center justify-between w-full max-w-4xl gap-4">
         {/* Search Box */}
@@ -96,11 +109,8 @@ export default function UpcomingEvents() {
         </button>
       </div>
 
-      {/* Title + Count */}
+      {/* Count */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-primary mb-2">
-          🚀 Upcoming Events
-        </h1>
         <p className="text-muted-foreground">
           Showing <span className="font-semibold">{filteredEvents.length}</span>{" "}
           events
