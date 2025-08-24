@@ -13,8 +13,8 @@ const ArchiveSchema = new mongoose.Schema(
     endDate: { type: Date, required: true },
     brochureUrl: { type: String },
     venue: { type: String, required: true },
-    organizers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Organizer" }],
-    supporters: [{ type: mongoose.Schema.Types.ObjectId, ref: "Supporter" }],
+    organizers: { type: String },
+    supporters: { type: String },
     events: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
     registeredStudents: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
@@ -26,7 +26,7 @@ const ArchiveSchema = new mongoose.Schema(
     teams: [{ type: mongoose.Schema.Types.ObjectId, ref: "Team" }],
     workshops: [{ type: mongoose.Schema.Types.ObjectId, ref: "Workshop" }],
     speakers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Speaker" }],
-    sponsors: [{ type: mongoose.Schema.Types.ObjectId, ref: "Sponsor" }],
+    sponsors: {type: String},
   },
   { timestamps: true }
 );

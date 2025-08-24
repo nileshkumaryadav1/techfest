@@ -5,7 +5,7 @@ import { Clock4, MapPin, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import FadeInSection from "../custom/FadeInSection";
 import BlurText from "../custom/ui/BlurText";
-import ElectricBorder from "../custom/ui/ElectricBorder";
+// import ElectricBorder from "../custom/ui/ElectricBorder";
 
 export default function HeroSection() {
   return (
@@ -17,12 +17,12 @@ export default function HeroSection() {
           color: "var(--foreground)",
         }}
       >
-        <ElectricBorder
+        {/* <ElectricBorder
           color="var(--accent)"
           thickness={0}
           speed={1}
           chaos={0.1}
-        >
+        > */}
           <div className="max-w-6xl w-full z-10 md:space-y-8">
             {/* Fest Name */}
             <h1 className="text-[clamp(3rem,10vw,6rem)] font-extrabold leading-tight tracking-tight drop-shadow-md">
@@ -71,7 +71,7 @@ export default function HeroSection() {
               </div>
             </div>
           </div>
-        </ElectricBorder>
+        {/* </ElectricBorder> */}
       </section>
     </FadeInSection>
   );

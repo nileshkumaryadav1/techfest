@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Home,
+  ArchiveRestore,
 } from "lucide-react";
 import { useEffect } from "react";
 // import { useRouter } from "next/router";
@@ -25,6 +26,7 @@ const adminLinks = [
   { name: "Registered Students", href: "/admin/users", icon: Users },
   { name: "Winners List", href: "/admin/winners", icon: Trophy },
   { name: "Settings", href: "/admin/settings", icon: Settings },
+  { name: "Archive" , href: "/admin/archive", icon: ArchiveRestore },
 ];
 
 export default function AdminSidebar({

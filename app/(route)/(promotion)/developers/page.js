@@ -1,4 +1,4 @@
-import ElectricBorder from "@/components/custom/ui/ElectricBorder";
+// import ElectricBorder from "@/components/custom/ui/ElectricBorder";
 import { developersData } from "@/data/FestData";
 import { Github, Globe, Linkedin } from "lucide-react";
 
@@ -30,13 +30,13 @@ function DeveloperCard({
   portfolio,
 }) {
   return (
-    <ElectricBorder
-      color="var(--accent)"
-      speed={1}
-      chaos={0.5}
-      thickness={2}
-      style={{ borderRadius: 16 }}
-    >
+    // <ElectricBorder
+    //   color="var(--accent)"
+    //   speed={1}
+    //   chaos={0.5}
+    //   thickness={2}
+    //   style={{ borderRadius: 16 }}
+    // >
       <div className="p-6 rounded-2xl bg-[color:var(--background)] shadow-lg hover:shadow-xl transition-shadow duration-300">
         <img
           src={image}
@@ -75,6 +75,6 @@ function DeveloperCard({
           </a>
         </div>
       </div>
-    </ElectricBorder>
+    // </ElectricBorder>
   );
 }

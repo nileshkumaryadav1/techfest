@@ -1,5 +1,6 @@
 export const FestData = {
   name: "CentreFest'25",
+  month: "08",
   year: "2025",
   theme: "TechYug",
   tagline: "The Era of HUM∆N and M∆CHINE",
@@ -8,8 +9,11 @@ export const FestData = {
   description:
     "Welcome to TechYug — where tradition meets transformation, and imagination merges with innovation. In this new era, the synergy between human intelligence and artificial intelligence is redefining the boundaries of possibility.",
   date: "31st July - 3rd August, 2025",
+  startDate: "2025-07-31",
+  endDate: "2025-08-03",
   venue: "H1 & H2, KEC Katihar, Bihar",
-  brochure: "https://www.google.com/",
+  brochure: "https://centreorg.vercel.app/",
+  brochureUrl: "https://centreorg.vercel.app/",
   organizers: "Centre Organization, KEC Katihar",
   organizersLink: "https://centreorg.vercel.app/",
   sponsors: "KEC Katihar, Centre Organization",

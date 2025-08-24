@@ -1,41 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { FestData } from "@/data/FestData";
+import { useEffect, useState, useMemo } from "react";
 
 const monthNames = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
 export default function AdminArchivePage() {
   const [archives, setArchives] = useState([]);
-  const [form, setForm] = useState({
-    _id: null,
-    name: "",
-    month: "",
-    year: "",
-    theme: "",
-    tagline: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-    brochureUrl: "",
-    venue: "",
-  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch archives
+  /** 🔹 Fetch archived data from DB */
   const fetchArchives = async () => {
     try {
       const res = await fetch("/api/admin/fest-archive");
@@ -51,55 +29,25 @@ export default function AdminArchivePage() {
     fetchArchives();
   }, []);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
-  // Create or update archive
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  /** 🔹 Archive a fest */
+  const handleArchive = async (fest) => {
     setLoading(true);
     setError("");
 
     try {
-      const payload = {
-        ...form,
-        month: Number(form.month),
-        year: Number(form.year),
-      };
-      const method = form._id ? "PUT" : "POST";
-
       const res = await fetch("/api/admin/fest-archive", {
-        method,
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(fest),
       });
 
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || "Failed to save archive");
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to archive fest");
       }
 
-      const data = await res.json();
-
-      if (form._id) {
-        setArchives((prev) => prev.map((a) => (a._id === data._id ? data : a)));
-      } else {
-        setArchives((prev) => [...prev, data]);
-      }
-
-      setForm({
-        _id: null,
-        name: "",
-        month: "",
-        year: "",
-        theme: "",
-        tagline: "",
-        description: "",
-        startDate: "",
-        endDate: "",
-        brochureUrl: "",
-        venue: "",
-      });
+      const saved = await res.json();
+      setArchives((prev) => [...prev, saved]); // sync state
     } catch (err) {
       setError(err.message);
     } finally {
@@ -107,17 +55,15 @@ export default function AdminArchivePage() {
     }
   };
 
-  // Delete archive using same route
+  /** 🔹 Delete an archived fest */
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this archive?")) return;
-
     try {
       const res = await fetch("/api/admin/fest-archive", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ _id: id }),
       });
-
       if (!res.ok) throw new Error("Failed to delete archive");
       setArchives((prev) => prev.filter((a) => a._id !== id));
     } catch (err) {
@@ -125,21 +71,12 @@ export default function AdminArchivePage() {
     }
   };
 
-  const handleEdit = (archive) => {
-    setForm({
-      _id: archive._id,
-      name: archive.name || "",
-      month: archive.month || "",
-      year: archive.year || "",
-      theme: archive.theme || "",
-      tagline: archive.tagline || "",
-      description: archive.description || "",
-      startDate: archive.startDate || "",
-      endDate: archive.endDate || "",
-      brochureUrl: archive.brochureUrl || "",
-      venue: archive.venue || "",
-    });
-  };
+  /** 🔹 Convert FestData (object) → array, then check archives */
+  const availableFests = useMemo(() => {
+    const archivedNames = new Set(archives.map((a) => a.name));
+    const festArray = [FestData]; // 👈 wrap single object into array
+    return festArray.filter((fest) => !archivedNames.has(fest.name));
+  }, [archives]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -147,125 +84,79 @@ export default function AdminArchivePage() {
         Admin Archive Page
       </h1>
 
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10"
-      >
-        {Object.keys(form)
-          .filter((k) => k !== "_id")
-          .map((key) => {
-            const type = key.includes("Date")
-              ? "date"
-              : key === "month" || key === "year"
-              ? "number"
-              : "text";
-            const min = key === "month" ? 1 : key === "year" ? 2000 : undefined;
-            const max =
-              key === "month" ? 12 : key === "year" ? 2099 : undefined;
-            return (
-              <input
-                key={key}
-                type={type}
-                name={key}
-                placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-                value={form[key]}
-                onChange={handleChange}
-                required
-                min={min}
-                max={max}
-                className="p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400"
-              />
-            );
-          })}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="col-span-full py-3 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition"
-        >
-          {loading
-            ? "Saving..."
-            : form._id
-            ? "Update Archive"
-            : "Create Archive"}
-        </button>
-      </form>
-
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-      <h2 className="text-2xl font-semibold text-center mb-6">
-        Archives ({archives.length})
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {archives.map((archive) => (
-          <div
-            key={archive._id}
-            className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition transform hover:scale-105"
-          >
-            <h3 className="text-xl font-semibold text-blue-600 mb-2">
-              {archive.name}
-            </h3>
-            <p className="mb-1">
-              <strong>Month:</strong> {monthNames[archive.month - 1]} &nbsp;{" "}
-              <strong>Year:</strong> {archive.year}
-            </p>
-            {archive.theme && (
-              <p className="mb-1">
-                <strong>Theme:</strong> {archive.theme}
+      {/* 🔹 FestData List (ready to archive) */}
+      <h2 className="text-2xl font-semibold mb-6">Available Fests</h2>
+      {availableFests.length === 0 ? (
+        <p className="text-gray-500 mb-10">✅ All fests are archived.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          {availableFests.map((fest, i) => (
+            <div
+              key={i}
+              className="bg-gray-100 p-6 rounded-xl shadow hover:shadow-md transition"
+            >
+              <h3 className="text-xl font-semibold text-blue-600 mb-2">
+                {fest.name}
+              </h3>
+              <p>
+                {fest.date} – {fest.theme}
               </p>
-            )}
-            {archive.tagline && (
-              <p className="mb-1">
-                <strong>Tagline:</strong> {archive.tagline}
-              </p>
-            )}
-            {archive.description && (
-              <p className="mb-1">{archive.description}</p>
-            )}
-            {archive.startDate && archive.endDate && (
-              <p className="mb-1">
-                <strong>Dates:</strong> {archive.startDate} – {archive.endDate}
-              </p>
-            )}
-            {archive.venue && (
-              <p className="mb-1">
-                <strong>Venue:</strong> {archive.venue}
-              </p>
-            )}
-            {archive.brochureUrl && (
-              <p className="mb-2">
-                <a
-                  href={archive.brochureUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  View Brochure
-                </a>
-              </p>
-            )}
-            <p className="mb-2">
-              <strong>Events:</strong> {archive.events?.length || 0}
-            </p>
-
-            <div className="flex gap-2 mt-3">
+              <p className="text-sm text-gray-600">{fest.tagline}</p>
               <button
-                onClick={() => handleEdit(archive)}
-                className="flex-1 py-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded-lg font-semibold transition"
+                onClick={() => handleArchive(fest)}
+                disabled={loading}
+                className="mt-3 w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
               >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(archive._id)}
-                className="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition"
-              >
-                Delete
+                {loading ? "Archiving..." : "Archive This Fest"}
               </button>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+
+      {/* 🔹 Archived Fests */}
+      <h2 className="text-2xl font-semibold mb-6">
+        Archived Fests ({archives.length})
+      </h2>
+      {archives.length === 0 ? (
+        <p className="text-gray-500">📦 No archives yet.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {archives.map((archive) => (
+            <div
+              key={archive._id}
+              className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
+            >
+              <h3 className="text-xl font-semibold text-blue-600 mb-2">
+                {archive.name}
+              </h3>
+              <p>
+                <strong>Year:</strong> {archive.year}
+              </p>
+              {archive.theme && (
+                <p>
+                  <strong>Theme:</strong> {archive.theme}
+                </p>
+              )}
+              {archive.tagline && (
+                <p>
+                  <strong>Tagline:</strong> {archive.tagline}
+                </p>
+              )}
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => handleDelete(archive._id)}
+                  className="flex-1 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
