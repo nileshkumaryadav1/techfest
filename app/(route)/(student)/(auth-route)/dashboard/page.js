@@ -98,7 +98,7 @@ export default function DashboardPage() {
               onClick={handleDeleteAccount}
               className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg w-full sm:w-auto bg-red-600/20 text-red-400 hover:bg-red-600/30 transition"
             >
-              <Trash2 size={16} /> Delete Account Permanently
+              <Trash2 size={16} /> Delete Account
             </button>
           </div>
         </div>

@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, Trophy, User } from "lucide-react"; // or use any 4 icons you like
+import { Home, Calendar, Trophy, User, Pen, CalendarFold } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
   { href: "/events", label: "Events", icon: Calendar },
-  { href: "/registered-event", label: "Enrolled", icon: Calendar },
+  { href: "/registered-event", label: "Enrolled", icon: CalendarFold },
   { href: "/certificate", label: "Certificate", icon: Trophy },
   { href: "/dashboard", label: "Profile", icon: User },
 ];
