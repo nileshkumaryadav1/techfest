@@ -4,7 +4,11 @@ import connectDB from "@/utils/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  await connectDB();
-  const archives = await Archive.find();
-  return NextResponse.json(archives);
+  try {
+    await connectDB();
+    const archives = await Archive.find();
+    return NextResponse.json(archives, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
 }

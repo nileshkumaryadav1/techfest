@@ -1,211 +1,290 @@
 "use client";
-import React, { useEffect, useState, useMemo } from "react";
-import { Users, MapPin, Calendar, Star } from "lucide-react";
-import LoadingState from "@/components/custom/myself/LoadingState";
 
-function HallOfFame() {
-  const [events, setEvents] = useState([]);
-  const [years, setYears] = useState([]);
-  const [selectedYear, setSelectedYear] = useState("");
-  const [loading, setLoading] = useState(true);
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Search } from "lucide-react";
+
+const monthNames = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December",
+];
+
+export default function HallOfFamePage() {
+  const [archives, setArchives] = useState([]);
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [years, setYears] = useState([]);
+  const [months, setMonths] = useState([]);
+  const [selectedArchive, setSelectedArchive] = useState(null);
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("name");
-  const [category, setCategory] = useState("all");
+  const [sortBy, setSortBy] = useState("default");
 
+  // Fetch all archives
   useEffect(() => {
-    async function fetchEvents() {
+    const fetchArchives = async () => {
       try {
         setLoading(true);
-        setError("");
+        const res = await fetch("/api/admin/fest-archive");
+        if (!res.ok) throw new Error("Failed to fetch archives");
+        const data = await res.json();
+        setArchives(data || []);
 
-        const res = await fetch("/api/admin/winners");
-        if (!res.ok) throw new Error(`API error: ${res.status}`);
-
-        const { success, events } = await res.json();
-        if (!success || !Array.isArray(events)) {
-          throw new Error("Invalid data format");
-        }
-
-        const grouped = events.map((event) => ({
-          eventName: event.title,
-          category: event.category || "General",
-          eventId: event.eventId || "TBD",
-          venue: event.venue || "TBD",
-          date: event.date ? new Date(event.date) : null,
-          prizePool: event.prizes || 0,
-          coordinators: event.coordinators || [],
-          year: event.date ? new Date(event.date).getFullYear() : null,
-          winners: (event.winners || []).map((w, i) => ({
-            name: w.name,
-            team: w.team || null,
-            rank: i + 1,
-          })),
-        }));
-
-        setEvents(grouped);
-
-        const uniqueYears = [...new Set(grouped.map((e) => e.year))].sort(
+        const uniqueYears = Array.from(new Set(data.map((a) => a.year))).sort(
           (a, b) => b - a
         );
         setYears(uniqueYears);
-        if (uniqueYears.length > 0) setSelectedYear(uniqueYears[0]);
+
+        if (uniqueYears.length > 0) {
+          const lastYear = uniqueYears[0];
+          setSelectedYear(lastYear);
+
+          const monthsOfYear = data
+            .filter((a) => a.year === lastYear)
+            .map((a) => a.month)
+            .sort((a, b) => a - b);
+          setMonths(monthsOfYear);
+
+          if (monthsOfYear.length > 0) {
+            const lastMonth = monthsOfYear[monthsOfYear.length - 1];
+            setSelectedMonth(lastMonth);
+
+            const defaultArchive = data.find(
+              (a) => a.year === lastYear && a.month === lastMonth
+            );
+            setSelectedArchive(defaultArchive || null);
+          }
+        }
       } catch (err) {
-        console.error("Error fetching events:", err);
-        setError("⚠️ Failed to load winners. Please try again later.");
+        setError(err.message);
       } finally {
         setLoading(false);
       }
-    }
-    fetchEvents();
+    };
+    fetchArchives();
   }, []);
 
-  const filteredEvents = useMemo(() => {
-    return events
-      .filter((e) => e.year === Number(selectedYear))
-      .filter((e) => (category === "all" ? true : e.category === category))
-      .filter(
-        (e) =>
-          e.eventName.toLowerCase().includes(search.toLowerCase()) ||
-          e.winners.some((w) =>
-            w.name.toLowerCase().includes(search.toLowerCase())
-          )
-      )
-      .sort((a, b) => {
-        if (sortBy === "name") return a.eventName.localeCompare(b.eventName);
-        if (sortBy === "prize") return b.prizePool - a.prizePool;
-        if (sortBy === "date") return b.date - a.date;
-        return 0;
-      });
-  }, [events, selectedYear, search, sortBy, category]);
+  const handleYearChange = (e) => {
+    const year = Number(e.target.value);
+    setSelectedYear(year);
 
-  if (loading)
-    return (
-      <div className="p-10">
-        <LoadingState text="Loading Winners..." />
-      </div>
+    const monthsOfYear = archives
+      .filter((a) => a.year === year)
+      .map((a) => a.month)
+      .sort((a, b) => a - b);
+    setMonths(monthsOfYear);
+
+    if (monthsOfYear.length > 0) {
+      const lastMonth = monthsOfYear[monthsOfYear.length - 1];
+      setSelectedMonth(lastMonth);
+
+      const archive = archives.find(
+        (a) => a.year === year && a.month === lastMonth
+      );
+      setSelectedArchive(archive || null);
+    }
+  };
+
+  const handleMonthClick = (month) => {
+    setSelectedMonth(month);
+    const archive = archives.find(
+      (a) => a.year === selectedYear && a.month === month
     );
-  if (error) return <div>{error}</div>;
+    setSelectedArchive(archive || null);
+  };
+
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
+  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+  if (!selectedArchive) return <div className="text-center mt-10">No data available</div>;
+
+  const {
+    name,
+    month,
+    year,
+    theme,
+    tagline,
+    description,
+    startDate,
+    endDate,
+    venue,
+    brochureUrl,
+    events = [],
+    registeredStudents = [],
+    enrolledStudents = [],
+  } = selectedArchive;
+
+  let filteredEvents = events.filter(
+    (e) =>
+      e.title?.toLowerCase().includes(search.toLowerCase()) ||
+      e.winners?.some((w) => w.name?.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  if (sortBy === "name") {
+    filteredEvents.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+  } else if (sortBy === "winners") {
+    filteredEvents.sort((a, b) => (b.winners?.length || 0) - (a.winners?.length || 0));
+  }
 
   return (
-    <section className="relative py-12 px-4 sm:px-6 lg:px-12">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-8 tracking-tight">
-          🏆 Hall Of Fame
-        </h1>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      {/* Page Title */}
+      <motion.h1
+        className="text-center text-3xl sm:text-5xl font-extrabold mb-10 sm:mb-14 bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        🎖 Hall of Fame
+      </motion.h1>
 
-        {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-6 justify-center">
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            className="px-3 py-2 rounded-lg bg-white shadow border border-gray-200 text-sm focus:ring-2 focus:ring-[color:var(--highlight)] transition"
-          >
-            {years.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
+      {/* Year & Month controls */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
+        <select
+          value={selectedYear || ""}
+          onChange={handleYearChange}
+          className="px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 w-full sm:w-auto"
+        >
+          {years.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
 
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="px-3 py-2 rounded-lg bg-white shadow border border-gray-200 text-sm focus:ring-2 focus:ring-[color:var(--highlight)] transition"
-          >
-            <option value="all">All Categories</option>
-            {[...new Set(events.map((e) => e.category))].map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="px-3 py-2 rounded-lg bg-white shadow border border-gray-200 text-sm focus:ring-2 focus:ring-[color:var(--highlight)] transition"
-          >
-            <option value="name">Sort by Name</option>
-            <option value="prize">Sort by Prize</option>
-            <option value="date">Sort by Date</option>
-          </select>
-
-          <input
-            type="text"
-            placeholder="🔍 Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="px-3 py-2 rounded-lg bg-white shadow border border-gray-200 text-sm placeholder-gray-400 focus:ring-2 focus:ring-[color:var(--highlight)] transition"
-          />
-        </div>
-
-        {/* Count */}
-        <p className="text-sm text-center text-gray-600 mb-6">
-          Showing{" "}
-          <span className="font-semibold text-[color:var(--highlight)]">
-            {filteredEvents.length}
-          </span>{" "}
-          Event Winners
-        </p>
-
-        {/* Cards */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredEvents.map((event, idx) => (
-            <div
-              key={idx}
-              className="p-5 rounded-xl bg-white shadow-md hover:shadow-xl border border-gray-100 transition"
+        <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+          {months.map((m) => (
+            <button
+              key={m}
+              onClick={() => handleMonthClick(m)}
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium shadow-sm transition-all text-sm sm:text-base ${
+                selectedMonth === m
+                  ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
             >
-              <h2 className="text-lg font-bold mb-1 text-gray-900">
-                {event.eventName}
-              </h2>
-              <p className="text-xs text-gray-500 mb-2">
-                {event.category} · {event.eventId}
-              </p>
-              <div className="space-y-1 text-sm text-gray-600 mb-3">
-                <p className="flex items-center gap-2">
-                  <Calendar size={14} /> {event.date?.toDateString() || "TBD"}
-                </p>
-                <p className="flex items-center gap-2">
-                  <MapPin size={14} /> {event.venue}
-                </p>
-                <p className="flex items-center gap-2">
-                  <Star size={14} /> Prize Pool: ₹{event.prizePool}
-                </p>
-              </div>
-
-              <ul className="space-y-1 mb-3 text-sm">
-                {event.winners.map((w, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <span>
-                      {w.rank === 1 ? "🥇" : w.rank === 2 ? "🥈" : "🥉"}
-                    </span>
-                    <span className="font-medium">{w.name}</span>
-                    {w.team && (
-                      <span className="text-xs text-gray-500">({w.team})</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-
-              {event.coordinators?.length > 0 && (
-                <div>
-                  <p className="font-medium text-xs mb-1 flex items-center gap-2 text-gray-700">
-                    <Users size={14} /> Coordinators
-                  </p>
-                  <ul className="text-xs text-gray-500 space-y-1">
-                    {event.coordinators.map((c, i) => (
-                      <li key={i}>{c.name}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+              {monthNames[m - 1]}
+            </button>
           ))}
         </div>
       </div>
-    </section>
+
+      {/* Archive detail */}
+      <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 mb-10 border border-gray-100">
+        <h2 className="text-2xl sm:text-3xl font-bold text-blue-600 mb-4">
+          {name || "Unnamed Fest"}
+        </h2>
+        <div className="space-y-2 text-sm sm:text-base text-gray-700">
+          <p>
+            <strong>Month:</strong> {monthNames[month - 1]} &nbsp; 
+            <strong>Year:</strong> {year}
+          </p>
+          {theme && <p><strong>Theme:</strong> {theme}</p>}
+          {tagline && <p><strong>Tagline:</strong> {tagline}</p>}
+          {description && <p>{description}</p>}
+          {startDate && endDate && (
+            <p><strong>Dates:</strong> {startDate} – {endDate}</p>
+          )}
+          {venue && <p><strong>Venue:</strong> {venue}</p>}
+          {brochureUrl && (
+            <p>
+              <a
+                href={brochureUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline"
+              >
+                📄 View Brochure
+              </a>
+            </p>
+          )}
+        </div>
+
+        {/* Top Stats */}
+        <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-6">
+          <StatCard title="Registered" value={registeredStudents.length} color="blue" />
+          <StatCard title="Enrollments" value={enrolledStudents.length} color="green" />
+          <StatCard title="Events" value={events.length} color="purple" />
+        </div>
+      </div>
+
+      {/* Events Section */}
+      <h3 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-10 text-gray-800">
+        All Events & Winners
+      </h3>
+
+      {/* Toolbar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-8">
+        <div className="relative w-full sm:w-1/3">
+          <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Search events or winners..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-purple-400"
+          />
+        </div>
+
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 w-full sm:w-auto"
+        >
+          <option value="default">Sort: Default</option>
+          <option value="name">Sort: Name</option>
+          <option value="winners">Sort: Winners</option>
+        </select>
+      </div>
+
+      {/* Event Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+        {filteredEvents.length > 0 ? (
+          filteredEvents.map((event, idx) => (
+            <motion.div
+              key={event._id || idx}
+              className="bg-white border border-gray-100 p-5 sm:p-6 rounded-2xl shadow hover:shadow-lg transition-transform transform hover:scale-[1.02]"
+              whileHover={{ y: -3 }}
+            >
+              <h4 className="text-lg sm:text-xl font-semibold text-blue-600 mb-2">
+                {event.title || "Unnamed Event"}
+              </h4>
+              {event.description && (
+                <p className="text-sm text-gray-600 mb-3">{event.description}</p>
+              )}
+              {event.winners?.length > 0 ? (
+                <ul className="list-disc list-inside space-y-1 text-gray-700 text-sm">
+                  {event.winners.map((winner, idx) => (
+                    <li key={winner._id || idx}>
+                      {winner.name || winner.email || "Unnamed Winner"}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-400 italic text-sm">No winners listed</p>
+              )}
+            </motion.div>
+          ))
+        ) : (
+          <p className="col-span-full text-center text-gray-500">
+            No events found.
+          </p>
+        )}
+      </div>
+    </div>
   );
 }
 
-export default HallOfFame;
+function StatCard({ title, value, color }) {
+  const colors = {
+    blue: "from-blue-50 to-blue-100 text-blue-700",
+    green: "from-green-50 to-green-100 text-green-700",
+    purple: "from-purple-50 to-purple-100 text-purple-700",
+  };
+
+  return (
+    <div className={`bg-gradient-to-br ${colors[color]} p-4 sm:p-6 rounded-xl text-center shadow`}>
+      <h4 className="text-xs sm:text-sm font-medium">{title}</h4>
+      <p className="text-lg sm:text-2xl font-extrabold">{value}</p>
+    </div>
+  );
+}

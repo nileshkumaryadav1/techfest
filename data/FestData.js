@@ -22,7 +22,7 @@ export const FestData = {
   totalNumberOfDays: 4,
   totalParticipantCount: 24,
   socialMedia: {
-    whatsapp:"https://chat.whatsapp.com/JSrqwbsqGz3BnB7zUNrfOE",
+    whatsapp: "https://chat.whatsapp.com/JSrqwbsqGz3BnB7zUNrfOE",
     facebook: "",
     instagram: "https://www.instagram.com/CentreOrganization/",
     twitter: "",
@@ -30,6 +30,50 @@ export const FestData = {
     github: "https://github.com/nileshkumaryadav1/techfest",
     youtube: "https://www.youtube.com/@CentreOrganization",
   },
+  contact: {
+    email: "contact@centrefest.org.in",
+    phone: "123-456-7890",
+  },
+  college: {
+    name: "Katihar Engineering College",
+    address: "Katihar, Bihar, India",
+    contact: "123-456-7890",
+    email: "principal@keck.ac.in",
+    website: "http://keck.ac.in",
+    logo: "/college/logo.png",
+    socialMedia: {
+      facebook: "",
+      instagram: "",
+      twitter: "",
+      linkedin: "",
+    },
+  },
+  sponsor: [
+    {
+      name: "Katihar Engineering College",
+      image: "/sponsors/kec-logo.png",
+      companyUrl: "http://keck.ac.in/",
+      tier: "Platinum",
+    },
+    {
+      name: "Centre Organization",
+      image: "/sponsors/centre-logo.png",
+      companyUrl: "https://centreorg.vercel.app/",
+      tier: "Gold",
+    },
+  ],
+  developers: [
+    {
+      _id: 1,
+      name: "Nilesh Kumar",
+      role: "Full Stack Developer",
+      bio: "Hi! I am passionate about web development. I am a Civil Engineering student with a strong interest in building innovative web experiences.",
+      image: "/developers/nilesh.jpg",
+      github: "https://github.com/nileshkumaryadav1",
+      linkedin: "https://www.linkedin.com/in/nileshkumaryadav1/",
+      portfolio: "https://nileshkumar.vercel.app/",
+    },
+  ],
 };
 
 export const sponsorsData = [

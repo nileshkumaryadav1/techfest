@@ -4,8 +4,18 @@ import { FestData } from "@/data/FestData";
 import { useEffect, useState, useMemo } from "react";
 
 const monthNames = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 export default function AdminArchivePage() {
@@ -72,10 +82,23 @@ export default function AdminArchivePage() {
   };
 
   /** 🔹 Convert FestData (object) → array, then check archives */
+  // const availableFests = useMemo(() => {
+  //   const archivedNames = new Set(archives.map((a) => a.name));
+  //   const festArray = [FestData]; // 👈 wrap single object into array
+  //   return festArray.filter((fest) => !archivedNames.has(fest.name));
+  // }, [archives]);
+
+  /** 🔹 Convert FestData (object) → array, then check archives */
   const availableFests = useMemo(() => {
-    const archivedNames = new Set(archives.map((a) => a.name));
+    // create a unique key like "7/2025"
+    const archivedDates = new Set(archives.map((a) => `${a.month}/${a.year}`));
+
     const festArray = [FestData]; // 👈 wrap single object into array
-    return festArray.filter((fest) => !archivedNames.has(fest.name));
+
+    // compare using month/year
+    return festArray.filter(
+      (fest) => !archivedDates.has(`${fest.month}/${fest.year}`)
+    );
   }, [archives]);
 
   return (
@@ -101,7 +124,7 @@ export default function AdminArchivePage() {
                 {fest.name}
               </h3>
               <p>
-                {fest.date} – {fest.theme}
+                {fest.month} / {fest.year} – {fest.theme}
               </p>
               <p className="text-sm text-gray-600">{fest.tagline}</p>
               <button
@@ -133,7 +156,7 @@ export default function AdminArchivePage() {
                 {archive.name}
               </h3>
               <p>
-                <strong>Year:</strong> {archive.year}
+                <strong>Year:</strong> {archive.month} / {archive.year}
               </p>
               {archive.theme && (
                 <p>
