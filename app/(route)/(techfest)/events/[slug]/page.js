@@ -173,7 +173,7 @@ export default function EventDetailPage() {
 
           <div className="flex flex-wrap gap-4 justify-center">
             {/* Team Registration */}
-            <RegisterButton eventId={_id} />
+            {/* <RegisterButton eventId={_id} /> */}
 
             {/* Single Registration */}
             {student ? (

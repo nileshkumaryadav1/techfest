@@ -169,11 +169,11 @@ export default function HallOfFamePage() {
       </div>
 
       {/* Archive detail */}
-      <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 mb-10 border border-gray-100">
-        <h2 className="text-2xl sm:text-3xl font-bold text-blue-600 mb-4">
+      <div className="bg-[var(--background)] shadow-md rounded-2xl p-6 sm:p-8 mb-10 border border-gray-100">
+        <h2 className="text-2xl sm:text-3xl font-bold text-[var(--highlight)] mb-4">
           {name || "Unnamed Fest"}
         </h2>
-        <div className="space-y-2 text-sm sm:text-base text-gray-700">
+        <div className="space-y-2 text-sm sm:text-base text-[var(--secondary)]">
           <p>
             <strong>Month:</strong> {monthNames[month - 1]} &nbsp; 
             <strong>Year:</strong> {year}
@@ -208,7 +208,7 @@ export default function HallOfFamePage() {
       </div>
 
       {/* Events Section */}
-      <h3 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-10 text-gray-800">
+      <h3 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-10 text-[var(--foreground)]">
         All Events & Winners
       </h3>
 
@@ -242,17 +242,17 @@ export default function HallOfFamePage() {
           filteredEvents.map((event, idx) => (
             <motion.div
               key={event._id || idx}
-              className="bg-white border border-gray-100 p-5 sm:p-6 rounded-2xl shadow hover:shadow-lg transition-transform transform hover:scale-[1.02]"
+              className="bg-[color:var(--background)] border border-[color:var(--border)] p-5 sm:p-6 rounded-2xl shadow hover:shadow-lg transition-transform transform hover:scale-[1.02]"
               whileHover={{ y: -3 }}
             >
               <h4 className="text-lg sm:text-xl font-semibold text-blue-600 mb-2">
                 {event.title || "Unnamed Event"}
               </h4>
               {event.description && (
-                <p className="text-sm text-gray-600 mb-3">{event.description}</p>
+                <p className="text-sm text-[color:var(--secondary)] mb-3">{event.description}</p>
               )}
               {event.winners?.length > 0 ? (
-                <ul className="list-disc list-inside space-y-1 text-gray-700 text-sm">
+                <ul className="list-disc list-inside space-y-1 text-[color:var(--highlight)] text-sm">
                   {event.winners.map((winner, idx) => (
                     <li key={winner._id || idx}>
                       {winner.name || winner.email || "Unnamed Winner"}

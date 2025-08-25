@@ -107,7 +107,7 @@ export default function AdminSettings() {
       </div>
 
       {/* Theme Toggle */}
-      <div className="flex items-center justify-between rounded-xl border border-[color:var(--border)] bg-[color:var(--card)]/50 backdrop-blur p-4">
+      {/* <div className="flex items-center justify-between rounded-xl border border-[color:var(--border)] bg-[color:var(--card)]/50 backdrop-blur p-4">
         <span className="font-medium">
           Theme:
           <span className="ml-2 text-[color:var(--accent)]">{theme}</span>
@@ -119,7 +119,7 @@ export default function AdminSettings() {
           <SunMoon className="w-4 h-4" />
           Toggle
         </button>
-      </div>
+      </div> */}
 
       {/* Superadmin-only Actions */}
       {admin?.role === "superadmin" && (

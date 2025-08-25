@@ -95,7 +95,7 @@ export default function UpcomingEvents() {
           onClick={() =>
             setSortOrder(sortOrder === "newest" ? "oldest" : "newest")
           }
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground shadow hover:shadow-lg transition"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-[var(--foreground)] border border-[color:var(--border)] shadow hover:shadow-lg transition"
         >
           {sortOrder === "newest" ? (
             <>

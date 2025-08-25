@@ -14,6 +14,7 @@ export default function SponsorPage() {
   });
 
   const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -22,6 +23,8 @@ export default function SponsorPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setSuccess(false);
+
     try {
       const res = await fetch("/api/sponsor", {
         method: "POST",
@@ -30,13 +33,21 @@ export default function SponsorPage() {
       });
 
       if (res.ok) {
-        toast.success("Thank you for your interest in sponsoring!");
-        setFormData({ name: "", email: "", company: "", phone: "", message: "" , image: ""});
+        setSuccess(true);
+        toast.success("Thank you! Your email has been sent.");
+        setFormData({
+          name: "",
+          email: "",
+          company: "",
+          phone: "",
+          message: "",
+          image: "",
+        });
       } else {
-        toast.error("Something went wrong.");
+        toast.error("Something went wrong. Please try again.");
       }
     } catch (err) {
-      toast.error("Server error.");
+      toast.error("Server error. Please try later.");
     } finally {
       setSubmitting(false);
     }
@@ -48,10 +59,12 @@ export default function SponsorPage() {
         {/* Header */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold">
-            Partner With Us as Our <span className="text-[color:var(--accent)]">Sponsor</span>
+            Partner With Us as Our{" "}
+            <span className="text-[color:var(--accent)]">Sponsor</span>
           </h1>
           <p className="text-[color:var(--secondary)] text-lg">
-            Empower innovation, support student talent, and amplify your brand visibility.
+            Empower innovation, support student talent, and amplify your brand
+            visibility.
           </p>
         </div>
 
@@ -67,7 +80,7 @@ export default function SponsorPage() {
           ].map((benefit, i) => (
             <div
               key={i}
-              className="p-4 border border-[color:var(--border)] rounded-xl bg-white/5 backdrop-blur"
+              className="p-4 border border-[color:var(--highlight)] rounded-xl bg-white/5 backdrop-blur"
             >
               ✅ {benefit}
             </div>
@@ -77,8 +90,10 @@ export default function SponsorPage() {
         {/* Social Impact */}
         <div className="text-center">
           <h2 className="text-2xl font-semibold mb-2">Make a Difference</h2>
-          <p className="text-[color:var(--secondary)]">
-            By sponsoring, you&apos;re not just investing in an event — you&apos;re uplifting students, supporting grassroots innovation, and enabling skill development in young minds.
+          <p className="text-[color:var(--color-secondary)]">
+            By sponsoring, you&apos;re not just investing in an event —
+            you&apos;re uplifting students, supporting grassroots innovation,
+            and enabling skill development in young minds.
           </p>
         </div>
 
@@ -137,14 +152,23 @@ export default function SponsorPage() {
             onChange={handleChange}
             rows={4}
             className="p-3 rounded-lg border bg-transparent"
+            required
           />
           <button
             type="submit"
             disabled={submitting}
-            className="bg-[color:var(--accent)] text-[color:var(--background)] px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-transform"
+            className="bg-[color:var(--accent)] text-[color:var(--foreground)] px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-transform disabled:opacity-50"
           >
-            {submitting ? "Submitting..." : "Become Our Sponsor"}
+            {submitting ? "Submitting..." : "Send Message"}
           </button>
+          {success && (
+            <>
+            <p className="text-[color:var(--foreground)] font-semibold text-center">
+              ✅ Your email has been sent successfully!
+            </p>
+            <p className="text-[color:var(--secondary)] text-center">We will get back to you soon.</p>
+            </>
+          )}
         </form>
       </div>
     </section>

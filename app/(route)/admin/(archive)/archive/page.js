@@ -22,6 +22,12 @@ export default function AdminArchivePage() {
   const [archives, setArchives] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [admin, setAdmin] = useState(null);
+
+  useEffect(() => {
+    const adminData = JSON.parse(localStorage.getItem("admin"));
+    setAdmin(adminData);
+  }, []);
 
   /** 🔹 Fetch archived data from DB */
   const fetchArchives = async () => {
@@ -112,13 +118,13 @@ export default function AdminArchivePage() {
       {/* 🔹 FestData List (ready to archive) */}
       <h2 className="text-2xl font-semibold mb-6">Available Fests</h2>
       {availableFests.length === 0 ? (
-        <p className="text-gray-500 mb-10">✅ All fests are archived.</p>
+        <p className="text-[var(--foreground)] mb-10">✅ All fests are archived.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
           {availableFests.map((fest, i) => (
             <div
               key={i}
-              className="bg-gray-100 p-6 rounded-xl shadow hover:shadow-md transition"
+              className="bg-[var(--background)] p-6 rounded-xl shadow hover:shadow-md transition border border-[var(--border)]"
             >
               <h3 className="text-xl font-semibold text-blue-600 mb-2">
                 {fest.name}
@@ -126,14 +132,16 @@ export default function AdminArchivePage() {
               <p>
                 {fest.month} / {fest.year} – {fest.theme}
               </p>
-              <p className="text-sm text-gray-600">{fest.tagline}</p>
-              <button
-                onClick={() => handleArchive(fest)}
-                disabled={loading}
-                className="mt-3 w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
-              >
-                {loading ? "Archiving..." : "Archive This Fest"}
-              </button>
+              <p className="text-sm text-[var(--secondary)]">{fest.tagline}</p>
+              {admin?.role === "superadmin" && (
+                <button
+                  onClick={() => handleArchive(fest)}
+                  disabled={loading}
+                  className="mt-3 w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                >
+                  {loading ? "Archiving..." : "Archive This Fest"}
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -150,7 +158,7 @@ export default function AdminArchivePage() {
           {archives.map((archive) => (
             <div
               key={archive._id}
-              className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
+              className="bg-[var(--background)] p-6 rounded-2xl shadow hover:shadow-lg transition border border-[var(--border)]"
             >
               <h3 className="text-xl font-semibold text-blue-600 mb-2">
                 {archive.name}
@@ -168,14 +176,16 @@ export default function AdminArchivePage() {
                   <strong>Tagline:</strong> {archive.tagline}
                 </p>
               )}
-              <div className="flex gap-2 mt-3">
-                <button
-                  onClick={() => handleDelete(archive._id)}
-                  className="flex-1 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-                >
-                  Delete
-                </button>
-              </div>
+              {admin?.role === "superadmin" && (
+                <div className="flex gap-2 mt-3">
+                  <button
+                    onClick={() => handleDelete(archive._id)}
+                    className="flex-1 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
