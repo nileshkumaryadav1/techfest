@@ -9,12 +9,10 @@ export default function EnrolledEvents({ studentId }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch Enrolled Events
   const fetchEnrolled = async () => {
     try {
       const res = await fetch(`/api/enrollments?studentId=${studentId}`);
       const data = await res.json();
-
       const validEvents = (data.enrolledEvents || []).filter(
         (e) => e && e._id && e.title
       );
@@ -30,29 +28,22 @@ export default function EnrolledEvents({ studentId }) {
     if (studentId) fetchEnrolled();
   }, [studentId]);
 
-  // De-enroll handler
   const handleDeEnroll = async (eventId) => {
     if (!confirm("Are you sure you want to de-enroll from this event?")) return;
-
     try {
       const res = await fetch(`/api/enrollments`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ studentId, eventId }),
       });
-
-      if (res.ok) {
-        setEvents((prev) => prev.filter((e) => e._id !== eventId));
-      } else {
-        alert("Failed to de-enroll from the event.");
-      }
+      if (res.ok) setEvents((prev) => prev.filter((e) => e._id !== eventId));
+      else alert("Failed to de-enroll from the event.");
     } catch (err) {
       console.error("Error de-enrolling:", err);
       alert("Something went wrong.");
     }
   };
 
-  // Formatters
   const formatDate = (dateStr) =>
     dateStr
       ? new Date(dateStr).toLocaleDateString("en-US", {
@@ -74,86 +65,129 @@ export default function EnrolledEvents({ studentId }) {
     });
   };
 
-  // Loading state
   if (!studentId) return null;
   if (loading) return <LoadingState text="Fetching enrolled events..." />;
-
   if (events.length === 0)
     return (
-      <p className="text-center text-[color:var(--secondary)] italic">
+      <p className="text-center text-sm sm:text-base text-[color:var(--secondary)] italic mt-6">
         No enrolled events yet 🚀
       </p>
     );
 
   return (
-    <section className="relative py-8 px-3 sm:px-6 md:px-12">
-      {/* Container */}
-      <div className="max-w-5xl mx-auto relative z-10">
-        {/* Title */}
-        <h2 className="text-2xl sm:text-4xl font-extrabold text-center mb-6 sm:mb-8 drop-shadow-md">
+    <section className="py-6 px-3 sm:px-6 md:px-12">
+      <div className="max-w-5xl mx-auto">
+        <h2 className="text-xl sm:text-3xl font-extrabold text-center mb-6 sm:mb-8 drop-shadow-md">
           🎟️ Your Enrolled Events
         </h2>
 
-        {/* Card Container */}
-        <div className="p-4 sm:p-6 rounded-3xl bg-white/10 backdrop-blur-2xl border border-[color:var(--border)] shadow-xl">
-          {/* Header Row */}
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6 sm:mb-8">
-            <h3 className="text-base sm:text-xl font-bold text-[color:var(--foreground)]">
+        <div className="p-4 sm:p-6 rounded-2xl bg-white/10 backdrop-blur-lg border border-[color:var(--border)] shadow-lg">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-bold text-[color:var(--foreground)]">
               Active Enrollments
             </h3>
-            <span className="px-3 sm:px-4 py-1 text-xs sm:text-sm font-semibold rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-[color:var(--border)] text-[color:var(--foreground)] shadow-sm text-center">
+            <span className="px-3 py-1 text-xs sm:text-sm font-semibold rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-[color:var(--border)] text-[color:var(--foreground)] shadow-sm text-center">
               {events.length} Enrolled
             </span>
           </div>
 
-          {/* Event List */}
-          <ul className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2">
+          <ul className="grid gap-3 sm:gap-5 grid-cols-1 sm:grid-cols-2">
             {events.map((event) => (
               <li
                 key={event._id}
-                className="group relative p-4 sm:p-5 rounded-2xl bg-[color:var(--background)] backdrop-blur-xl border border-[color:var(--border)] shadow-lg hover:scale-[1.02] hover:shadow-[color:var(--accent)]/10 transition-all"
+                className="group relative p-4 sm:p-5 rounded-2xl bg-[color:var(--background)] border border-[color:var(--border)] shadow-md hover:scale-[1.02] hover:shadow-[color:var(--accent)]/20 transition-all"
               >
-                {/* Glow effect */}
                 <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition bg-gradient-to-tr from-purple-500 via-pink-500 to-cyan-500 blur-2xl"></div>
 
-                {/* Top Row */}
                 <div className="relative flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3">
-                  <h4 className="text-base sm:text-lg font-semibold text-[color:var(--foreground)] group-hover:text-[color:var(--accent)] transition break-words">
+                  <h4 className="text-sm sm:text-base font-semibold text-[color:var(--foreground)] group-hover:text-[color:var(--accent)] break-words">
                     {event.title}
                   </h4>
-                  <div className="flex gap-2 flex-wrap">
-                    <Link
-                      href={`/events/${event.slug || ""}`}
-                      className="px-3 py-1 rounded-lg bg-cyan-500/20 text-[color:var(--foreground)] text-xs sm:text-sm hover:bg-cyan-500/30 transition"
-                    >
-                      View
-                    </Link>
-                    <button
-                      onClick={() => handleDeEnroll(event._id)}
-                      disabled={event.winners?.length > 0}
-                      className={`px-3 py-1 rounded-lg text-xs sm:text-sm transition min-w-[80px] ${
-                        event.winners?.length > 0
-                          ? "bg-gray-500/20 text-[color:var(--secondary)] cursor-not-allowed"
-                          : "bg-red-500/20 text-[color:var(--foreground)] hover:bg-red-500/30 hover:text-[color:var(--secondary)]"
-                      }`}
-                    >
-                      {event.winners?.length > 0 ? "Ended 🎉" : "Remove"}
-                    </button>
-                  </div>
                 </div>
 
-                {/* Date & Time */}
-                <p className="relative text-xs sm:text-sm text-[color:var(--secondary)] mb-3">
+                <p className="text-xs sm:text-sm text-[color:var(--secondary)] mb-2">
                   📅 {formatDate(event.date)} • ⏰ {formatTime(event.time)}
                 </p>
 
-                {/* Countdown */}
                 <CountdownTimer
                   date={event.date}
                   time={event.time}
                   winnerDeclared={event.winners?.length > 0}
                   cancelled={event.status === "cancelled"}
                 />
+
+                {/* Winners */}
+                {event.winners?.length > 0 && (
+                  <div className="mt-2 border-t border-[color:var(--border)] pt-2">
+                    <p className="text-xs sm:text-xs text-[color:var(--secondary)] mb-1">
+                      🏆 Winner Declared
+                    </p>
+
+                    {event.winners.some(
+                      (winner) => winner._id === studentId
+                    ) ? (
+                      event.winners.map((winner) => (
+                        <p
+                          key={winner._id}
+                          className={
+                            winner._id === studentId
+                              ? "font-bold text-green-600 text-xs"
+                              : "text-xs"
+                          }
+                        >
+                          : {winner.name}
+                        </p>
+                      ))
+                    ) : (
+                      <>
+                        {event.winners.map((winner) => (
+                          <p key={winner._id} className="text-xs">
+                            {winner.name}
+                          </p>
+                        ))}
+                        <p className="mt-1 text-xs text-green-500">
+                          🍀 Better luck next fest!
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )}
+                <div className="relative flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3">
+                  <div className="flex gap-2 flex-wrap border-t border-[color:var(--border)] pt-2 mt-2">
+                    <Link
+                      href={`/events/${event.slug || ""}`}
+                      className="px-3 py-1 rounded-lg bg-cyan-500/20 text-[color:var(--foreground)] text-xs sm:text-sm hover:bg-cyan-500/30 transition"
+                    >
+                      View Event
+                    </Link>
+                    <button
+                      onClick={() => handleDeEnroll(event._id)}
+                      disabled={
+                        event.winners?.length > 0 ||
+                        event.status === "cancelled"
+                      }
+                      className={`relative px-3 py-1 rounded-lg text-xs sm:text-sm min-w-[80px] transition ${
+                        event.winners?.length > 0 ||
+                        event.status === "cancelled"
+                          ? "bg-gray-500/20 text-[color:var(--secondary)] cursor-not-allowed"
+                          : "bg-red-500/20 text-[color:var(--foreground)] hover:bg-red-500/30 hover:text-[color:var(--secondary)]"
+                      }`}
+                      title={
+                        event.winners?.length > 0
+                          ? "This event has ended and winners are declared. You cannot remove it."
+                          : event.status === "cancelled"
+                          ? "This event has been cancelled. You cannot remove it."
+                          : ""
+                      }
+                    >
+                      {event.winners?.length > 0
+                        ? "Completed 🎉"
+                        : event.status === "cancelled"
+                        ? "Cancelled ❌"
+                        : "Remove"}
+                    </button>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>

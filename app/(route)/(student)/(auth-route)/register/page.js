@@ -157,9 +157,16 @@ export default function RegisterPage() {
 
       <Link
         href="/login"
-        className="mt-4 text-sm text-[var(--highlight)] hover:underline"
+        className="mt-4 text-sm text-[var(--secondary)] hover:underline active:text-[var(--accent)]"
       >
         Already registered? Login here →
+      </Link>
+
+      <Link
+        href="/reset-password"
+        className="mt-2 text-sm text-[var(--secondary)] hover:underline active:text-[var(--accent)]"
+      >
+        Forgot password?
       </Link>
     </main>
   );

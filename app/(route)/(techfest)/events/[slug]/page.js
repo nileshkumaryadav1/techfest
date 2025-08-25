@@ -161,7 +161,7 @@ export default function EventDetailPage() {
           <h2 className="text-xl font-semibold text-[var(--highlight)]">
             {winnersCount > 0 ? (
               <>
-                🏁 Event Concluded <br />
+                ✅ Event Completed <br />
                 🏆 Winners: {winners.map((w) => w.name).join(", ")}
               </>
             ) : status === "success" || status === "already" ? (

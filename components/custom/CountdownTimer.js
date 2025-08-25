@@ -38,7 +38,7 @@ export default function CountdownTimer({
       }
 
       if (winnerDeclared) {
-        setCountdown("✅ Event Ended");
+        setCountdown("✅ Event Completed");
         setLoading(false);
         return true;
       }

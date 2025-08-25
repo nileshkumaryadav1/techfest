@@ -104,6 +104,7 @@ export default function EditProfilePage() {
             onChange={handleChange}
             className="w-full p-2 rounded border bg-[var(--background)]"
             type="email"
+            disabled
             required
           />
         </div>
@@ -115,6 +116,7 @@ export default function EditProfilePage() {
             onChange={handleChange}
             className="w-full p-2 rounded border bg-[var(--background)]"
             type="tel"
+            disabled
             required
           />
         </div>
