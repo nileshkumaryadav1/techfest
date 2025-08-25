@@ -90,12 +90,12 @@ export default function AdminEvents() {
             return (
               <div
                 key={event._id}
-                className="bg-white border border-gray-200 rounded-2xl shadow-md md:p-6 p-3 hover:shadow-lg transition-all duration-300"
+                className="bg-[var(--background)] border border-[color:var(--border)] rounded-2xl shadow-md md:p-6 p-3 hover:shadow-lg transition-all duration-300"
               >
                 <div className="flex flex-col md:flex-row justify-between gap-6">
                   {/* Left - Event Details */}
-                  <div className="text-sm text-gray-700 md:space-y-2 flex-1">
-                    <h2 className="md:text-xl text-lg text-center font-semibold text-gray-900">
+                  <div className="text-sm text-[color:var(--secondary)] md:space-y-2 flex-1">
+                    <h2 className="md:text-xl text-lg text-center font-semibold text-[color:var(--foreground)]">
                       {event.title}
                     </h2>
                     <div className="grid sm:grid-cols-2 gap-x-6 md:gap-y-1">
@@ -130,7 +130,7 @@ export default function AdminEvents() {
                     </div>
 
                     <div className="mt-3">
-                      <p className="text-gray-600 leading-relaxed">
+                      <p className="text-[color:var(--secondary)] leading-relaxed">
                         <strong>Description:</strong>{" "}
                         {event.description.slice(0, 100) + "..." || "N/A"}
                       </p>
@@ -161,7 +161,7 @@ export default function AdminEvents() {
 
                     <div className="mt-2">
                       <strong>Coordinators:</strong>{" "}
-                      <span className="text-gray-700">
+                      <span className="text-[color:var(--secondary)]">
                         {Array.isArray(event.coordinators)
                           ? event.coordinators
                               .map((c) =>
@@ -174,7 +174,7 @@ export default function AdminEvents() {
                       </span>
                     </div>
 
-                    <p className="text-[color:var(--highlight)] font-semibold mt-2">
+                    <p className="text-[color:var(--accent)] font-semibold mt-2">
                       🏆 Winner:{" "}
                       {event.winners.length > 0
                         ? event.winners.map((w) => w.name).join(", ")
@@ -202,7 +202,7 @@ export default function AdminEvents() {
                       className={`px-3 py-1 rounded-md border transition
                            ${
                              event.winners.length > 0
-                               ? "border-gray-400 text-gray-400 bg-gray-100 cursor-not-allowed"
+                               ? "border-gray-400 text-gray-400 bg-[color:var(--background)] cursor-not-allowed"
                                : "border-red-500 text-red-600 hover:bg-red-50"
                            }
                            `}

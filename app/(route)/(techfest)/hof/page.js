@@ -3,10 +3,22 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
+import LoadingState from "@/components/custom/myself/LoadingState";
+import LoadingSkeleton from "@/components/custom/myself/LoadingSkeleton";
 
 const monthNames = [
-  "January","February","March","April","May","June",
-  "July","August","September","October","November","December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 export default function HallOfFamePage() {
@@ -94,9 +106,16 @@ export default function HallOfFamePage() {
     setSelectedArchive(archive || null);
   };
 
-  if (loading) return <div className="text-center mt-10">Loading...</div>;
-  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
-  if (!selectedArchive) return <div className="text-center mt-10">No data available</div>;
+  if (loading) return <LoadingState />;
+  if (error)
+    return <div className="text-center mt-10 text-red-500">{error}</div>;
+  if (!selectedArchive)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-6">
+        <LoadingSkeleton />
+        <p className="m-10">No data available.</p>
+      </div>
+    );
 
   const {
     name,
@@ -117,13 +136,17 @@ export default function HallOfFamePage() {
   let filteredEvents = events.filter(
     (e) =>
       e.title?.toLowerCase().includes(search.toLowerCase()) ||
-      e.winners?.some((w) => w.name?.toLowerCase().includes(search.toLowerCase()))
+      e.winners?.some((w) =>
+        w.name?.toLowerCase().includes(search.toLowerCase())
+      )
   );
 
   if (sortBy === "name") {
     filteredEvents.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
   } else if (sortBy === "winners") {
-    filteredEvents.sort((a, b) => (b.winners?.length || 0) - (a.winners?.length || 0));
+    filteredEvents.sort(
+      (a, b) => (b.winners?.length || 0) - (a.winners?.length || 0)
+    );
   }
 
   return (
@@ -169,22 +192,36 @@ export default function HallOfFamePage() {
       </div>
 
       {/* Archive detail */}
-      <div className="bg-[var(--background)] shadow-md rounded-2xl p-6 sm:p-8 mb-10 border border-gray-100">
-        <h2 className="text-2xl sm:text-3xl font-bold text-[var(--highlight)] mb-4">
+      <div className="bg-[var(--background)] shadow-md rounded-2xl p-6 sm:p-8 mb-10 border border-[var(--border)]">
+        <h2 className="text-2xl sm:text-3xl font-bold text-[var(--accent)] mb-4 text-center">
           {name || "Unnamed Fest"}
         </h2>
         <div className="space-y-2 text-sm sm:text-base text-[var(--secondary)]">
           <p>
-            <strong>Month:</strong> {monthNames[month - 1]} &nbsp; 
+            <strong>Month:</strong> {monthNames[month - 1]} &nbsp;
             <strong>Year:</strong> {year}
           </p>
-          {theme && <p><strong>Theme:</strong> {theme}</p>}
-          {tagline && <p><strong>Tagline:</strong> {tagline}</p>}
+          {theme && (
+            <p>
+              <strong>Theme:</strong> {theme}
+            </p>
+          )}
+          {tagline && (
+            <p>
+              <strong>Tagline:</strong> {tagline}
+            </p>
+          )}
           {description && <p>{description}</p>}
           {startDate && endDate && (
-            <p><strong>Dates:</strong> {startDate} – {endDate}</p>
+            <p>
+              <strong>Dates:</strong> {startDate} – {endDate}
+            </p>
           )}
-          {venue && <p><strong>Venue:</strong> {venue}</p>}
+          {venue && (
+            <p>
+              <strong>Venue:</strong> {venue}
+            </p>
+          )}
           {brochureUrl && (
             <p>
               <a
@@ -201,8 +238,16 @@ export default function HallOfFamePage() {
 
         {/* Top Stats */}
         <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-6">
-          <StatCard title="Registered" value={registeredStudents.length} color="blue" />
-          <StatCard title="Enrollments" value={enrolledStudents.length} color="green" />
+          <StatCard
+            title="Registered"
+            value={registeredStudents.length}
+            color="blue"
+          />
+          <StatCard
+            title="Enrollments"
+            value={enrolledStudents.length}
+            color="green"
+          />
           <StatCard title="Events" value={events.length} color="purple" />
         </div>
       </div>
@@ -221,14 +266,14 @@ export default function HallOfFamePage() {
             placeholder="Search events or winners..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-purple-400"
+            className="w-full pl-10 pr-4 py-2 border border-[color:var(--border)] rounded-lg shadow-sm focus:ring-2 focus:ring-[color:var(--accent)] text-[color:var(--secondary)]"
           />
         </div>
 
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 w-full sm:w-auto"
+          className="px-3 py-2 border border-[color:var(--border)] rounded-lg shadow-sm focus:ring-2 focus:ring-[color:var(--accent)] w-full sm:w-auto text-[color:var(--secondary)]"
         >
           <option value="default">Sort: Default</option>
           <option value="name">Sort: Name</option>
@@ -245,22 +290,36 @@ export default function HallOfFamePage() {
               className="bg-[color:var(--background)] border border-[color:var(--border)] p-5 sm:p-6 rounded-2xl shadow hover:shadow-lg transition-transform transform hover:scale-[1.02]"
               whileHover={{ y: -3 }}
             >
-              <h4 className="text-lg sm:text-xl font-semibold text-blue-600 mb-2">
+              <h4 className="text-lg sm:text-xl font-semibold text-blue-600">
                 {event.title || "Unnamed Event"}
               </h4>
-              {event.description && (
-                <p className="text-sm text-[color:var(--secondary)] mb-3">{event.description}</p>
+              <p className="text-sm text-[color:var(--secondary)] mb-2">
+                {event.category} - {event.eventId}
+              </p>
+              {event.description ? (
+                <p className="text-sm text-[color:var(--secondary)] leading-relaxed mb-3">
+                  {event.description.length > 120
+                    ? `${event.description.slice(0, 120)}...`
+                    : event.description}
+                </p>
+              ) : (
+                <p className="text-sm italic text-[var(--secondary)] mb-3">
+                  No description available
+                </p>
               )}
+
               {event.winners?.length > 0 ? (
-                <ul className="list-disc list-inside space-y-1 text-[color:var(--highlight)] text-sm">
+                <ol className="list-decimal list-inside space-y-1 text-[color:var(--accent)] text-sm">
                   {event.winners.map((winner, idx) => (
                     <li key={winner._id || idx}>
                       {winner.name || winner.email || "Unnamed Winner"}
                     </li>
                   ))}
-                </ul>
+                </ol>
               ) : (
-                <p className="text-gray-400 italic text-sm">No winners listed</p>
+                <p className="text-gray-400 italic text-sm">
+                  No winners listed
+                </p>
               )}
             </motion.div>
           ))
@@ -282,7 +341,9 @@ function StatCard({ title, value, color }) {
   };
 
   return (
-    <div className={`bg-gradient-to-br ${colors[color]} p-4 sm:p-6 rounded-xl text-center shadow`}>
+    <div
+      className={`bg-gradient-to-br ${colors[color]} p-4 sm:p-6 rounded-xl text-center shadow`}
+    >
       <h4 className="text-xs sm:text-sm font-medium">{title}</h4>
       <p className="text-lg sm:text-2xl font-extrabold">{value}</p>
     </div>

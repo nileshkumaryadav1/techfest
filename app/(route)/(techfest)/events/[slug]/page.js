@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import CountdownTimer from "@/components/custom/CountdownTimer";
 import TextType from "@/components/custom/ui/TextType";
 import RegisterButton from "@/components/fest/RegisterInEventBtn";
+import LoadingState from "@/components/custom/myself/LoadingState";
 
 // ✅ Utilities for date/time formatting
 function formatDate(date) {
@@ -84,9 +85,24 @@ export default function EventDetailPage() {
   // 🔹 Loading state
   if (loading) {
     return (
-      <div className="text-center mt-24 text-lg text-[var(--secondary)] animate-pulse">
-        Loading event details...
-      </div>
+      <>
+        {/* min h screen for Fullscreen loading */}
+        <LoadingState
+          text="loading event details…"
+          tips={[
+            "Pro tip: Use strong passwords.",
+            "Press / to search.",
+            "Save events to your favorites ⭐",
+            "Join events with your friends.",
+            "Enjoy the event.",
+            "Stay hydrated 💧 and code smarter.",
+            "Dark mode saves your eyes 👀",
+            "Check out trending events 🔥",
+            "Invite friends for extra fun 🎉",
+            "Don’t forget to take breaks ⏳",
+          ]}
+        />
+      </>
     );
   }
 
@@ -108,7 +124,21 @@ export default function EventDetailPage() {
   }
 
   // Extract fields
-  const { _id, title, eventId, category, date, time, venue, status: eventStatus, winners, imageUrl, description, ruleBookPdfUrl, coordinators } = event;
+  const {
+    _id,
+    title,
+    eventId,
+    category,
+    date,
+    time,
+    venue,
+    status: eventStatus,
+    winners,
+    imageUrl,
+    description,
+    ruleBookPdfUrl,
+    coordinators,
+  } = event;
   const winnersCount = winners?.length || 0;
 
   return (
@@ -178,15 +208,24 @@ export default function EventDetailPage() {
             {/* Single Registration */}
             {student ? (
               eventStatus === "cancelled" ? (
-                <button disabled className="bg-gray-400 text-white px-6 py-2.5 rounded-full font-semibold cursor-not-allowed">
+                <button
+                  disabled
+                  className="bg-gray-400 text-white px-6 py-2.5 rounded-full font-semibold cursor-not-allowed"
+                >
                   🚫 Event Cancelled
                 </button>
               ) : winnersCount > 0 ? (
-                <button disabled className="bg-gray-400 text-white px-6 py-2.5 rounded-full font-semibold cursor-not-allowed">
+                <button
+                  disabled
+                  className="bg-gray-400 text-white px-6 py-2.5 rounded-full font-semibold cursor-not-allowed"
+                >
                   🏆 Winners Declared
                 </button>
               ) : status === "success" || status === "already" ? (
-                <button disabled className="bg-green-600 text-white px-6 py-2.5 rounded-full font-semibold cursor-not-allowed">
+                <button
+                  disabled
+                  className="bg-green-600 text-white px-6 py-2.5 rounded-full font-semibold cursor-not-allowed"
+                >
                   ✅ Enrolled
                 </button>
               ) : (
@@ -200,7 +239,10 @@ export default function EventDetailPage() {
             ) : (
               <p className="text-yellow-400">
                 ⚠️ Please{" "}
-                <a href="/login" className="underline text-blue-400 hover:text-blue-300">
+                <a
+                  href="/login"
+                  className="underline text-blue-400 hover:text-blue-300"
+                >
                   login
                 </a>{" "}
                 to enroll.
@@ -220,9 +262,15 @@ export default function EventDetailPage() {
           </div>
 
           {/* Enrollment messages */}
-          {status === "success" && <p className="text-green-400">✅ Successfully enrolled!</p>}
-          {status === "already" && <p className="text-yellow-400">👍 You&apos;re already enrolled.</p>}
-          {status === "error" && <p className="text-red-400">❌ Something went wrong. Try again.</p>}
+          {status === "success" && (
+            <p className="text-green-400">✅ Successfully enrolled!</p>
+          )}
+          {status === "already" && (
+            <p className="text-yellow-400">👍 You&apos;re already enrolled.</p>
+          )}
+          {status === "error" && (
+            <p className="text-red-400">❌ Something went wrong. Try again.</p>
+          )}
         </form>
 
         {/* 👥 Coordinators */}
@@ -244,7 +292,11 @@ export default function EventDetailPage() {
                     className="bg-[var(--card)] p-4 border border-[var(--border)] rounded-xl shadow-sm hover:shadow-md transition"
                   >
                     <h3 className="text-lg font-bold">{name}</h3>
-                    {role && <p className="text-sm italic text-[var(--highlight)]">{role}</p>}
+                    {role && (
+                      <p className="text-sm italic text-[var(--highlight)]">
+                        {role}
+                      </p>
+                    )}
                     <p className="text-sm mt-1 text-[var(--secondary)]">
                       📞 {contact || "Not available"}
                     </p>

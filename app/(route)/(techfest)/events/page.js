@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import EventCard from "@/components/fest/EventCard";
+import LoadingSkeleton from "@/components/custom/myself/LoadingSkeleton";
 
 const sortOptions = [
   { label: "Newest First", value: "newest" },
@@ -39,9 +40,10 @@ export default function EventListPage() {
   }, []);
 
   const filteredEvents = events
-    .filter(({ title, category: eventCategory }) =>
-      (category === "All" || eventCategory === category) &&
-      title.toLowerCase().includes(search.toLowerCase())
+    .filter(
+      ({ title, category: eventCategory }) =>
+        (category === "All" || eventCategory === category) &&
+        title.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
       switch (sortBy) {
@@ -114,9 +116,18 @@ export default function EventListPage() {
 
         {/* Event Grid */}
         {loading ? (
-          <p className="text-center text-[var(--foreground)]">Loading events...</p>
+          <>
+            {/* <p className="text-center text-[var(--foreground)]">Loading events...</p> */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <LoadingSkeleton />
+              <LoadingSkeleton />
+              <LoadingSkeleton />
+            </div>
+          </>
         ) : filteredEvents.length === 0 ? (
-          <p className="text-center text-[var(--foreground)]">No events found.</p>
+          <p className="text-center text-[var(--foreground)]">
+            No events found.
+          </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredEvents.map((event) => (

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import CountdownTimer from "../custom/CountdownTimer";
 import LoadingState from "../custom/myself/LoadingState";
+import LoadingSkeletonSmall from "../custom/myself/LoadingSkeletonSmall";
+import LoadingSkeleton from "../custom/myself/LoadingSkeleton";
 
 export default function EnrolledEvents({ studentId }) {
   const [events, setEvents] = useState([]);
@@ -66,7 +68,20 @@ export default function EnrolledEvents({ studentId }) {
   };
 
   if (!studentId) return null;
-  if (loading) return <LoadingState text="Fetching enrolled events..." />;
+  if (loading)
+    return (
+      <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:hidden">
+          <LoadingSkeletonSmall />
+          <LoadingSkeleton />
+        </div>
+        <div className="hidden md:grid grid-cols-3 gap-4">
+          <LoadingSkeleton />
+          <LoadingSkeleton />
+          <LoadingSkeleton />
+        </div>
+      </>
+    );
   if (events.length === 0)
     return (
       <p className="text-center text-sm sm:text-base text-[color:var(--secondary)] italic mt-6">
