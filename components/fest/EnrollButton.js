@@ -3,36 +3,38 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+/**
+ * EnrollButton Component
+ *
+ * Handles enrollment for:
+ * - Solo events (instant enroll)
+ * - Team events (open modal, collect team info, then enroll)
+ *
+ * Props:
+ * - eventId: string (required)
+ * - type: string ("single" | "team")
+ */
 export default function EnrollButton({ eventId, type, isEnrolled }) {
   const router = useRouter();
 
   const [student, setStudent] = useState(null);
-  const [status, setStatus] = useState("idle"); // idle | loading | success | error | already
-  const [showModal, setShowModal] = useState(false);
-
-  // Team form states
+  const [status, setStatus] = useState("idle"); // idle | loading | success | error
+  const [showTeamModal, setShowTeamModal] = useState(false);
   const [teamName, setTeamName] = useState("");
-  const [members, setMembers] = useState([""]);
+  const [members, setMembers] = useState([""]); // festIds entered by leader
 
-  // Load student from localStorage
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("student");
-      if (stored) {
-        try {
-          setStudent(JSON.parse(stored));
-        } catch (e) {
-          console.error("Invalid student data in localStorage");
-        }
-      }
+    const storedStudent = localStorage.getItem("student");
+    if (storedStudent) {
+      setStudent(JSON.parse(storedStudent));
     }
   }, []);
 
-  // Solo enrollment
+  // -------------------- Solo Enroll --------------------
   const handleSoloEnroll = async () => {
     if (!student?._id) {
       alert("Please login to enroll in this event.");
-      router.push("/student/login");
+      router.push("/login");
       return;
     }
 
@@ -44,33 +46,33 @@ export default function EnrollButton({ eventId, type, isEnrolled }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           eventId,
-          registeredBy: student._id,
-          participants: [student._id],
+          registeredBy: student._id, // DB id
+          teamName: null,
+          participants: [], // ✅ empty → API will add leader automatically
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        if (data?.message?.includes("already")) setStatus("already");
-        else {
-          setStatus("error");
-          alert(data.message || "Enrollment failed.");
-        }
-        return;
-      }
+
+      if (!res.ok) throw new Error(data.error || "Enrollment failed");
 
       setStatus("success");
+      alert("Enrolled successfully!");
+      router.refresh();
     } catch (err) {
-      console.error(err);
+      console.error("Enrollment error:", err);
       setStatus("error");
+      alert("Enrollment failed: " + err.message);
+    } finally {
+      setStatus("idle");
     }
   };
 
-  // Team enrollment
+  // -------------------- Team Enroll --------------------
   const handleTeamEnroll = async () => {
-    if (!student?._id) {
+    if (!student?._id || !student?.festId) {
       alert("Please login to enroll in this event.");
-      router.push("/student/login");
+      router.push("/login");
       return;
     }
 
@@ -80,8 +82,9 @@ export default function EnrollButton({ eventId, type, isEnrolled }) {
     }
 
     const filteredMembers = members.map((m) => m.trim()).filter(Boolean);
+
     if (filteredMembers.length === 0) {
-      alert("Add at least one team member ID.");
+      alert("Add at least one team member Fest ID.");
       return;
     }
 
@@ -93,143 +96,121 @@ export default function EnrollButton({ eventId, type, isEnrolled }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           eventId,
-          registeredBy: student._id,
+          registeredBy: student._id, // DB id of leader
           teamName,
-          participants: [student._id, ...filteredMembers],
+          participants: filteredMembers, // ✅ only festIds of members
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        if (data?.message?.includes("already")) setStatus("already");
-        else setStatus("error");
-        return;
-      }
+
+      if (!res.ok) throw new Error(data.error || "Team enrollment failed");
 
       setStatus("success");
-      setShowModal(false);
+      alert("Team enrolled successfully!");
+      setShowTeamModal(false);
+      setTeamName("");
+      setMembers([""]);
+      router.refresh();
     } catch (err) {
-      console.error(err);
+      console.error("Team enrollment error:", err);
       setStatus("error");
+      alert("Team enrollment failed: " + err.message);
+    } finally {
+      setStatus("idle");
     }
   };
 
-  // Render main button
-  const renderButton = () => {
-    if (status === "loading")
-      return (
-        <button
-          disabled
-          className="px-4 py-2 rounded-lg bg-gray-400 text-white cursor-not-allowed w-full md:w-auto"
-        >
-          Enrolling...
-        </button>
-      );
-
-    if (status === "success" || isEnrolled)
-      return (
-        <button
-          disabled
-          className="bg-green-600 text-white px-6 py-2.5 rounded-full font-semibold w-full md:w-auto cursor-not-allowed"
-        >
-          ✅ Enrolled
-        </button>
-      );
-
-    if (status === "already")
-      return (
-        <button
-          disabled
-          className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold w-full cursor-not-allowed"
-        >
-          Already Enrolled
-        </button>
-      );
-
-    if (status === "error")
-      return (
-        <button
-          onClick={
-            type === "single" ? handleSoloEnroll : () => setShowModal(true)
-          }
-          className="px-4 py-2 rounded-lg bg-red-600 text-white w-full"
-        >
-          Retry Enroll
-        </button>
-      );
-
-    // default
+  // -------------------- UI --------------------
+  if (isEnrolled) {
     return (
-      <button
-        onClick={
-          type === "single" ? handleSoloEnroll : () => setShowModal(true)
-        }
-        className="bg-[var(--accent)] text-black px-6 py-2.5 rounded-full font-semibold hover:scale-105 transition-all w-full md:w-auto"
-      >
-        {type === "single" ? "🚀 Enroll in this Event" : "🚀 Register Team"}
+      <button className="px-4 py-2 bg-gray-400 text-white rounded cursor-not-allowed">
+        Already Enrolled
       </button>
     );
-  };
+  }
 
+  if (type === "single") {
+    return (
+      <button
+        onClick={handleSoloEnroll}
+        disabled={status === "loading"}
+        className="px-4 py-2 bg-blue-600 text-white rounded"
+      >
+        {status === "loading" ? "Enrolling..." : "Enroll"}
+      </button>
+    );
+  }
+
+  // Team enrollment button
   return (
-    <div className="my-4 flex flex-col items-start w-full">
-      {renderButton()}
+    <>
+      <button
+        onClick={() => setShowTeamModal(true)}
+        className="px-4 py-2 bg-green-600 text-white rounded"
+      >
+        Enroll Team
+      </button>
 
-      {/* Team Enrollment Modal */}
-      {showModal && type === "team" && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-            <h2 className="text-lg font-bold mb-4">Team Registration</h2>
+      {showTeamModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded w-96">
+            <h2 className="text-xl font-bold mb-4">Team Enrollment</h2>
 
+            {/* Team name input */}
             <input
               type="text"
+              placeholder="Team Name"
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
-              placeholder="Team Name"
-              className="w-full mb-3 px-3 py-2 border rounded-lg"
+              className="w-full border p-2 rounded mb-4"
             />
 
+            {/* Member festId inputs */}
             <div className="space-y-2">
-              {members.map((m, idx) => (
+              {members.map((member, idx) => (
                 <input
                   key={idx}
                   type="text"
-                  value={m}
+                  placeholder="Member Fest ID"
+                  value={member}
                   onChange={(e) => {
-                    const newMembers = [...members];
-                    newMembers[idx] = e.target.value;
-                    setMembers(newMembers);
+                    const updated = [...members];
+                    updated[idx] = e.target.value;
+                    setMembers(updated);
                   }}
-                  placeholder={`Member ${idx + 1} ID`}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full border p-2 rounded"
                 />
               ))}
             </div>
 
+            {/* Add Member button */}
             <button
               onClick={() => setMembers([...members, ""])}
-              className="mt-2 text-sm text-blue-600 hover:underline"
+              className="mt-2 text-sm text-blue-600"
             >
               + Add Member
             </button>
 
+            {/* Submit button */}
             <div className="mt-4 flex justify-end gap-2">
               <button
-                onClick={() => setShowModal(false)}
-                className="px-3 py-2 rounded-lg bg-gray-300"
+                onClick={() => setShowTeamModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded"
               >
                 Cancel
               </button>
               <button
                 onClick={handleTeamEnroll}
-                className="px-3 py-2 rounded-lg bg-indigo-600 text-white"
+                disabled={status === "loading"}
+                className="px-4 py-2 bg-green-600 text-white rounded"
               >
-                Submit Team
+                {status === "loading" ? "Enrolling..." : "Submit"}
               </button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

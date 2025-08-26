@@ -299,14 +299,14 @@ export default function AdminHomePage() {
                   />
                 )}
                 <h3 className="text-lg font-semibold text-[color:var(--foreground)]">
-                  {s.name}
+                  🏢 {s.company}
                 </h3>
               </div>
 
               {/* Sponsor Details */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-[color:var(--secondary)]">
                 {s.email && <p>📧 {s.email}</p>}
-                {s.company && <p>🏢 {s.company}</p>}
+                {s.company && <p>👤 {s.name}</p>}
                 {s.phone && <p>📞 {s.phone}</p>}
               </div>
 

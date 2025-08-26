@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/utils/db";
 import { z } from "zod";
-import Team from "@/models/Team";
+// import Team from "@/models/Team";
 import Enrollment from "@/models/Enrollment";
 import { getCurrentStudent } from "@/utils/getCurrentStudent";
 
@@ -23,7 +23,7 @@ export async function POST(req) {
 
     // TEAM REGISTRATION
     if (teamId) {
-      const team = await Team.findById(teamId).lean();
+      // const team = await Team.findById(teamId).lean();
       if (!team) return NextResponse.json({ error: "Team not found" }, { status: 404 });
 
       const isLeader = String(team.leaderId) === String(me._id);

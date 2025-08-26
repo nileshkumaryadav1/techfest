@@ -9,6 +9,11 @@ const enrollmentSchema = new mongoose.Schema(
       required: true,
     },
 
+    eventDetails:
+      {
+        type: Object,
+      } || null,
+
     // All students enrolled (solo → 1, team → many)
     participants: [
       {

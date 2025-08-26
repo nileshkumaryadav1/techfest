@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { LogOut, Pencil, Trash2 } from "lucide-react";
 import EnrolledEvents from "@/components/fest/EnrolledEvent";
 import StudentInfo from "@/components/dashboard/StudentInfo";
-import MyTeamCard from "@/components/dashboard/TeamComponent";
-import CreateTeamForm from "@/components/fest/team/CreateTeamForm";
+import EnrolledInTeam from "@/components/dashboard/EnrolledInTeam";
 
 export default function DashboardPage() {
   const [student, setStudent] = useState(null);
@@ -50,7 +49,9 @@ export default function DashboardPage() {
     if (!student?._id) return;
 
     try {
-      const res = await fetch(`/api/student/${student._id}`, { method: "DELETE" });
+      const res = await fetch(`/api/student/${student._id}`, {
+        method: "DELETE",
+      });
       if (res.ok) {
         alert("Account deleted.");
         localStorage.removeItem("student");
@@ -75,7 +76,6 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen px-4 py-6 sm:px-6 md:px-12 bg-[var(--background)] text-[var(--foreground)]">
       <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
-        
         {/* Header */}
         <div className="p-5 sm:p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <h1 className="text-xl sm:text-2xl font-bold text-[color:var(--foreground)] break-words">
@@ -118,15 +118,7 @@ export default function DashboardPage() {
           <h2 className="text-base sm:text-lg font-semibold text-[var(--foreground)]">
             Teams
           </h2>
-          <MyTeamCard />
-        </section>
-
-        {/* Create Team */}
-        <section className="p-5 sm:p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">
-          <h2 className="text-base sm:text-lg font-semibold text-[var(--foreground)]">
-            Create Team
-          </h2>
-          <CreateTeamForm />
+          <EnrolledInTeam />
         </section>
       </div>
     </main>

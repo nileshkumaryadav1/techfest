@@ -15,6 +15,7 @@ import {
   X,
   Home,
   ArchiveRestore,
+  CalendarRange,
 } from "lucide-react";
 import { useEffect } from "react";
 // import { useRouter } from "next/router";
@@ -24,9 +25,10 @@ const adminLinks = [
   { name: "Add New Event", href: "/admin/homepage", icon: Pencil },
   { name: "Manage Events", href: "/admin/events", icon: LayoutDashboard },
   { name: "Registered Students", href: "/admin/users", icon: Users },
+  { name: "Enrollments", href: "/admin/enrollments", icon: CalendarRange },
   { name: "Winners List", href: "/admin/winners", icon: Trophy },
   { name: "Settings", href: "/admin/settings", icon: Settings },
-  { name: "Archive" , href: "/admin/archive", icon: ArchiveRestore },
+  { name: "Archive", href: "/admin/archive", icon: ArchiveRestore },
 ];
 
 export default function AdminSidebar({

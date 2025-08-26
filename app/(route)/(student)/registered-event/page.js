@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LogOut, Pencil, CalendarCheck } from "lucide-react";
 import EnrolledEvents from "@/components/fest/EnrolledEvent";
+import EnrolledInTeam from "@/components/dashboard/EnrolledInTeam";
 
 export default function DashboardPage() {
   const [student, setStudent] = useState(null);
@@ -61,6 +62,9 @@ export default function DashboardPage() {
           </h2> */}
 
           <EnrolledEvents studentId={student._id} />
+        </section>
+        <section>
+          <EnrolledInTeam />
         </section>
       </div>
     </main>
