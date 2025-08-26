@@ -2,13 +2,6 @@ import mongoose from "mongoose";
 
 const enrollmentSchema = new mongoose.Schema(
   {
-    // Always store the main student who initiated this enrollment
-    studentId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-      required: true,
-    },
-
     // Event being enrolled in
     eventId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,45 +9,33 @@ const enrollmentSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Enrollment type: single participant or team
-    type: {
-      type: String,
-      enum: ["single", "team"],
-      default: "single",
+    // All students enrolled (solo → 1, team → many)
+    participants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student",
+        required: true,
+      },
+    ],
+
+    // The student who initiated the enrollment (auto = leader in quick flow)
+    registeredBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: true,
     },
 
-    // Link to team if this is a team event
+    // Optional: if enrollment came from a pre-created Team
     teamId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Team",
       default: null,
     },
 
-    // For team events: list of all participant IDs
-    // For single events: will just have the one studentId
-    participants: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Student",
-      },
-    ],
-
-    // The student who actually submitted the registration
-    registeredBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-    },
-
-    // Optional: store teamName directly for quick lookups (avoids join if needed)
+    // Optional: snapshot of team name (helps if team is deleted later)
     teamName: {
       type: String,
       default: null,
-    },
-
-    // Optional: flag to quickly identify captain/leader in a team event
-    isLeader: {
-      type: Boolean,
-      default: false,
     },
   },
   { timestamps: true }

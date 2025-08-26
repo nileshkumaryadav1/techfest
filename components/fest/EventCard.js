@@ -12,6 +12,7 @@ import {
   Calendar,
   ArrowRight,
 } from "lucide-react";
+import EnrollButton from "./EnrollButton";
 
 export default function EventCard({ event }) {
   const [enrolling, setEnrolling] = useState(false);
@@ -27,6 +28,7 @@ export default function EventCard({ event }) {
     description = "",
     imageUrl = "",
     category = "",
+    type = "",
     eventId = "",
     date = "",
     time = "",
@@ -331,8 +333,11 @@ export default function EventCard({ event }) {
         )} */}
 
         {/* BOTTOM BUTTONS */}
-        <div className="mt-4 flex flex-col gap-2">
-          <button
+        <div className="mt-4 flex flex-col md:gap-2">
+          {/* Single + Team Enroll Button */}
+          <EnrollButton eventId={_id} type={type} isEnrolled={isEnrolled} />
+
+          {/* <button
             onClick={handleEnroll}
             disabled={
               enrolling || isEnrolled || winnersCount > 0 || isCancelled
@@ -356,7 +361,7 @@ export default function EventCard({ event }) {
               : enrolling
               ? "Enrolling..."
               : "Enroll"}
-          </button>
+          </button> */}
 
           <Link
             href={`/events/${slug}`}

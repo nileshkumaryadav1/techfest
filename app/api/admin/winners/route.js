@@ -10,7 +10,10 @@ export async function GET() {
     await connectDB();
 
     const events = await Event.find().lean();
-    const enrollments = await Enrollment.find().populate("studentId").lean();
+    const enrollments = await Enrollment.find()
+      .populate("registeredBy") // the student who registered / leader
+      .populate("participants") // all participants of the enrollment
+      .lean();
 
     const enrollmentMap = {};
     enrollments.forEach((e) => {
@@ -46,7 +49,10 @@ export async function GET() {
     return NextResponse.json({ success: true, events: fullData });
   } catch (err) {
     console.error("GET /api/admin/winners error:", err);
-    return NextResponse.json({ success: false, message: "Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Server Error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -57,23 +63,34 @@ export async function PATCH(req) {
     const { eventId, winners } = await req.json();
 
     if (!eventId || !Array.isArray(winners)) {
-      return NextResponse.json({ success: false, message: "Invalid payload" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Invalid payload" },
+        { status: 400 }
+      );
     }
 
     const event = await Event.findById(eventId);
     if (!event) {
-      return NextResponse.json({ success: false, message: "Event not found" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: "Event not found" },
+        { status: 404 }
+      );
     }
 
-    const enrolledIds = await Enrollment.find({ eventId }).distinct("studentId");
+    const enrolledIds = await Enrollment.find({ eventId }).distinct(
+      "studentId"
+    );
     const enrolledSet = new Set(enrolledIds.map(String));
 
     const isValid = winners.every((w) => enrolledSet.has(w._id));
     if (!isValid) {
-      return NextResponse.json({
-        success: false,
-        message: "One or more winners are not enrolled for this event.",
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: "One or more winners are not enrolled for this event.",
+        },
+        { status: 400 }
+      );
     }
 
     event.winners = winners;
@@ -90,7 +107,10 @@ export async function PATCH(req) {
     });
   } catch (err) {
     console.error("PATCH /api/admin/winners error:", err);
-    return NextResponse.json({ success: false, message: "Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Server Error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -101,27 +121,40 @@ export async function PUT(req) {
     const { eventId, winners } = await req.json();
 
     if (!eventId || !Array.isArray(winners)) {
-      return NextResponse.json({ success: false, message: "Invalid payload" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Invalid payload" },
+        { status: 400 }
+      );
     }
 
     const event = await Event.findById(eventId);
     if (!event) {
-      return NextResponse.json({ success: false, message: "Event not found" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: "Event not found" },
+        { status: 404 }
+      );
     }
 
-    const enrolledIds = await Enrollment.find({ eventId }).distinct("studentId");
+    const enrolledIds = await Enrollment.find({ eventId }).distinct(
+      "studentId"
+    );
     const enrolledSet = new Set(enrolledIds.map(String));
 
     const isValid = winners.every((w) => enrolledSet.has(w._id));
     if (!isValid) {
-      return NextResponse.json({
-        success: false,
-        message: "One or more winners are not enrolled in the event.",
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: "One or more winners are not enrolled in the event.",
+        },
+        { status: 400 }
+      );
     }
 
-    const existingMap = new Map(event.winners.map(w => [w._id.toString(), w]));
-    winners.forEach(w => existingMap.set(w._id.toString(), w));
+    const existingMap = new Map(
+      event.winners.map((w) => [w._id.toString(), w])
+    );
+    winners.forEach((w) => existingMap.set(w._id.toString(), w));
 
     event.winners = Array.from(existingMap.values());
     await event.save();
@@ -137,7 +170,10 @@ export async function PUT(req) {
     });
   } catch (err) {
     console.error("PUT /api/admin/winners error:", err);
-    return NextResponse.json({ success: false, message: "Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Server Error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -148,12 +184,18 @@ export async function DELETE(req) {
     const { eventId } = await req.json();
 
     if (!eventId) {
-      return NextResponse.json({ success: false, message: "Event ID required" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Event ID required" },
+        { status: 400 }
+      );
     }
 
     const event = await Event.findById(eventId);
     if (!event) {
-      return NextResponse.json({ success: false, message: "Event not found" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: "Event not found" },
+        { status: 404 }
+      );
     }
 
     event.winners = [];
@@ -165,6 +207,9 @@ export async function DELETE(req) {
     });
   } catch (err) {
     console.error("DELETE /api/admin/winners error:", err);
-    return NextResponse.json({ success: false, message: "Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Server Error" },
+      { status: 500 }
+    );
   }
 }

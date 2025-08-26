@@ -114,10 +114,36 @@ export default function EnrolledEvents({ studentId }) {
               >
                 <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition bg-gradient-to-tr from-purple-500 via-pink-500 to-cyan-500 blur-2xl"></div>
 
-                <div className="relative flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3">
+                <div className="flex justify-between">
+                  {/* Event Title */}
                   <h4 className="text-sm sm:text-base font-semibold text-[color:var(--foreground)] group-hover:text-[color:var(--accent)] break-words">
                     {event.title}
                   </h4>
+                  {/* De-enroll Button */}
+                  <button
+                    onClick={() => handleDeEnroll(event._id)}
+                    disabled={
+                      event.winners?.length > 0 || event.status === "cancelled"
+                    }
+                    className={`relative px-3 py-1 rounded-lg text-xs sm:text-sm min-w-[80px] transition ${
+                      event.winners?.length > 0 || event.status === "cancelled"
+                        ? "bg-gray-500/20 text-[color:var(--secondary)] cursor-not-allowed"
+                        : "bg-red-500/20 text-[color:var(--foreground)] hover:bg-red-500/30 hover:text-[color:var(--secondary)]"
+                    }`}
+                    title={
+                      event.winners?.length > 0
+                        ? "This event has ended and winners are declared. You cannot remove it."
+                        : event.status === "cancelled"
+                        ? "This event has been cancelled. You cannot remove it."
+                        : ""
+                    }
+                  >
+                    {event.winners?.length > 0
+                      ? "Completed 🎉"
+                      : event.status === "cancelled"
+                      ? "Cancelled ❌"
+                      : "Remove"}
+                  </button>
                 </div>
 
                 <p className="text-xs sm:text-sm text-[color:var(--secondary)] mb-2">
@@ -171,36 +197,10 @@ export default function EnrolledEvents({ studentId }) {
                   <div className="flex gap-2 flex-wrap border-t border-[color:var(--border)] pt-2 mt-2">
                     <Link
                       href={`/events/${event.slug || ""}`}
-                      className="px-3 py-1 rounded-lg bg-cyan-500/20 text-[color:var(--foreground)] text-xs sm:text-sm hover:bg-cyan-500/30 transition"
+                      className="px-3 py-2 rounded-lg bg-cyan-500/20 text-[color:var(--foreground)] text-xs sm:text-sm hover:bg-cyan-500/30 transition w-full text-center"
                     >
                       View Event
                     </Link>
-                    <button
-                      onClick={() => handleDeEnroll(event._id)}
-                      disabled={
-                        event.winners?.length > 0 ||
-                        event.status === "cancelled"
-                      }
-                      className={`relative px-3 py-1 rounded-lg text-xs sm:text-sm min-w-[80px] transition ${
-                        event.winners?.length > 0 ||
-                        event.status === "cancelled"
-                          ? "bg-gray-500/20 text-[color:var(--secondary)] cursor-not-allowed"
-                          : "bg-red-500/20 text-[color:var(--foreground)] hover:bg-red-500/30 hover:text-[color:var(--secondary)]"
-                      }`}
-                      title={
-                        event.winners?.length > 0
-                          ? "This event has ended and winners are declared. You cannot remove it."
-                          : event.status === "cancelled"
-                          ? "This event has been cancelled. You cannot remove it."
-                          : ""
-                      }
-                    >
-                      {event.winners?.length > 0
-                        ? "Completed 🎉"
-                        : event.status === "cancelled"
-                        ? "Cancelled ❌"
-                        : "Remove"}
-                    </button>
                   </div>
                 </div>
               </li>

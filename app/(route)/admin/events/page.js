@@ -230,6 +230,7 @@ export default function AdminEvents() {
                 "date",
                 "time",
                 "venue",
+                "type",
                 "description",
                 "imageUrl",
                 "prizes",
@@ -258,6 +259,18 @@ export default function AdminEvents() {
                       <option value="ongoing">Ongoing</option>
                       <option value="finished">Finished</option>
                       <option value="cancelled">Cancelled</option>
+                    </select>
+                  ) : field === "type" ? (
+                    <select
+                      className="rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-2 focus:ring-2 focus:ring-[color:var(--accent)] focus:outline-none bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 w-full"
+                      value={form.type || ""}
+                      onChange={(e) =>
+                        setForm({ ...form, type: e.target.value })
+                      }
+                    >
+                      <option value="">Select Type</option>
+                      <option value="single">Single</option>
+                      <option value="team">Team</option>
                     </select>
                   ) : (
                     <input

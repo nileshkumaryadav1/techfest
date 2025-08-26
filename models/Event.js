@@ -6,6 +6,11 @@ const EventSchema = new mongoose.Schema({
   slug: { type: String, required: true, unique: true },
   eventId: { type: String, required: true },
   category: String,
+  type: {
+    type: String,
+    enum: ["single", "team"],
+    default: "single",
+  },
   date: String,
   time: String,
   venue: String,

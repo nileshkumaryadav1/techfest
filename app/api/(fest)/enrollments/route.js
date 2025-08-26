@@ -13,7 +13,7 @@ export async function GET(req) {
 
   await connectDB();
 
-  const enrollments = await Enrollment.find({ studentId }).populate("eventId");
+  const enrollments = await Enrollment.find({ participants: studentId }).populate("eventId");
   const enrolledEvents = enrollments
     .map((e) => e.eventId)
     .filter((e) => e && e._id); // Skip missing/deleted event references
@@ -32,7 +32,7 @@ export async function DELETE(req) {
 
     if (eventId) {
       // Remove a single event
-      const deleted = await Enrollment.findOneAndDelete({ studentId, eventId });
+      const deleted = await Enrollment.findOneAndDelete({ participants: studentId, eventId });
       if (!deleted) {
         return NextResponse.json({ error: "Enrollment not found" }, { status: 404 });
       }
@@ -40,7 +40,7 @@ export async function DELETE(req) {
       return NextResponse.json({ message: "De-enrolled successfully" });
     } else {
       // Bulk remove all enrollments for this student
-      const result = await Enrollment.deleteMany({ studentId });
+      const result = await Enrollment.deleteMany({ participants: studentId });
       return NextResponse.json({
         message: `De-enrolled from ${result.deletedCount} event(s)`,
       });
