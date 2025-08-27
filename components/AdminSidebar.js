@@ -16,6 +16,7 @@ import {
   Home,
   ArchiveRestore,
   CalendarRange,
+  Mail,
 } from "lucide-react";
 import { useEffect } from "react";
 // import { useRouter } from "next/router";
@@ -29,6 +30,7 @@ const adminLinks = [
   { name: "Winners List", href: "/admin/winners", icon: Trophy },
   { name: "Settings", href: "/admin/settings", icon: Settings },
   { name: "Archive", href: "/admin/archive", icon: ArchiveRestore },
+  { name: "Bulk Mail", href: "/admin/bulk-mail", icon: Mail },
 ];
 
 export default function AdminSidebar({
