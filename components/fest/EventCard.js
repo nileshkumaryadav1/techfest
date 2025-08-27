@@ -333,7 +333,7 @@ export default function EventCard({ event }) {
         )} */}
 
         {/* BOTTOM BUTTONS */}
-        <div className="mt-4 flex flex-col md:gap-2">
+        <div className="mt-4 flex flex-col md:gap-2 gap-1">
           {/* Single + Team Enroll Button */}
           <EnrollButton eventId={_id} type={type} isEnrolled={isEnrolled} />
 

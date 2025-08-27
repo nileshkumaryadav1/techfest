@@ -110,14 +110,14 @@ export default function DashboardPage() {
 
         {/* Enrolled Events */}
         <section>
-          <EnrolledEvents studentId={student._id} />
+          {/* <EnrolledEvents studentId={student._id} /> */}
         </section>
 
         {/* Teams */}
         <section className="p-5 sm:p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">
-          <h2 className="text-base sm:text-lg font-semibold text-[var(--foreground)]">
+          {/* <h2 className="text-base sm:text-lg font-semibold text-[var(--foreground)]">
             Teams
-          </h2>
+          </h2> */}
           <EnrolledInTeam />
         </section>
       </div>

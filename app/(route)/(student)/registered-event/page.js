@@ -61,7 +61,7 @@ export default function DashboardPage() {
             <CalendarCheck size={20} /> Registered Events
           </h2> */}
 
-          <EnrolledEvents studentId={student._id} />
+          {/* <EnrolledEvents studentId={student._id} /> */}
         </section>
         <section>
           <EnrolledInTeam />

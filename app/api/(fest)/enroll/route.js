@@ -119,8 +119,12 @@ export async function POST(req) {
       ? {
           name: event.title,
           date: event.date,
+          time: event.time,
           venue: event.venue,
           description: event.description,
+          imageUrl: event.imageUrl,
+          eventId: event.eventId,
+          category: event.category,
           // add any other fields you want to snapshot
         }
       : null;

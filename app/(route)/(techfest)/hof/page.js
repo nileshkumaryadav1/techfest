@@ -159,7 +159,6 @@ export default function HallOfFamePage() {
       >
         🎖 Hall of Fame
       </motion.h1>
-
       {/* Year & Month controls */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
         <select
@@ -190,7 +189,6 @@ export default function HallOfFamePage() {
           ))}
         </div>
       </div>
-
       {/* Archive detail */}
       <div className="bg-[var(--background)] shadow-md rounded-2xl p-6 sm:p-8 mb-10 border border-[var(--border)]">
         <h2 className="text-2xl sm:text-3xl font-bold text-[var(--accent)] mb-4 text-center">
@@ -251,12 +249,10 @@ export default function HallOfFamePage() {
           <StatCard title="Events" value={events.length} color="purple" />
         </div>
       </div>
-
       {/* Events Section */}
       <h3 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-10 text-[var(--foreground)]">
         All Events & Winners
       </h3>
-
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-8">
         <div className="relative w-full sm:w-1/3">
@@ -280,51 +276,77 @@ export default function HallOfFamePage() {
           <option value="winners">Sort: Winners</option>
         </select>
       </div>
-
+      {/* Event Count */}
+      <p className="text-sm text-[color:var(--secondary)] mb-4 text-center">
+        Showing {filteredEvents.length} events & their winners
+      </p>
       {/* Event Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+      {/* import {motion} from "framer-motion"; */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event, idx) => (
             <motion.div
               key={event._id || idx}
-              className="bg-[color:var(--background)] border border-[color:var(--border)] p-5 sm:p-6 rounded-2xl shadow hover:shadow-lg transition-transform transform hover:scale-[1.02]"
-              whileHover={{ y: -3 }}
+              className="relative bg-[color:var(--background)] border border-[color:var(--border)] p-6 rounded-3xl shadow-md hover:shadow-xl transition-transform transform hover:scale-[1.03] flex flex-col justify-between"
+              whileHover={{ y: -5 }}
             >
-              <h4 className="text-lg sm:text-xl font-semibold text-blue-600">
-                {event.title || "Unnamed Event"}
-              </h4>
-              <p className="text-sm text-[color:var(--secondary)] mb-2">
-                {event.category} - {event.eventId}
-              </p>
+              {/* Top Badge */}
+              <span className="absolute top-4 right-4 px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
+                {event.category || "General"}
+              </span>
+
+              {/* Event Title */}
+              <div className="mb-4">
+                <h4 className="text-lg sm:text-xl font-bold text-[color:var(--foreground)] mb-1">
+                  {event.title || "Unnamed Event"}
+                </h4>
+                <p className="text-sm text-[color:var(--secondary)]">
+                  Event ID: {event.eventId || "N/A"}
+                </p>
+              </div>
+
+              {/* Description */}
               {event.description ? (
-                <p className="text-sm text-[color:var(--secondary)] leading-relaxed mb-3">
-                  {event.description.length > 120
-                    ? `${event.description.slice(0, 120)}...`
-                    : event.description}
+                <p className="text-sm text-[color:var(--secondary)] leading-relaxed mb-4 line-clamp-3">
+                  {event.description}
                 </p>
               ) : (
-                <p className="text-sm italic text-[var(--secondary)] mb-3">
+                <p className="text-sm italic text-gray-400 mb-4">
                   No description available
                 </p>
               )}
 
-              {event.winners?.length > 0 ? (
-                <ol className="list-decimal list-inside space-y-1 text-[color:var(--accent)] text-sm">
-                  {event.winners.map((winner, idx) => (
-                    <li key={winner._id || idx}>
-                      {winner.name || winner.email || "Unnamed Winner"}
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <p className="text-gray-400 italic text-sm">
-                  No winners listed
-                </p>
-              )}
+              {/* Winners */}
+              <div className="mb-4">
+                <h5 className="text-sm font-semibold text-[color:var(--accent)] mb-1">
+                  Winners
+                </h5>
+                {event.winners?.length > 0 ? (
+                  <ol className="list-decimal list-inside space-y-1 text-[color:var(--accent)] text-sm">
+                    {event.winners.map((winner, widx) => (
+                      <li key={winner._id || widx}>
+                        {winner.name || winner.email || "Unnamed Winner"}
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="text-gray-400 italic text-sm">
+                    No winners listed
+                  </p>
+                )}
+              </div>
+
+              {/* Action Button */}
+              {/* <a
+                href={`/events/${event.slug || "#"}`}
+                className="mt-auto w-full inline-block text-center px-4 py-3 bg-blue-500 text-white font-semibold rounded-xl shadow-md hover:bg-blue-600 transition"
+              >
+                View Event
+              </a> */}
             </motion.div>
           ))
         ) : (
-          <p className="col-span-full text-center text-gray-500">
+          <p className="col-span-full text-center text-gray-500 mt-6">
             No events found.
           </p>
         )}

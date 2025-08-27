@@ -8,6 +8,7 @@ import HeroSection from "@/components/home/Hero";
 import SponsorsSection from "@/components/home/Sponsors";
 import TimelineSection from "@/components/home/Timeline";
 import AfterMovie from "@/components/home/AfterMovie";
+import FloatingWinnersButton from "@/components/custom/myself/FloatingHofButton";
 
 export default function Home() {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -45,7 +46,8 @@ export default function Home() {
       <AfterMovie />
       <ContactSection />
       <SponsorsSection />
-      
+      {/* Floating Hof Button */}
+      <FloatingWinnersButton />
       {/* Scroll to Top Button (only visible at bottom) */}
       {showScrollTop && (
         <button

@@ -163,8 +163,8 @@ export default function EventDetailPage() {
           cursorCharacter="|"
         />
 
-        <form onSubmit={handleEnroll} className="space-y-6 text-center">
-          <h2 className="text-xl font-semibold text-[var(--highlight)]">
+        <form onSubmit={handleEnroll} className="md:space-y-6 space-y-2 text-center">
+          <h2 className="text-lg font-semibold text-[var(--highlight)]">
             {winnersCount > 0
               ? `✅ Event Completed 🏆 Winners: ${winners.map((w) => w.name).join(", ")}`
               : status === "success" || status === "already"
@@ -172,7 +172,7 @@ export default function EventDetailPage() {
               : "🚀 Participate Now"}
           </h2>
 
-          <div className="flex flex-wrap md:gap-4 justify-center">
+          <div className="flex flex-wrap md:gap-4 gap-2 justify-center">
             {student ? (
               <>
                 <EnrollButton eventId={_id} type={type} isEnrolled={isEnrolled} />

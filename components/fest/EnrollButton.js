@@ -124,7 +124,7 @@ export default function EnrollButton({ eventId, type, isEnrolled }) {
   // -------------------- UI --------------------
   if (isEnrolled) {
     return (
-      <button className="px-4 py-2 bg-gray-400 text-white rounded cursor-not-allowed">
+      <button className="px-4 py-2 bg-green-600 text-white rounded-full cursor-not-allowed">
         Already Enrolled
       </button>
     );
@@ -135,7 +135,7 @@ export default function EnrollButton({ eventId, type, isEnrolled }) {
       <button
         onClick={handleSoloEnroll}
         disabled={status === "loading"}
-        className="px-4 py-2 bg-blue-600 text-white rounded"
+        className="px-4 py-2 bg-blue-600 text-white rounded-full"
       >
         {status === "loading" ? "Enrolling..." : "Enroll"}
       </button>
@@ -147,7 +147,7 @@ export default function EnrollButton({ eventId, type, isEnrolled }) {
     <>
       <button
         onClick={() => setShowTeamModal(true)}
-        className="px-4 py-2 bg-green-600 text-white rounded"
+        className="px-4 py-2 bg-green-600 text-white rounded-full"
       >
         Enroll Team
       </button>
