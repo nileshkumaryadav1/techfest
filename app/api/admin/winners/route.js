@@ -1,50 +1,72 @@
+// /api/admin/winners/route.js
 import { NextResponse } from "next/server";
 import connectDB from "@/utils/db";
 import Event from "@/models/Event";
 import Enrollment from "@/models/Enrollment";
-import Student from "@/models/Student";
 
-// 🔹 GET: Fetch all events with enrolled students and winners
+// ---------------------------------------------------------------------------
+// GET: Return all events + enrolled students (flattened per event) + winners
+// ---------------------------------------------------------------------------
 export async function GET() {
   try {
     await connectDB();
 
-    const events = await Event.find().lean();
-    const enrollments = await Enrollment.find()
-      .populate("registeredBy") // the student who registered / leader
-      .populate("participants") // all participants of the enrollment
+    // Pull only the fields you actually render
+    const events = await Event.find(
+      {},
+      "title category venue date time coordinators winners"
+    ).lean();
+
+    // Pull minimal enrollment fields; populate participants with minimal fields
+    const enrollments = await Enrollment.find(
+      {},
+      "eventId participants registeredBy"
+    )
+      .populate("participants", "name email phone festId")
       .lean();
 
+    // Build: eventId -> Map(studentId -> studentObj) to de-duplicate
     const enrollmentMap = {};
-    enrollments.forEach((e) => {
+
+    for (const e of enrollments) {
       const eid = e.eventId?.toString();
-      const student = e.studentId;
+      if (!eid || !Array.isArray(e.participants)) continue;
 
-      if (!eid || !student || !student._id) return;
+      if (!enrollmentMap[eid]) enrollmentMap[eid] = new Map();
 
-      if (!enrollmentMap[eid]) enrollmentMap[eid] = [];
+      for (const student of e.participants) {
+        const sid = student?._id?.toString();
+        if (!sid) continue;
+        // Ensure unique student per event
+        if (!enrollmentMap[eid].has(sid)) {
+          enrollmentMap[eid].set(sid, {
+            _id: student._id,
+            name: student.name,
+            phone: student.phone,
+            email: student.email,
+            festId: student.festId,
+          });
+        }
+      }
+    }
 
-      enrollmentMap[eid].push({
-        _id: student._id,
-        name: student.name,
-        phone: student.phone,
-        email: student.email,
-        festId: student.festId,
-      });
+    const fullData = events.map((event) => {
+      const list = Array.from(
+        (enrollmentMap[event._id.toString()] || new Map()).values()
+      );
+      return {
+        _id: event._id,
+        title: event.title,
+        category: event.category,
+        venue: event.venue,
+        date: event.date,
+        time: event.time,
+        coordinators: event.coordinators,
+        enrolledStudents: list,
+        enrolledCount: list.length,
+        winners: event.winners || [],
+      };
     });
-
-    const fullData = events.map((event) => ({
-      _id: event._id,
-      title: event.title,
-      category: event.category,
-      venue: event.venue,
-      date: event.date,
-      time: event.time,
-      coordinators: event.coordinators,
-      enrolledStudents: enrollmentMap[event._id.toString()] || [],
-      enrolledCount: (enrollmentMap[event._id.toString()] || []).length,
-      winners: event.winners || [],
-    }));
 
     return NextResponse.json({ success: true, events: fullData });
   } catch (err) {
@@ -56,7 +78,18 @@ export async function GET() {
   }
 }
 
-// 🔹 PATCH: Replace the winner list entirely
+// ---------------------------------------------------------------------------
+// Helpers for PATCH/PUT
+// ---------------------------------------------------------------------------
+function normalizeWinnerId(w) {
+  // Winners might be objects with _id, or plain ids; normalize to string
+  const id = typeof w === "string" ? w : w?._id;
+  return id ? String(id) : null;
+}
+
+// ---------------------------------------------------------------------------
+// PATCH: Replace winners entirely (validate they are enrolled participants)
+// ---------------------------------------------------------------------------
 export async function PATCH(req) {
   try {
     await connectDB();
@@ -77,13 +110,17 @@ export async function PATCH(req) {
       );
     }
 
+    // All enrolled student ids (from participants array)
     const enrolledIds = await Enrollment.find({ eventId }).distinct(
-      "studentId"
+      "participants"
     );
     const enrolledSet = new Set(enrolledIds.map(String));
 
-    const isValid = winners.every((w) => enrolledSet.has(w._id));
-    if (!isValid) {
+    const invalid = winners.find((w) => {
+      const wid = normalizeWinnerId(w);
+      return !wid || !enrolledSet.has(wid);
+    });
+    if (invalid) {
       return NextResponse.json(
         {
           success: false,
@@ -114,7 +151,9 @@ export async function PATCH(req) {
   }
 }
 
-// 🔹 PUT: Add winners to existing list
+// ---------------------------------------------------------------------------
+// PUT: Add winners (merge with existing; no duplicates; validate enrollment)
+// ---------------------------------------------------------------------------
 export async function PUT(req) {
   try {
     await connectDB();
@@ -135,13 +174,17 @@ export async function PUT(req) {
       );
     }
 
+    // Validate winners belong to enrolled participants
     const enrolledIds = await Enrollment.find({ eventId }).distinct(
-      "studentId"
+      "participants"
     );
     const enrolledSet = new Set(enrolledIds.map(String));
 
-    const isValid = winners.every((w) => enrolledSet.has(w._id));
-    if (!isValid) {
+    const invalid = winners.find((w) => {
+      const wid = normalizeWinnerId(w);
+      return !wid || !enrolledSet.has(wid);
+    });
+    if (invalid) {
       return NextResponse.json(
         {
           success: false,
@@ -151,12 +194,18 @@ export async function PUT(req) {
       );
     }
 
-    const existingMap = new Map(
-      event.winners.map((w) => [w._id.toString(), w])
-    );
-    winners.forEach((w) => existingMap.set(w._id.toString(), w));
+    // Merge by _id (object or id string supported)
+    const byId = new Map();
+    for (const w of event.winners || []) {
+      const wid = normalizeWinnerId(w);
+      if (wid) byId.set(wid, w);
+    }
+    for (const w of winners) {
+      const wid = normalizeWinnerId(w);
+      if (wid) byId.set(wid, w);
+    }
 
-    event.winners = Array.from(existingMap.values());
+    event.winners = Array.from(byId.values());
     await event.save();
 
     return NextResponse.json({
@@ -177,7 +226,9 @@ export async function PUT(req) {
   }
 }
 
-// 🔹 DELETE: Remove all winners from an event
+// ---------------------------------------------------------------------------
+// DELETE: Clear winners for an event
+// ---------------------------------------------------------------------------
 export async function DELETE(req) {
   try {
     await connectDB();

@@ -117,6 +117,7 @@ export async function POST(req) {
     const event = await Event.findById(eventId).lean();
     const eventDetails = event
       ? {
+          slug: event.slug,
           name: event.title,
           date: event.date,
           time: event.time,

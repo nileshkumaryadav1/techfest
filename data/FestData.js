@@ -1,6 +1,6 @@
 export const FestData = {
   name: "CentreFest'25",
-  month: "08",
+  month: "09",
   year: "2025",
   theme: "TechYug",
   tagline: "The Era of HUM∆N and M∆CHINE",
@@ -8,10 +8,10 @@ export const FestData = {
   ogImage: "/logo.png",
   description:
     "Welcome to TechYug — where tradition meets transformation, and imagination merges with innovation. In this new era, the synergy between human intelligence and artificial intelligence is redefining the boundaries of possibility.",
-  date: "31st July - 3rd August, 2025",
-  startDate: "2025-07-31",
-  endDate: "2025-08-03",
-  venue: "H1 & H2, KEC Katihar, Bihar",
+  date: "18th - 20th September, 2025",
+  startDate: "18-09-2025",
+  endDate: "20-09-2025",
+  venue: "H2, Katihar Engineering College, Katihar, Bihar",
   brochure: "https://centreorg.vercel.app/",
   brochureUrl: "https://centreorg.vercel.app/",
   organizers: "Centre Organization, KEC Katihar",
@@ -19,7 +19,7 @@ export const FestData = {
   sponsors: "KEC Katihar, Centre Organization",
   totalEventCount: 13,
   totalWorkshopCount: 0,
-  totalNumberOfDays: 4,
+  totalNumberOfDays: 3,
   totalParticipantCount: 24,
   socialMedia: {
     whatsapp: "https://chat.whatsapp.com/JSrqwbsqGz3BnB7zUNrfOE",

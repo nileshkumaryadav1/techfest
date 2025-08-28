@@ -58,15 +58,17 @@ export default function EnrolledInTeam() {
         enroll.registeredBy?.name?.toLowerCase().includes(search.toLowerCase())
     );
 
-  // De-enroll
-  const handleDeEnroll = async (enrollId) => {
+  // Remove single event enrollment
+  const handleDeEnroll = async (eventId) => {
     if (!confirm("Are you sure you want to de-enroll from this event?")) return;
     try {
       const res = await axios.delete("/api/enrollments", {
-        data: { enrollId, studentId: student._id },
+        data: { eventId, studentId: student._id },
       });
       if (res.status === 200) {
-        setEnrollments((prev) => prev.filter((e) => e._id !== enrollId));
+        setEnrollments(
+          (prev) => prev.filter((e) => e.eventId !== eventId) // use schema field
+        );
       } else {
         alert("Failed to de-enroll.");
       }
@@ -76,6 +78,26 @@ export default function EnrolledInTeam() {
     }
   };
 
+  // Remove all events enrollment
+  // const handleDeEnrollAll = async () => {
+  //   if (!confirm("Are you sure you want to de-enroll from ALL events?")) return;
+  //   try {
+  //     const res = await axios.delete("/api/enrollments", {
+  //       data: { studentId: student._id },
+  //     });
+  //     if (res.status === 200) {
+  //       setEnrollments((prev) =>
+  //         prev.filter((e) => !e.participants.includes(student._id))
+  //       );
+  //     } else {
+  //       alert("Failed to de-enroll all.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Error de-enrolling all:", err);
+  //     alert("Something went wrong.");
+  //   }
+  // };
+
   if (loading)
     return (
       <section className="flex flex-col gap-4">
@@ -84,6 +106,8 @@ export default function EnrolledInTeam() {
       </section>
     );
   if (!student) return null;
+
+  // console.log(studentEnrollments);
 
   return (
     <section className="py-6 px-3 sm:px-6 md:px-12">
@@ -242,7 +266,7 @@ export default function EnrolledInTeam() {
                     </Link>
 
                     <button
-                      onClick={() => handleDeEnroll(enroll._id)}
+                      onClick={() => handleDeEnroll(enroll.eventId)}
                       disabled={
                         event?.winners?.length > 0 ||
                         event?.status === "cancelled"
