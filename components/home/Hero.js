@@ -24,7 +24,7 @@ export default function HeroSection() {
           speed={1}
           chaos={0.1}
         > */}
-        <div className="max-w-6xl w-full z-10 md:space-y-8">
+        <div className="max-w-6xl w-full z-10">
           {/* Fest Name */}
           <h1 className="text-[clamp(3rem,10vw,6rem)] font-extrabold leading-tight tracking-tight drop-shadow-md">
             <span className="bg-gradient-to-r from-[color:var(--accent)] to-[color:var(--highlight)] bg-clip-text text-transparent">
@@ -39,7 +39,7 @@ export default function HeroSection() {
               delay={150}
               animateBy="words"
               direction="top"
-              className="text-[clamp(1rem,3vw,1.5rem)] font-semibold text-[color:var(--highlight)]"
+              className="text-[clamp(1rem,3vw,1.5rem)] font-semibold text-[color:var(--secondary)]"
             />
           </p>
 
@@ -60,17 +60,17 @@ export default function HeroSection() {
           </div>
 
           {/* Count Down */}
-          <div className="flex flex-col items-center gap-3 pt-6 text-sm sm:text-base md:text-lg text-[color:var(--secondary)]">
+          <div>
             <FestCountdown />
           </div>
 
           {/* Date & Venue */}
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 md:pt-6 text-sm sm:text-base md:text-lg text-[color:var(--secondary)]">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 text-sm sm:text-base md:text-lg text-[color:var(--secondary)]">
             {/* <div className="flex items-center gap-2">
                 <Clock4 className="w-5 h-5 text-[color:var(--accent)]" />
                 <span>{FestData.date}</span>
               </div> */}
-            <span className="hidden sm:inline-block">|</span>
+            {/* <span className="hidden sm:inline-block">|</span> */}
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-[color:var(--accent)]" />
               <span>{FestData.venue}</span>

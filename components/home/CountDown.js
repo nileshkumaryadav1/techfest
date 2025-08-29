@@ -46,22 +46,23 @@ export default function FestCountdown() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center text-center p-2 sm:p-10">
-      <h2 className="text-lg sm:text-4xl font-extrabold md:mb-6 mb-2 bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent animate-pulse">
+    <div className="flex flex-col items-center justify-center text-center px-2 py-2">
+      {/* Title */}
+      <h2 className="text-base sm:text-2xl md:text-3xl font-extrabold mb-4 bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent animate-pulse">
         ⏳ Countdown to Fest 🎉
       </h2>
 
       {/* Countdown Blocks */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 md:gap-4 gap-2 sm:gap-6 w-full max-w-2xl">
+      <div className="grid grid-cols-4 gap-2 sm:gap-4 w-full max-w-md sm:max-w-2xl">
         {Object.entries(timeLeft).map(([label, value]) => (
           <div
             key={label}
-            className="flex flex-col items-center justify-center rounded-2xl shadow-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white px-4 md:py-6 py-2 sm:py-8 transform hover:scale-105 transition-all duration-300"
+            className="flex flex-col items-center justify-center rounded-xl shadow-md bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white px-2 py-3 sm:px-4 sm:py-6"
           >
-            <span className="text-3xl sm:text-5xl font-extrabold tracking-widest">
+            <span className="text-lg sm:text-3xl md:text-4xl font-extrabold tracking-wide">
               {String(value).padStart(2, "0")}
             </span>
-            <span className="text-sm sm:text-base uppercase mt-2 font-medium tracking-wide opacity-90">
+            <span className="text-[10px] sm:text-sm uppercase mt-1 font-medium opacity-90">
               {label}
             </span>
           </div>
@@ -69,7 +70,7 @@ export default function FestCountdown() {
       </div>
 
       {/* Fest Date */}
-      <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-lg md:mt-8 mt-2">
+      <p className="text-gray-700 dark:text-gray-300 text-xs sm:text-base md:text-lg mt-4 sm:mt-6">
         📅 Fest Dates:{" "}
         <span className="font-semibold text-indigo-600 dark:text-indigo-400">
           {FestData.date}

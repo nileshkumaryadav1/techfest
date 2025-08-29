@@ -3,7 +3,7 @@ export const FestData = {
   month: "09",
   year: "2025",
   theme: "TechYug",
-  tagline: "The Era of HUM∆N and M∆CHINE",
+  tagline: "The Era of HUM∆N + M∆CHINE",
   url: "https://centrefest.vercel.app/",
   ogImage: "/logo.png",
   description:
