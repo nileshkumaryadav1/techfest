@@ -6,7 +6,7 @@ import { Search } from "lucide-react";
 import LoadingState from "@/components/custom/myself/LoadingState";
 import LoadingSkeleton from "@/components/custom/myself/LoadingSkeleton";
 
-const monthNames = [
+const MONTHS = [
   "January",
   "February",
   "March",
@@ -25,49 +25,52 @@ export default function HallOfFamePage() {
   const [archives, setArchives] = useState([]);
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [selectedArchive, setSelectedArchive] = useState(null);
+
   const [years, setYears] = useState([]);
   const [months, setMonths] = useState([]);
-  const [selectedArchive, setSelectedArchive] = useState(null);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("default");
 
-  // Fetch all archives
+  // Initial fetch
   useEffect(() => {
     const fetchArchives = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const res = await fetch("/api/admin/fest-archive");
         if (!res.ok) throw new Error("Failed to fetch archives");
+
         const data = await res.json();
         setArchives(data || []);
 
-        const uniqueYears = Array.from(new Set(data.map((a) => a.year))).sort(
+        const uniqueYears = [...new Set(data.map((a) => a.year))].sort(
           (a, b) => b - a
         );
         setYears(uniqueYears);
 
-        if (uniqueYears.length > 0) {
-          const lastYear = uniqueYears[0];
-          setSelectedYear(lastYear);
+        if (!uniqueYears.length) return;
 
-          const monthsOfYear = data
-            .filter((a) => a.year === lastYear)
-            .map((a) => a.month)
-            .sort((a, b) => a - b);
-          setMonths(monthsOfYear);
+        const latestYear = uniqueYears[0];
+        setSelectedYear(latestYear);
 
-          if (monthsOfYear.length > 0) {
-            const lastMonth = monthsOfYear[monthsOfYear.length - 1];
-            setSelectedMonth(lastMonth);
+        const yearMonths = data
+          .filter((a) => a.year === latestYear)
+          .map((a) => a.month)
+          .sort((a, b) => a - b);
+        setMonths(yearMonths);
 
-            const defaultArchive = data.find(
-              (a) => a.year === lastYear && a.month === lastMonth
-            );
-            setSelectedArchive(defaultArchive || null);
-          }
-        }
+        if (!yearMonths.length) return;
+
+        const latestMonth = yearMonths[yearMonths.length - 1];
+        setSelectedMonth(latestMonth);
+
+        const defaultArchive = data.find(
+          (a) => a.year === latestYear && a.month === latestMonth
+        );
+        setSelectedArchive(defaultArchive || null);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -81,21 +84,21 @@ export default function HallOfFamePage() {
     const year = Number(e.target.value);
     setSelectedYear(year);
 
-    const monthsOfYear = archives
+    const yearMonths = archives
       .filter((a) => a.year === year)
       .map((a) => a.month)
       .sort((a, b) => a - b);
-    setMonths(monthsOfYear);
+    setMonths(yearMonths);
 
-    if (monthsOfYear.length > 0) {
-      const lastMonth = monthsOfYear[monthsOfYear.length - 1];
-      setSelectedMonth(lastMonth);
+    if (!yearMonths.length) return;
 
-      const archive = archives.find(
-        (a) => a.year === year && a.month === lastMonth
-      );
-      setSelectedArchive(archive || null);
-    }
+    const latestMonth = yearMonths[yearMonths.length - 1];
+    setSelectedMonth(latestMonth);
+
+    const archive = archives.find(
+      (a) => a.year === year && a.month === latestMonth
+    );
+    setSelectedArchive(archive || null);
   };
 
   const handleMonthClick = (month) => {
@@ -106,6 +109,7 @@ export default function HallOfFamePage() {
     setSelectedArchive(archive || null);
   };
 
+  // States
   if (loading) return <LoadingState />;
   if (error)
     return <div className="text-center mt-10 text-red-500">{error}</div>;
@@ -117,6 +121,7 @@ export default function HallOfFamePage() {
       </div>
     );
 
+  // Archive data
   const {
     name,
     month,
@@ -133,6 +138,7 @@ export default function HallOfFamePage() {
     enrolledStudents = [],
   } = selectedArchive;
 
+  // Filtering
   let filteredEvents = events.filter(
     (e) =>
       e.title?.toLowerCase().includes(search.toLowerCase()) ||
@@ -159,6 +165,7 @@ export default function HallOfFamePage() {
       >
         🎖 Hall of Fame
       </motion.h1>
+
       {/* Year & Month controls */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
         <select
@@ -184,11 +191,12 @@ export default function HallOfFamePage() {
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              {monthNames[m - 1]}
+              {MONTHS[m - 1]}
             </button>
           ))}
         </div>
       </div>
+
       {/* Archive detail */}
       <div className="bg-[var(--background)] shadow-md rounded-2xl p-6 sm:p-8 mb-10 border border-[var(--border)]">
         <h2 className="text-2xl sm:text-3xl font-bold text-[var(--accent)] mb-4 text-center">
@@ -196,7 +204,7 @@ export default function HallOfFamePage() {
         </h2>
         <div className="space-y-2 text-sm sm:text-base text-[var(--secondary)]">
           <p>
-            <strong>Month:</strong> {monthNames[month - 1]} &nbsp;
+            <strong>Month:</strong> {MONTHS[month - 1]} &nbsp;
             <strong>Year:</strong> {year}
           </p>
           {theme && (
@@ -234,7 +242,7 @@ export default function HallOfFamePage() {
           )}
         </div>
 
-        {/* Top Stats */}
+        {/* Stats */}
         <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-6">
           <StatCard
             title="Registered"
@@ -249,10 +257,12 @@ export default function HallOfFamePage() {
           <StatCard title="Events" value={events.length} color="purple" />
         </div>
       </div>
+
       {/* Events Section */}
       <h3 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-10 text-[var(--foreground)]">
         All Events & Winners
       </h3>
+
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-8">
         <div className="relative w-full sm:w-1/3">
@@ -276,12 +286,13 @@ export default function HallOfFamePage() {
           <option value="winners">Sort: Winners</option>
         </select>
       </div>
+
       {/* Event Count */}
       <p className="text-sm text-[color:var(--secondary)] mb-4 text-center">
         Showing {filteredEvents.length} events & their winners
       </p>
+
       {/* Event Cards */}
-      {/* import {motion} from "framer-motion"; */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event, idx) => (
@@ -290,7 +301,25 @@ export default function HallOfFamePage() {
               className="relative bg-[color:var(--background)] border border-[color:var(--border)] p-6 rounded-3xl shadow-md hover:shadow-xl transition-transform transform hover:scale-[1.03] flex flex-col justify-between"
               whileHover={{ y: -5 }}
             >
-              {/* Top Badge */}
+              {/* Serial Number Badge */}
+              <div className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold rounded-full bg-[var(--background)] text-[color:var(--accent)]">
+                #{idx + 1}
+              </div>
+
+              {/* image */}
+              {event.imageUrl ? (
+                <img
+                  src={event.imageUrl}
+                  alt={event.title}
+                  className="w-full h-40 object-cover rounded-2xl mb-4"
+                />
+              ) : (
+                <div className="w-full h-40 flex items-center justify-center bg-gray-100 text-gray-400 rounded-2xl mb-4">
+                  No Image
+                </div>
+              )}
+
+              {/* Badge */}
               <span className="absolute top-4 right-4 px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
                 {event.category || "General"}
               </span>
@@ -306,27 +335,44 @@ export default function HallOfFamePage() {
               </div>
 
               {/* Description */}
-              {event.description ? (
-                <p className="text-sm text-[color:var(--secondary)] leading-relaxed mb-4 line-clamp-3">
-                  {event.description}
-                </p>
-              ) : (
-                <p className="text-sm italic text-gray-400 mb-4">
-                  No description available
-                </p>
-              )}
+              <p className="text-sm text-[color:var(--secondary)] leading-relaxed mb-4 line-clamp-3">
+                {event.description || (
+                  <span className="italic text-gray-400">
+                    No description available
+                  </span>
+                )}
+              </p>
 
               {/* Winners */}
-              <div className="mb-4">
+              <motion.div
+                className="mb-4"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { staggerChildren: 0.1 },
+                  },
+                }}
+              >
                 <h5 className="text-sm font-semibold text-[color:var(--accent)] mb-1">
                   Winners
                 </h5>
                 {event.winners?.length > 0 ? (
                   <ol className="list-decimal list-inside space-y-1 text-[color:var(--accent)] text-sm">
                     {event.winners.map((winner, widx) => (
-                      <li key={winner._id || widx}>
+                      <motion.li
+                        key={winner._id || widx}
+                        variants={{
+                          hidden: { opacity: 0, x: -10 },
+                          visible: { opacity: 1, x: 0 },
+                        }}
+                      >
                         {winner.name || winner.email || "Unnamed Winner"}
-                      </li>
+                      </motion.li>
                     ))}
                   </ol>
                 ) : (
@@ -334,15 +380,7 @@ export default function HallOfFamePage() {
                     No winners listed
                   </p>
                 )}
-              </div>
-
-              {/* Action Button */}
-              {/* <a
-                href={`/events/${event.slug || "#"}`}
-                className="mt-auto w-full inline-block text-center px-4 py-3 bg-blue-500 text-white font-semibold rounded-xl shadow-md hover:bg-blue-600 transition"
-              >
-                View Event
-              </a> */}
+              </motion.div>
             </motion.div>
           ))
         ) : (

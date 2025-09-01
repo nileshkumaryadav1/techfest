@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import CountdownTimer from "../custom/CountdownTimer";
 import {
   Bookmark,
   Share2,
@@ -13,12 +12,11 @@ import {
   ArrowRight,
 } from "lucide-react";
 import EnrollButton from "./EnrollButton";
+import CountdownTimer from "../custom/CountdownTimer";
 
 export default function EventCard({ event }) {
-  const [enrolling, setEnrolling] = useState(false);
   const [student, setStudent] = useState(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const [showMore, setShowMore] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const {
@@ -33,16 +31,11 @@ export default function EventCard({ event }) {
     date = "",
     time = "",
     venue = "",
-    prizes = "",
-    ruleBookPdfUrl = "",
-    coordinators = [],
     registeredStudents = [],
     winners = [],
     status = "",
-    maxParticipants = 0,
   } = event || {};
 
-  const coordinatorPrimary = coordinators?.[0];
   const registeredCount = registeredStudents?.length || 0;
   const winnersCount = winners?.length || 0;
   const isCancelled = status === "cancelled";
@@ -64,28 +57,6 @@ export default function EventCard({ event }) {
       })
       .catch(console.error);
   }, [_id]);
-
-  const handleEnroll = async () => {
-    if (!student) return alert("Please log in first.");
-    setEnrolling(true);
-
-    try {
-      const res = await fetch("/api/enroll", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studentId: student._id, eventId: _id }),
-      });
-
-      const data = await res.json();
-      setEnrolling(false);
-
-      if (res.ok) setIsEnrolled(true);
-      else alert(data.message || "❌ Enrollment failed.");
-    } catch (err) {
-      setEnrolling(false);
-      alert("Something went wrong. Try again.");
-    }
-  };
 
   const handleShare = async (slug, title) => {
     // Build event detail URL dynamically
@@ -114,24 +85,20 @@ export default function EventCard({ event }) {
     Technical: "bg-[var(--accent)]",
     default: "bg-gray-600",
   };
-
-  // Utility function
   function formatTo12Hour(time) {
     if (!time) return "";
     const [hour, minute] = time.split(":").map(Number);
-
     let suffix = hour >= 12 ? "PM" : "AM";
-    let formattedHour = hour % 12 || 12; // convert 0 -> 12
+    let formattedHour = hour % 12 || 12;
     return `${formattedHour}:${minute.toString().padStart(2, "0")} ${suffix}`;
   }
 
-  // utils/date.js
   function formatDateToMonthName(dateString) {
     if (!dateString) return "";
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",
-      month: "long", // "short" for Aug, "long" for August
+      month: "long",
       day: "numeric",
     });
   }
@@ -140,9 +107,9 @@ export default function EventCard({ event }) {
     <motion.div
       whileHover={{ scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
-      className="flex flex-col h-full rounded-2xl border border-[color:var(--border)] shadow-md hover:shadow-lg transition duration-300 overflow-hidden"
+      className="relative flex flex-col h-full rounded-2xl border border-[color:var(--border)] shadow-md overflow-hidden group"
     >
-      {/* IMAGE SECTION */}
+      {/* IMAGE */}
       <div className="relative">
         {imageUrl ? (
           <Link href={`/events/${slug}`}>
@@ -170,7 +137,7 @@ export default function EventCard({ event }) {
         )}
 
         {/* Fav + Share */}
-        <div className="absolute top-3 right-3 flex gap-2">
+        <div className="absolute top-3 right-3 flex gap-2 z-20">
           <button
             onClick={toggleFavorite}
             className={`p-2 rounded-full bg-white shadow hover:bg-gray-50 transition ${
@@ -186,31 +153,43 @@ export default function EventCard({ event }) {
             <Share2 size={16} />
           </button>
         </div>
+
+        {/* DESKTOP HOVER OVERLAY */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileHover={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="hidden md:flex absolute inset-0 flex-col justify-end bg-black/60 p-4 opacity-0 group-hover:opacity-100 transition-all"
+        >
+          <p className="text-sm text-white line-clamp-3 mb-3">{description}</p>
+
+          <div className="flex gap-2">
+            <EnrollButton eventId={_id} type={type} isEnrolled={isEnrolled} />
+            <Link
+              href={`/events/${slug}`}
+              className="flex-1 inline-flex justify-center items-center gap-2 px-4 py-2 text-sm font-semibold rounded-full border border-white text-white hover:bg-white hover:text-black transition-all"
+            >
+              View Details <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </motion.div>
       </div>
 
-      {/* CONTENT SECTION */}
-      <div className="flex flex-col flex-1 p-4">
-        {/* Title */}
+      {/* CONTENT (ALWAYS VISIBLE ON MOBILE) */}
+      <div className="flex flex-col flex-1 p-4 md:p-4">
         <h3 className="text-lg font-bold mb-2 line-clamp-1 text-[color:var(--foreground)]">
           {title}
         </h3>
 
-        {/* Meta Info */}
         <div className="flex flex-wrap gap-2 text-xs text-gray-600 mb-3">
           {date && (
             <span className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded">
-              <Calendar size={12} />{" "}
-              <p className="text-sm text-gray-600">
-                {formatDateToMonthName(event.date)}
-              </p>
+              <Calendar size={12} /> {formatDateToMonthName(date)}
             </span>
           )}
           {time && (
             <span className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded">
-              <Clock size={12} />{" "}
-              <p className="text-sm text-gray-600">
-                {formatTo12Hour(event.time)}
-              </p>
+              <Clock size={12} /> {formatTo12Hour(time)}
             </span>
           )}
           {venue && (
@@ -218,154 +197,23 @@ export default function EventCard({ event }) {
               <MapPin size={12} /> {venue}
             </span>
           )}
+          {/* Countdown */}
+          <span className="flex items-center bg-gray-100 px-2 py-0.5 rounded">
+            <CountdownTimer
+              date={date}
+              time={time}
+              winnerDeclared={winnersCount > 0}
+              cancelled={isCancelled}
+            />
+          </span>
         </div>
 
-        {/* Description */}
-        {description && (
-          <p className="text-sm text-gray-500 line-clamp-2 mb-3">
-            {description}
-          </p>
-        )}
-
-        {/* Countdown */}
-        {/* <CountdownTimer
-          date={date}
-          time={time}
-          winnerDeclared={winnersCount > 0}
-          cancelled={isCancelled}
-        /> */}
-
-        {/* Seats Progress */}
-        {/* {maxParticipants > 0 && (
-          <div className="mt-3">
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-blue-500 h-2 rounded-full transition-all"
-                style={{
-                  width: `${Math.min(
-                    (registeredCount / maxParticipants) * 100,
-                    100
-                  )}%`,
-                }}
-              />
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              {registeredCount}/{maxParticipants} seats filled
-            </p>
-          </div>
-        )} */}
-
-        {/* Prizes */}
-        {/* {prizes && (
-          <p className="mt-3">
-            <span className="inline-block bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-2 py-0.5 rounded font-medium shadow text-sm">
-              🏆 {prizes}
-            </span>
-          </p>
-        )} */}
-
-        {/* Winners */}
-        {/* {winnersCount > 0 && (
-          <div className="mt-3 text-xs">
-            <p className="font-semibold text-gray-800 mb-1">Winners:</p>
-            <div className="flex flex-wrap gap-1">
-              {winners.map((w, i) => (
-                <span
-                  key={w._id}
-                  className={`px-2 py-0.5 rounded text-white ${
-                    i === 0
-                      ? "bg-yellow-500"
-                      : i === 1
-                      ? "bg-gray-400"
-                      : "bg-amber-700"
-                  }`}
-                >
-                  {i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"} {w.name}
-                </span>
-              ))}
-            </div>
-          </div>
-        )} */}
-
-        {/* Show More */}
-        {/* {(ruleBookPdfUrl || coordinatorPrimary) && (
-          <div className="mt-3">
-            <button
-              type="button"
-              onClick={() => setShowMore((v) => !v)}
-              className="text-xs font-medium underline underline-offset-2 text-blue-600"
-            >
-              {showMore ? "Hide details ▲" : "More details ▼"}
-            </button>
-
-            {showMore && (
-              <div className="mt-2 space-y-1 text-xs text-gray-700">
-                {ruleBookPdfUrl && (
-                  <p>
-                    📘{" "}
-                    <a
-                      href={ruleBookPdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600"
-                    >
-                      Rulebook (PDF)
-                    </a>
-                  </p>
-                )}
-                {coordinatorPrimary?.name && (
-                  <p>
-                    👥 <strong>{plural(coordinators.length, "Coordinator")}:</strong>{" "}
-                    {coordinatorPrimary.name}{" "}
-                    {coordinatorPrimary.contact && (
-                      <a
-                        href={`tel:${coordinatorPrimary.contact}`}
-                        className="text-blue-600"
-                      >
-                        {coordinatorPrimary.contact}
-                      </a>
-                    )}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        )} */}
-
-        {/* BOTTOM BUTTONS */}
-        <div className="mt-4 flex flex-col md:gap-2 gap-1">
-          {/* Single + Team Enroll Button */}
+        {/* MOBILE ACTION BUTTONS (ALWAYS SHOWN) */}
+        <div className="flex flex-col gap-2 mt-auto md:hidden">
           <EnrollButton eventId={_id} type={type} isEnrolled={isEnrolled} />
-
-          {/* <button
-            onClick={handleEnroll}
-            disabled={
-              enrolling || isEnrolled || winnersCount > 0 || isCancelled
-            }
-            className={`w-full px-4 py-2 rounded-full font-semibold text-sm sm:text-base transition ${
-              isCancelled
-                ? "bg-red-500 text-white"
-                : winnersCount > 0
-                ? "bg-gray-400 text-white"
-                : isEnrolled
-                ? "bg-green-500 text-white"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
-            }`}
-          >
-            {isCancelled
-              ? "Cancelled ❌"
-              : winnersCount > 0
-              ? "Closed 🏁"
-              : isEnrolled
-              ? "Enrolled ✅"
-              : enrolling
-              ? "Enrolling..."
-              : "Enroll"}
-          </button> */}
-
           <Link
             href={`/events/${slug}`}
-            className="inline-flex items-center gap-2 px-8 py-2 text-base font-semibold rounded-full border border-[color:var(--highlight)] text-[color:var(--highlight)] hover:bg-[color:var(--highlight)] hover:text-[color:var(--background)] transition-all shadow-md"
+            className="inline-flex items-center justify-center gap-2 px-6 py-2 text-sm font-semibold rounded-full border border-[color:var(--highlight)] text-[color:var(--highlight)] hover:bg-[color:var(--highlight)] hover:text-white transition-all shadow-sm"
           >
             View Details <ArrowRight className="w-4 h-4" />
           </Link>
