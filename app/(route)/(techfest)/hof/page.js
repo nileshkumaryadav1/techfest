@@ -35,6 +35,17 @@ export default function HallOfFamePage() {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("default");
 
+  const fetchStudentDetails = async (studentIds) => {
+    try {
+      const res = await fetch(`/api/students?ids=${studentIds.join(",")}`);
+      if (!res.ok) throw new Error("Failed to fetch student details");
+      return await res.json(); // expect { students: [...] }
+    } catch (err) {
+      console.error("Student fetch error:", err);
+      return { students: [] };
+    }
+  };
+
   // Initial fetch
   useEffect(() => {
     const fetchArchives = async () => {
@@ -44,19 +55,49 @@ export default function HallOfFamePage() {
         if (!res.ok) throw new Error("Failed to fetch archives");
 
         const data = await res.json();
-        setArchives(data || []);
 
-        const uniqueYears = [...new Set(data.map((a) => a.year))].sort(
+        // ✅ Collect all unique winner IDs
+        const winnerIds = [
+          ...new Set(
+            data.flatMap((archive) =>
+              archive.events.flatMap(
+                (event) => event.winners?.map((w) => w.studentId) || []
+              )
+            )
+          ),
+        ].filter(Boolean);
+
+        // ✅ Fetch student details
+        const { students } = await fetchStudentDetails(winnerIds);
+
+        // ✅ Map studentId → student
+        const studentMap = Object.fromEntries(students.map((s) => [s._id, s]));
+
+        // ✅ Merge into archives
+        const enrichedData = data.map((archive) => ({
+          ...archive,
+          events: archive.events.map((event) => ({
+            ...event,
+            winners: event.winners?.map((w) => ({
+              ...w,
+              college: studentMap[w.studentId]?.college || "Unknown College",
+            })),
+          })),
+        }));
+
+        setArchives(enrichedData);
+
+        // same year/month logic
+        const uniqueYears = [...new Set(enrichedData.map((a) => a.year))].sort(
           (a, b) => b - a
         );
         setYears(uniqueYears);
-
         if (!uniqueYears.length) return;
 
         const latestYear = uniqueYears[0];
         setSelectedYear(latestYear);
 
-        const yearMonths = data
+        const yearMonths = enrichedData
           .filter((a) => a.year === latestYear)
           .map((a) => a.month)
           .sort((a, b) => a - b);
@@ -67,7 +108,7 @@ export default function HallOfFamePage() {
         const latestMonth = yearMonths[yearMonths.length - 1];
         setSelectedMonth(latestMonth);
 
-        const defaultArchive = data.find(
+        const defaultArchive = enrichedData.find(
           (a) => a.year === latestYear && a.month === latestMonth
         );
         setSelectedArchive(defaultArchive || null);
@@ -358,22 +399,47 @@ export default function HallOfFamePage() {
                   },
                 }}
               >
-                <h5 className="text-sm font-semibold text-[color:var(--accent)] mb-1">
-                  Winners
+                <h5 className="text-base font-bold text-yellow-500 mb-2 flex items-center gap-2">
+                  🏆 Winners
                 </h5>
+
                 {event.winners?.length > 0 ? (
-                  <ol className="list-decimal list-inside space-y-1 text-[color:var(--accent)] text-sm">
-                    {event.winners.map((winner, widx) => (
-                      <motion.li
-                        key={winner._id || widx}
-                        variants={{
-                          hidden: { opacity: 0, x: -10 },
-                          visible: { opacity: 1, x: 0 },
-                        }}
-                      >
-                        {winner.name || winner.email || "Unnamed Winner"}
-                      </motion.li>
-                    ))}
+                  <ol className="space-y-3">
+                    {event.winners.map((winner, widx) => {
+                      const student = selectedArchive.registeredStudents?.find(
+                        (s) => s._id === winner._id
+                      );
+
+                      // Medal emoji for 1st, 2nd, 3rd
+                      const medal =
+                        widx === 0
+                          ? "🥇"
+                          : widx === 1
+                          ? "🥈"
+                          : widx === 2
+                          ? "🥉"
+                          : "🏅";
+
+                      return (
+                        <motion.li
+                          key={winner._id || widx}
+                          className="flex items-center gap-2 bg-gradient-to-r from-yellow-50 to-yellow-100 border border-yellow-300 rounded-xl px-3 py-2 shadow-sm"
+                          whileHover={{ scale: 1.02 }}
+                        >
+                          <span className="text-lg">{medal}</span>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-[color:var(--foreground)]">
+                              {winner.name || "Unnamed Winner"}
+                            </span>
+                            <span className="text-xs text-gray-600">
+                              {student?.college ||
+                                winner.college ||
+                                "Unknown College"}
+                            </span>
+                          </div>
+                        </motion.li>
+                      );
+                    })}
                   </ol>
                 ) : (
                   <p className="text-gray-400 italic text-sm">

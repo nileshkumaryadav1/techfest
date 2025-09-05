@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import axios from "axios";
 import AdminSidebar from "@/components/AdminSidebar";
 import { Menu } from "lucide-react";
 import Link from "next/link";
@@ -14,52 +13,20 @@ export default function AdminLayout({ children }) {
   const [adminUser, setAdminUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // ✅ Validate admin directly with DB
-  const validateAdmin = async () => {
-    try {
-      const user = JSON.parse(localStorage.getItem("admin"));
-
-      // Skip check if already on login page
-      if (pathname === "/admin/login") {
-        setAuthChecked(true);
-        return;
-      }
-
-      // No localStorage user → redirect
-      if (!user || (user.role !== "admin" && user.role !== "superadmin")) {
-        localStorage.removeItem("admin");
-        router.replace("/admin/login");
-        return;
-      }
-
-      // Fetch all admins from DB
-      const res = await axios.get("/api/admin/login");
-      const admins = res.data.admins || [];
-
-      // Check if localStorage admin exists in DB
-      const match = admins.find((a) => a.email === user.email);
-
-      if (!match) {
-        // ❌ Not in DB → logout
-        localStorage.removeItem("admin");
-        router.replace("/admin/login");
-        return;
-      }
-
-      // ✅ Valid admin
+  // ✅ Auth check
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("admin"));
+    if (pathname === "/admin/login") {
+      setAuthChecked(true);
+      return;
+    }
+    if (!user || (user.role !== "admin" && user.role !== "superadmin")) {
+      router.push("/admin/login");
+    } else {
       setAdminUser(user);
       setAuthChecked(true);
-    } catch (err) {
-      console.error("Admin validation failed:", err);
-      localStorage.removeItem("admin");
-      router.replace("/admin/login");
     }
-  };
-
-  // Run validation on mount + pathname change
-  useEffect(() => {
-    validateAdmin();
-  }, [pathname]);
+  }, [pathname, router]);
 
   // ✅ Close sidebar with ESC
   useEffect(() => {
@@ -69,10 +36,22 @@ export default function AdminLayout({ children }) {
   }, []);
 
   const handleLogout = () => {
-    if (!confirm("Are you sure you want to logout?")) return;
-    localStorage.removeItem("admin");
-    setAdminUser(null);
-    router.replace("/admin/login");
+    try {
+      // Confirm logout
+      if (!confirm("Are you sure you want to logout?")) return;
+
+      // Clear stored session/token
+      localStorage.removeItem("admin");
+
+      // Clear adminUser state
+      setAdminUser(null);
+
+      // Redirect to login with replace to prevent going back
+      router.replace("/admin/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      alert("Logout failed. Please try again.");
+    }
   };
 
   if (!authChecked) {
