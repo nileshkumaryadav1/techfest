@@ -56,13 +56,11 @@ export default function DashboardPage() {
       }}
     >
       <div className="max-w-4xl mx-auto space-y-6">
-        <section>
-          {/* <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+        {/* <section>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
             <CalendarCheck size={20} /> Registered Events
-          </h2> */}
-
-          {/* <EnrolledEvents studentId={student._id} /> */}
-        </section>
+          </h2>
+        </section> */}
         <section>
           <EnrolledInTeam />
         </section>

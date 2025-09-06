@@ -80,9 +80,9 @@ export default function EventCard({ event }) {
 
   const categoryColors = {
     Gaming: "bg-purple-600",
-    CULTURAL: "bg-[var(--highlight)]",
+    CULTURAL: "bg-[var(--highlight)] text-gray-900",
     Cultural: "bg-[var(--highlight)]",
-    Technical: "bg-[var(--accent)]",
+    Technical: "bg-[var(--accent)] text-white",
     default: "bg-gray-600",
   };
   function formatTo12Hour(time) {
@@ -128,7 +128,7 @@ export default function EventCard({ event }) {
         {/* Category Tag */}
         {category && (
           <span
-            className={`absolute top-3 left-3 px-2 py-0.5 text-[11px] sm:text-xs font-semibold rounded-full text-white shadow ${
+            className={`absolute top-3 left-3 px-2 py-0.5 text-[11px] sm:text-xs font-semibold rounded-full shadow ${
               categoryColors[category] || categoryColors.default
             }`}
           >
@@ -181,24 +181,24 @@ export default function EventCard({ event }) {
           {title}
         </h3>
 
-        <div className="flex flex-wrap gap-2 text-xs text-gray-600 mb-3">
+        <div className="flex flex-wrap gap-2 text-xs text-[color:var(--foreground)] bg-[color:var(--background)] mb-3">
           {date && (
-            <span className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded">
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded">
               <Calendar size={12} /> {formatDateToMonthName(date)}
             </span>
           )}
           {time && (
-            <span className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded">
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded">
               <Clock size={12} /> {formatTo12Hour(time)}
             </span>
           )}
           {venue && (
-            <span className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded">
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded">
               <MapPin size={12} /> {venue}
             </span>
           )}
           {/* Countdown */}
-          <span className="flex items-center bg-gray-100 px-2 py-0.5 rounded">
+          <span className="flex items-center px-2 py-0.5 rounded">
             <CountdownTimer
               date={date}
               time={time}

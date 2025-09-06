@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React from "react";
-import { Home, ShieldCheck } from "lucide-react";
+import { Home, Menu, ShieldCheck } from "lucide-react";
 // import { useRouter } from "next/router";
 
 export default function AdminPage() {
@@ -29,7 +29,14 @@ export default function AdminPage() {
 
         {/* Info Note */}
         <p className="text-sm text-[color:var(--secondary)] border-t border-[color:var(--border)] pt-4 italic">
-          All navigation is available in the left sidebar / menu
+          All navigation is available in the left sidebar / menu{" "}
+          <button
+            // onClick={}
+            className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-[color:var(--foreground)] hover:text-white bg-[color:var(--background)] hover:bg-[var(--accent)] backdrop-blur-lg border border-[color:var(--border)] shadow-md transition-all duration-200 active:scale-95 w-full sm:w-auto"
+          >
+            <Menu className="w-4 h-4" />
+            <span>Menu</span>
+          </button>
         </p>
 
         <p>OR</p>

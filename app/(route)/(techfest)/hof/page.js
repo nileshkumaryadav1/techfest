@@ -371,7 +371,7 @@ export default function HallOfFamePage() {
                   {event.title || "Unnamed Event"}
                 </h4>
                 <p className="text-sm text-[color:var(--secondary)]">
-                  Event ID: {event.eventId || "N/A"}
+                  Event ID: {event.eventId || "N/A"} | Date: {event.date || "N/A"}
                 </p>
               </div>
 
@@ -428,7 +428,7 @@ export default function HallOfFamePage() {
                         >
                           <span className="text-lg">{medal}</span>
                           <div className="flex flex-col">
-                            <span className="font-semibold text-[color:var(--foreground)]">
+                            <span className="font-semibold text-[color:var(--accent)]">
                               {winner.name || "Unnamed Winner"}
                             </span>
                             <span className="text-xs text-gray-600">

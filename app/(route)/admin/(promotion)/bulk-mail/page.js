@@ -26,123 +26,67 @@ export default function BulkEmailForm() {
   };
 
   const addMessageField = () => setMessages([...messages, ""]);
-  const removeMessageField = (index) => setMessages(messages.filter((_, i) => i !== index));
+  const removeMessageField = (index) =>
+    setMessages(messages.filter((_, i) => i !== index));
 
   return (
-    <div
-      style={{
-        maxWidth: 650,
-        margin: "40px auto",
-        padding: "30px",
-        borderRadius: "12px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        backgroundColor: "#fff",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      }}
-    >
-      <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#333" }}>Send Bulk Emails</h2>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[color:var(--background)] text-[color:var(--foreground)] md:px-6 px-1 md:py-10 py-5">
+      <div className="w-full max-w-2xl bg-[color:var(--card)] shadow-lg rounded-2xl p-8">
+        <h2 className="text-3xl font-bold text-center text-[color:var(--accent)] mb-6">
+          Send Bulk Emails
+        </h2>
 
-      <input
-        style={{
-          width: "100%",
-          padding: "12px 15px",
-          marginBottom: "20px",
-          borderRadius: "8px",
-          border: "1px solid #ccc",
-          fontSize: "16px",
-          outline: "none",
-          transition: "border 0.2s",
-        }}
-        placeholder="Subject"
-        value={subject}
-        onChange={(e) => setSubject(e.target.value)}
-        onFocus={(e) => (e.target.style.borderColor = "#0070f3")}
-        onBlur={(e) => (e.target.style.borderColor = "#ccc")}
-      />
+        {/* Subject Input */}
+        <input
+          className="w-full py-3 px-4 mb-6 border border-[color:var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent"
+          placeholder="Email Subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+        />
 
-      {messages.map((msg, i) => (
-        <div
-          key={i}
-          style={{
-            marginBottom: "20px",
-            padding: "15px",
-            borderRadius: "10px",
-            border: "1px solid #eee",
-            backgroundColor: "#fafafa",
-          }}
-        >
-          <textarea
-            style={{
-              width: "100%",
-              padding: "12px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "15px",
-              resize: "vertical",
-              minHeight: "80px",
-              outline: "none",
-            }}
-            placeholder={`Message section #${i + 1}`}
-            value={msg}
-            onChange={(e) => updateMessage(i, e.target.value)}
-          />
-          <button
-            onClick={() => removeMessageField(i)}
-            style={{
-              marginTop: "10px",
-              padding: "8px 12px",
-              borderRadius: "6px",
-              border: "none",
-              backgroundColor: "#ff4d4f",
-              color: "#fff",
-              cursor: "pointer",
-              fontWeight: "bold",
-              transition: "background-color 0.2s",
-            }}
-            onMouseOver={(e) => (e.target.style.backgroundColor = "#ff7875")}
-            onMouseOut={(e) => (e.target.style.backgroundColor = "#ff4d4f")}
+        {/* Messages */}
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className="flex flex-col mb-6 border border-[color:var(--border)] rounded-lg p-4 bg-[color:var(--muted)]"
           >
-            Remove
-          </button>
-        </div>
-      ))}
+            <textarea
+              className="w-full py-3 px-4 mb-4 border border-[color:var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent resize-none"
+              placeholder={`Message section #${i + 1}`}
+              rows={4}
+              value={msg}
+              onChange={(e) => updateMessage(i, e.target.value)}
+            />
+            <button
+              onClick={() => removeMessageField(i)}
+              className="w-full py-2 px-4 text-sm font-medium bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+            >
+              Remove Section
+            </button>
+          </div>
+        ))}
 
-      <button
-        onClick={addMessageField}
-        style={{
-          padding: "10px 16px",
-          marginBottom: "15px",
-          borderRadius: "8px",
-          border: "none",
-          backgroundColor: "#1890ff",
-          color: "#fff",
-          cursor: "pointer",
-          fontWeight: "bold",
-          marginRight: "10px",
-          transition: "background-color 0.2s",
-        }}
-        onMouseOver={(e) => (e.target.style.backgroundColor = "#40a9ff")}
-        onMouseOut={(e) => (e.target.style.backgroundColor = "#1890ff")}
-      >
-        Add Section
-      </button>
+        {/* Add Section */}
+        <button
+          onClick={addMessageField}
+          className="w-full py-3 px-4 mb-6 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+        >
+          Add Section
+        </button>
 
-      <button
-        onClick={handleSend}
-        disabled={loading}
-        style={{
-          padding: "10px 20px",
-          borderRadius: "8px",
-          border: "none",
-          backgroundColor: loading ? "#ccc" : "#52c41a",
-          color: "#fff",
-          cursor: loading ? "not-allowed" : "pointer",
-          fontWeight: "bold",
-          transition: "background-color 0.2s",
-        }}
-      >
-        {loading ? "Sending..." : "Send Emails"}
-      </button>
+        {/* Send Emails */}
+        <button
+          onClick={handleSend}
+          disabled={loading}
+          className={`w-full py-3 px-4 text-lg font-semibold rounded-lg transition-colors ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-green-500 hover:bg-green-600 text-white"
+          }`}
+        >
+          {loading ? "Sending..." : "Send Emails"}
+        </button>
+      </div>
     </div>
   );
 }

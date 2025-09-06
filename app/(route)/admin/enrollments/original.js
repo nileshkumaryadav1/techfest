@@ -2,20 +2,19 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Users, Calendar, UserCircle, Trash2 } from "lucide-react";
+import { Users, Calendar, UserCircle } from "lucide-react";
 
 export default function EnrolledInTeam() {
   const [enrollments, setEnrollments] = useState([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all"); // all | solo | team
   const [loading, setLoading] = useState(true);
-  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     const fetchEnrollments = async () => {
       try {
         const res = await axios.get("/api/admin/enrollments");
-        setEnrollments(res.data.data || res.data || []);
+        setEnrollments(res.data || []);
       } catch (err) {
         console.error("Error fetching enrollments:", err);
       } finally {
@@ -24,27 +23,6 @@ export default function EnrolledInTeam() {
     };
     fetchEnrollments();
   }, []);
-
-  // Handle delete
-  const handleDelete = async (enrollmentId) => {
-    if (!confirm("Are you sure you want to delete this enrollment?")) return;
-
-    try {
-      setDeletingId(enrollmentId);
-      await axios.delete("/api/admin/enrollments", {
-        data: { enrollmentId },
-      });
-
-      setEnrollments((prev) =>
-        prev.filter((enroll) => enroll._id !== enrollmentId)
-      );
-    } catch (err) {
-      console.error("Error deleting enrollment:", err);
-      alert("Failed to delete enrollment. Try again.");
-    } finally {
-      setDeletingId(null);
-    }
-  };
 
   // Handle filters + search
   const filteredEnrollments = enrollments
@@ -117,19 +95,8 @@ export default function EnrolledInTeam() {
             filteredEnrollments.map((enroll) => (
               <div
                 key={enroll._id}
-                className="relative p-5 border border-[var(--border)] rounded-2xl shadow-sm hover:shadow-md transition bg-[var(--background)] text-[var(--foreground)]"
+                className="p-5 border border-[var(--border)] rounded-2xl shadow-sm hover:shadow-md transition bg-[var(--background)] text-[var(--foreground)]"
               >
-                {/* Delete Button */}
-                <button
-                  onClick={
-                    () => handleDelete(enroll._id) // pass only enrollmentId
-                  }
-                  disabled={deletingId === enroll._id}
-                  className="absolute top-3 right-3 p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 disabled:opacity-50"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-
                 {/* Event Info */}
                 <div className="flex flex-col items-center mb-4 text-center">
                   <Calendar className="w-10 h-10 text-blue-500 mb-2" />

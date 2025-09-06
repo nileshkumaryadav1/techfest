@@ -19,7 +19,7 @@ export default function CoordinatorCard({ event }) {
         <h3 className="text-lg font-bold text-[color:var(--foreground)]">
           {title}
         </h3>
-        <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+        <p className="text-sm text-[color:var(--secondary)] flex items-center gap-1 mt-1">
           <Users size={14} /> Event Coordinators
         </p>
       </div>
@@ -40,7 +40,7 @@ export default function CoordinatorCard({ event }) {
                 <Phone size={14} className="text-[color:var(--accent)]" />
                 <a
                   href={`tel:${coordinator.contact}`}
-                  className="hover:underline"
+                  className="hover:underline text-[color:var(--accent)]"
                 >
                   {coordinator.contact}
                 </a>
