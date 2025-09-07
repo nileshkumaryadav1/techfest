@@ -1,63 +1,65 @@
 // app/api/certificate/winner/route.js
 import { NextResponse } from "next/server";
 import connectDB from "@/utils/db";
-import Student from "@/models/Student";
-import Event from "@/models/Event";
+import Archive from "@/models/Archive";
 
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    let festId = searchParams.get("festId");
+    let email = searchParams.get("email");
 
-    if (!festId || !festId.trim()) {
+    if (!email || !email.trim()) {
       return NextResponse.json(
-        { error: "Missing festId. Please provide a valid festId." },
+        { error: "Missing email. Please provide a valid email." },
         { status: 400 }
       );
     }
 
-    festId = festId.trim().toLowerCase(); // normalize festId
+    email = email.trim().toLowerCase();
     await connectDB();
 
-    // 🔎 Debug log
-    console.log("🔍 Looking up student with festId:", festId);
-
-    // 1️⃣ Find Student
-    const student = await Student.findOne({
-      festId: new RegExp(`^${festId}$`, "i"),
+    // 1️⃣ Find Archive where this email exists in any event winners
+    const archive = await Archive.findOne({
+      "events.winners.email": new RegExp(`^${email}$`, "i"),
     });
-    if (!student) {
-      console.warn(`⚠️ No student found for festId=${festId}`);
+
+    if (!archive) {
       return NextResponse.json(
-        { error: "Student not found. Please enter a valid festId." },
+        { error: "No archive found for this winner." },
         { status: 404 }
       );
     }
 
-    // 2️⃣ Find Events where this student is a winner
-    let winningEvents = await Event.find({ "winners._id": student._id });
+    // 2️⃣ Find winner details + winning events
+    let winner = null;
+    const winningEvents = [];
 
-    // If not found, fallback to match by festId
-    if (!winningEvents.length) {
-      winningEvents = await Event.find({ "winners.festId": festId });
+    archive.events.forEach((event) => {
+      event.winners.forEach((w) => {
+        if (w.email.toLowerCase() === email) {
+          winner = w;
+          winningEvents.push(event.title);
+        }
+      });
+    });
+
+    if (!winner) {
+      return NextResponse.json(
+        { error: "Winner not found in archive." },
+        { status: 404 }
+      );
     }
 
-    if (!winningEvents || winningEvents.length === 0) {
-      console.warn(`⚠️ No winning events found for studentId=${student._id}`);
+    if (!winningEvents.length) {
       return NextResponse.json(
         { error: "No winning events found for this student." },
         { status: 404 }
       );
     }
 
-    // 3️⃣ Collect event titles
-    const eventTitles = winningEvents.map((e) => e.title).filter(Boolean);
-
-    // 4️⃣ Fest name (fallback to default)
-    const festName = winningEvents[0]?.festName || "TechFest 2025";
-
-    // 5️⃣ Handle dates safely
-    const validDates = winningEvents
+    // 3️⃣ Format fest name + date range
+    const festName = archive.name || "TechFest";
+    const validDates = archive.events
       .map((e) => new Date(e.date))
       .filter((d) => !isNaN(d));
 
@@ -71,17 +73,18 @@ export async function GET(req) {
           : `${minDate.toDateString()} - ${maxDate.toDateString()}`;
     }
 
-    // 6️⃣ Generate a Certificate ID
-    const certId = `WIN-${festId.toUpperCase()}-${student._id
+    // 4️⃣ Generate cert ID
+    const certId = `WIN-${archive._id.toString().slice(-5)}-${winner._id
       .toString()
       .slice(-5)}`;
 
-    // 7️⃣ Success Response
+    // 5️⃣ Return success
     return NextResponse.json({
-      name: student.name,
+      name: winner.name,
+      email: winner.email,
       festName,
       dateRange,
-      events: eventTitles,
+      events: winningEvents,
       certId,
       issuedOn: new Date().toDateString(),
       type: "winner",

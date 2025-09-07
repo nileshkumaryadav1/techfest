@@ -81,7 +81,7 @@ export default function FestIdCardPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-[#f3f4f6] px-4 py-6">
+    <main className="flex flex-col items-center justify-center bg-[#f3f4f6] px-4 py-6">
       <div
         ref={cardRef}
         className="w-[343px] h-[215px] bg-white border-2 border-[#374151] rounded-xl shadow-xl overflow-hidden flex flex-col p-[3px]"

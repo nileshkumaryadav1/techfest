@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { User, Users } from "lucide-react";
 
 /**
  * EnrollButton Component
@@ -135,9 +136,16 @@ export default function EnrollButton({ eventId, type, isEnrolled }) {
       <button
         onClick={handleSoloEnroll}
         disabled={status === "loading"}
-        className="px-4 py-2 bg-blue-600 text-white rounded-full"
+        className="px-4 py-2 bg-blue-600 text-white rounded-full cursor-pointer"
       >
-        {status === "loading" ? "Enrolling..." : "Enroll"}
+        {status === "loading" ? (
+          "Enrolling..."
+        ) : (
+          <div className="flex items-center">
+            <User className="mr-2 w-4 h-4" />
+            <span>Enroll</span>
+          </div>
+        )}
       </button>
     );
   }
@@ -147,9 +155,12 @@ export default function EnrollButton({ eventId, type, isEnrolled }) {
     <>
       <button
         onClick={() => setShowTeamModal(true)}
-        className="px-4 py-2 bg-green-600 text-white rounded-full"
+        className="px-4 py-2 bg-blue-600 text-white rounded-full cursor-pointer"
       >
-        Enroll Team
+        <div className="flex items-center">
+          <Users className="mr-2" />
+          Enroll Team
+        </div>
       </button>
 
       {showTeamModal && (

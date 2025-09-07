@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function AboutPage() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 sm:px-8 lg:px-16 py-12 sm:py-16 bg-[color:var(--background)]">
+    <section className="md:min-h-screen flex items-center justify-center px-4 sm:px-8 lg:px-16 py-6 sm:py-16 bg-[color:var(--background)]">
       <div
         className="max-w-4xl w-full text-center space-y-6 sm:space-y-8 p-6 sm:p-10 
                    rounded-3xl bg-white/10 backdrop-blur-xl 

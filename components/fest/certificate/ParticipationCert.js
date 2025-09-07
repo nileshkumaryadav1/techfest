@@ -14,6 +14,7 @@ export default function ParticipationCertificate() {
   const [certificateData, setCertificateData] = useState(null);
   const router = useRouter();
   const cardRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   // ✅ Load student from localStorage and fetch certificate
   useEffect(() => {
@@ -26,6 +27,7 @@ export default function ParticipationCertificate() {
     try {
       const parsed = JSON.parse(stored);
       setStudent(parsed);
+      setLoading(true);
 
       fetch(`/api/certificate?festId=${parsed.festId}`)
         .then((res) => res.json())
@@ -36,6 +38,7 @@ export default function ParticipationCertificate() {
             return;
           }
           setCertificateData(data);
+          setLoading(false);
         })
         .catch((err) => {
           console.error("Error fetching certificate:", err);
@@ -77,7 +80,9 @@ export default function ParticipationCertificate() {
       });
 
       pdf.addImage(imgData, "PNG", 0, 0, 297, 210);
-      pdf.save(`ParticipationCertificate_${certificateData?.certId || "fest"}.pdf`);
+      pdf.save(
+        `ParticipationCertificate_${certificateData?.certId || "fest"}.pdf`
+      );
     } catch (err) {
       console.error("PDF generation failed:", err);
       alert("⚠️ PDF generation failed. Try again.");
@@ -94,14 +99,29 @@ export default function ParticipationCertificate() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-6 sm:px-6 md:px-12 bg-[var(--background)] text-[var(--foreground)]">
+    <main className="px-4 py-6 sm:px-6 md:px-12 bg-[var(--background)] text-[var(--foreground)]">
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
-        <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h1 className="text-2xl font-bold">
-            🎉 Congratulations, {student.name || student.email}!
-          </h1>
-          <p className="text-sm text-gray-300">Your participation certificate is ready</p>
+        <div className="md:p-6 p-4 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <h1 className="md:text-2xl text-lg font-bold">
+           Hello, {student.name || student.email}!
+          </h1>{" "}
+          {/* Status */}
+          <div className="flex items-center gap-2">
+            {loading ? (
+              <p className="text-sm text-gray-300">
+                Generating your certificate...
+              </p>
+            ) : certificateData ? (
+              <p className="text-sm text-gray-300">
+                🏆 Congratulations! Your certificate is ready!
+              </p>
+            ) : (
+              <p className="text-sm text-gray-300">
+                ⚠️ No certificate data found
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Certificate */}
@@ -142,7 +162,9 @@ export default function ParticipationCertificate() {
                 />
                 <div>
                   <h2 className="text-sm font-medium">{CollegeData.name}</h2>
-                  <p className="text-[10px] opacity-80">{CollegeData.address}</p>
+                  <p className="text-[10px] opacity-80">
+                    {CollegeData.address}
+                  </p>
                 </div>
               </div>
             </div>
