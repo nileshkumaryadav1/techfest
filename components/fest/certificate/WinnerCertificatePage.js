@@ -29,7 +29,6 @@ export default function WinnerCertificate() {
       setStudent(parsed);
       setLoading(true);
 
-      // fetch(`/api/certificate/winner?festId=${parsed.festId}`)
       fetch(`/api/certificate/winner?email=${encodeURIComponent(parsed.email)}`)
         .then((res) => res.json())
         .then((data) => {
@@ -39,7 +38,6 @@ export default function WinnerCertificate() {
             alert("⚠️ " + data.error);
           } else {
             setCertificateData(data);
-            // console.log("✅ Certificate Data:", data);
           }
           setLoading(false);
         })
@@ -55,14 +53,25 @@ export default function WinnerCertificate() {
     }
   }, [router]);
 
-  // ✅ Download PDF
+  // ✅ Download PDF using the same robust method
   const downloadPDF = async () => {
     if (!cardRef.current) return;
+
     try {
       const canvas = await html2canvas(cardRef.current, {
         scale: 3,
         useCORS: true,
         backgroundColor: "#ffffff",
+        onclone: (doc) => {
+          doc.querySelectorAll("*").forEach((el) => {
+            const style = window.getComputedStyle(el);
+            if (style.backgroundColor.includes("oklch"))
+              el.style.backgroundColor = "#ffffff";
+            if (style.color.includes("oklch")) el.style.color = "#000000";
+            if (style.borderColor.includes("oklch"))
+              el.style.borderColor = "#000000";
+          });
+        },
       });
 
       const imgData = canvas.toDataURL("image/png");
@@ -80,7 +89,6 @@ export default function WinnerCertificate() {
     }
   };
 
-  // ✅ If no student found
   if (!student) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-[var(--background)] text-[var(--foreground)]">
@@ -124,7 +132,7 @@ export default function WinnerCertificate() {
               className="w-[740px] h-[520px] bg-white border-2 border-gray-700 rounded-xl shadow-2xl overflow-hidden flex flex-col mx-auto"
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-[#001F3F] to-[#004080] text-white px-4 py-3 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-[#004d00] to-[#008000] text-white px-4 py-3 flex items-center justify-between">
                 {/* Fest Info */}
                 <div className="flex items-center gap-2">
                   <div>
@@ -155,9 +163,7 @@ export default function WinnerCertificate() {
                   />
                   <div>
                     <h2 className="text-sm font-medium">{CollegeData.name}</h2>
-                    <p className="text-[10px] opacity-80">
-                      {CollegeData.address}
-                    </p>
+                    <p className="text-[10px] opacity-80">{CollegeData.address}</p>
                   </div>
                 </div>
               </div>
@@ -168,7 +174,7 @@ export default function WinnerCertificate() {
                   Certificate of Achievement
                 </p>
                 <p className="text-sm text-gray-500">This is to certify that</p>
-                <h1 className="text-3xl font-bold text-[#004080] mt-2">
+                <h1 className="text-3xl font-bold text-green-700 mt-2">
                   {certificateData.name}
                 </h1>
                 <p className="text-sm text-gray-600 mt-2">{student.college}</p>
@@ -176,7 +182,7 @@ export default function WinnerCertificate() {
                 <div className="mt-4">
                   <p className="text-lg">has secured a winning position in</p>
                   {certificateData.events?.length > 0 ? (
-                    <ul className="mt-2 text-base font-medium text-gray-700">
+                    <ul className="mt-2 text-base font-medium text-gray-700 space-y-1">
                       {certificateData.events.map((event, idx) => (
                         <li key={idx}>🏅 {event}</li>
                       ))}
@@ -195,10 +201,7 @@ export default function WinnerCertificate() {
               {/* Footer */}
               <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
                 <div className="flex flex-col items-center">
-                  <QRCodeSVG
-                    value={JSON.stringify(certificateData)}
-                    size={64}
-                  />
+                  <QRCodeSVG value={JSON.stringify(certificateData)} size={64} />
                   <p className="text-[10px] text-gray-500 mt-1">Verify</p>
                 </div>
                 <div className="text-[10px] text-gray-500 text-center">
@@ -220,9 +223,9 @@ export default function WinnerCertificate() {
           <div className="flex justify-center">
             <button
               onClick={downloadPDF}
-              className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#001F3F] to-[#004080] text-white text-sm font-semibold shadow-md hover:scale-105 transition"
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#004d00] to-[#008000] text-white text-sm font-semibold shadow-md hover:scale-105 transition"
             >
-              📥 Download Certificate (PDF)
+              📥 Download Winner Certificate (PDF)
             </button>
           </div>
         )}

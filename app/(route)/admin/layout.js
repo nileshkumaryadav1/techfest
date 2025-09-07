@@ -6,6 +6,8 @@ import axios from "axios";
 import AdminSidebar from "@/components/AdminSidebar";
 import { Menu } from "lucide-react";
 import Link from "next/link";
+import LoadingSkeleton from "@/components/custom/myself/LoadingSkeleton";
+import LoadingSkeletonSmall from "@/components/custom/myself/LoadingSkeletonSmall";
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
@@ -77,8 +79,9 @@ export default function AdminLayout({ children }) {
 
   if (!authChecked) {
     return (
-      <div className="flex justify-center items-center h-screen text-[color:var(--foreground)] bg-[color:var(--background)]">
-        Loading...
+      <div className="flex flex-col justify-center items-center px-6 py-10 gap-2 text-[color:var(--foreground)] bg-[color:var(--background)]">
+        <LoadingSkeletonSmall />
+        <LoadingSkeleton />
       </div>
     );
   }

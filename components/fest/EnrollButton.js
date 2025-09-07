@@ -141,7 +141,7 @@ export default function EnrollButton({ eventId, type, isEnrolled }) {
         {status === "loading" ? (
           "Enrolling..."
         ) : (
-          <div className="flex items-center">
+          <div className="flex items-center justify-center">
             <User className="mr-2 w-4 h-4" />
             <span>Enroll</span>
           </div>
@@ -157,7 +157,7 @@ export default function EnrollButton({ eventId, type, isEnrolled }) {
         onClick={() => setShowTeamModal(true)}
         className="px-4 py-2 bg-blue-600 text-white rounded-full cursor-pointer"
       >
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
           <Users className="mr-2" />
           Enroll Team
         </div>

@@ -104,7 +104,7 @@ export default function ParticipationCertificate() {
         {/* Header */}
         <div className="md:p-6 p-4 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <h1 className="md:text-2xl text-lg font-bold">
-           Hello, {student.name || student.email}!
+            Hello, {student.name || student.email}!
           </h1>{" "}
           {/* Status */}
           <div className="flex items-center gap-2">
@@ -126,88 +126,106 @@ export default function ParticipationCertificate() {
 
         {/* Certificate */}
         {certificateData ? (
-          <div
-            ref={cardRef}
-            className="w-[740px] h-[520px] bg-white border-2 border-gray-700 rounded-xl shadow-2xl overflow-hidden flex flex-col mx-auto"
-          >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-[#004d00] to-[#008000] text-white px-4 py-3 flex items-center justify-between">
-              {/* Fest Info */}
-              <div className="flex items-center gap-2">
-                <div>
-                  <h2 className="text-lg font-bold uppercase">
-                    {certificateData.festName || FestData.name}
-                  </h2>
-                  <p className="text-xs opacity-80">{FestData.venue}</p>
+          <div className="max-w-5xl mx-auto">
+            <div className="w-full h-[540px] bg-white border-2 border-gray-700 rounded-xl shadow-2xl overflow-hidden mx-auto">
+              {/* Horizontal scroll container */}
+              <div className="w-full h-full overflow-x-auto overflow-y-hidden no-scrollbar flex justify-center">
+                <div
+                  ref={cardRef}
+                  className="min-w-[900px] h-full flex flex-col" // 👈 wider than parent to enable horizontal scroll
+                >
+                  {/* Header */}
+                  <div className="bg-gradient-to-r from-[#004d00] to-[#008000] text-white px-4 py-3 flex items-center justify-between">
+                    {/* Fest Info */}
+                    <div className="flex items-center gap-2">
+                      <div>
+                        <h2 className="text-lg font-bold uppercase">
+                          {certificateData.festName || FestData.name}
+                        </h2>
+                        <p className="text-xs opacity-80">{FestData.venue}</p>
+                      </div>
+                      <Image
+                        src="/logo.png"
+                        alt="Fest Logo"
+                        width={32}
+                        height={32}
+                        className="rounded-full border border-white"
+                        priority
+                      />
+                    </div>
+
+                    {/* College Info */}
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={CollegeData.logo}
+                        alt="College Logo"
+                        width={32}
+                        height={32}
+                        className="rounded-full border border-white"
+                        priority
+                      />
+                      <div>
+                        <h2 className="text-sm font-medium">
+                          {CollegeData.name}
+                        </h2>
+                        <p className="text-[10px] opacity-80">
+                          {CollegeData.address}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Certificate Body */}
+                  <div className="flex flex-col items-center text-center flex-1 px-6 py-6">
+                    <p className="text-xl font-semibold text-gray-700">
+                      Certificate of Participation
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      This is to certify that
+                    </p>
+                    <h1 className="text-3xl font-bold text-green-700 mt-2">
+                      {certificateData.name}
+                    </h1>
+                    <p className="text-sm text-gray-600 mt-2">
+                      {student.college}
+                    </p>
+
+                    <div className="mt-4">
+                      <p className="text-lg">has participated in</p>
+                      <ul className="mt-2 text-base font-medium text-gray-700 space-y-1">
+                        {certificateData.events.map((event, idx) => (
+                          <li key={idx}>🎯 {event}</li>
+                        ))}
+                      </ul>
+                      <p className="text-sm text-gray-500 mt-4">
+                        Held on {certificateData.dateRange} at {FestData.venue}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Footer with QR + Sponsors */}
+                  <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
+                    <div className="flex flex-col items-center">
+                      <QRCodeSVG
+                        value={JSON.stringify(certificateData)}
+                        size={64}
+                      />
+                      <p className="text-[10px] text-gray-500 mt-1">Verify</p>
+                    </div>
+                    <div className="text-[10px] text-gray-500 text-center">
+                      Sponsored by <br /> {FestData.sponsors}
+                    </div>
+                  </div>
                 </div>
-                <Image
-                  src="/logo.png"
-                  alt="Fest Logo"
-                  width={32}
-                  height={32}
-                  className="rounded-full border border-white"
-                  priority
-                />
-              </div>
-
-              {/* College Info */}
-              <div className="flex items-center gap-2">
-                <Image
-                  src={CollegeData.logo}
-                  alt="College Logo"
-                  width={32}
-                  height={32}
-                  className="rounded-full border border-white"
-                  priority
-                />
-                <div>
-                  <h2 className="text-sm font-medium">{CollegeData.name}</h2>
-                  <p className="text-[10px] opacity-80">
-                    {CollegeData.address}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Certificate Body */}
-            <div className="flex flex-col items-center text-center flex-1 px-6 py-6">
-              <p className="text-xl font-semibold text-gray-700">
-                Certificate of Participation
-              </p>
-              <p className="text-sm text-gray-500">This is to certify that</p>
-              <h1 className="text-3xl font-bold text-green-700 mt-2">
-                {certificateData.name}
-              </h1>
-              <p className="text-sm text-gray-600 mt-2">{student.college}</p>
-
-              <div className="mt-4">
-                <p className="text-lg">has participated in</p>
-                <ul className="mt-2 text-base font-medium text-gray-700">
-                  {certificateData.events.map((event, idx) => (
-                    <li key={idx}>🎯 {event}</li>
-                  ))}
-                </ul>
-                <p className="text-sm text-gray-500 mt-4">
-                  Held on {certificateData.dateRange} at {FestData.venue}
-                </p>
-              </div>
-            </div>
-
-            {/* Footer with QR + Sponsors */}
-            <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
-              <div className="flex flex-col items-center">
-                <QRCodeSVG value={JSON.stringify(certificateData)} size={64} />
-                <p className="text-[10px] text-gray-500 mt-1">Verify</p>
-              </div>
-              <div className="text-[10px] text-gray-500 text-center">
-                Sponsored by <br /> {FestData.sponsors}
               </div>
             </div>
           </div>
         ) : (
-          <p className="text-center text-gray-400">
-            ⚠️ No certificate data found
-          </p>
+          !loading && (
+            <p className="text-center text-gray-400">
+              ⚠️ No certificate data found
+            </p>
+          )
         )}
 
         {/* Download PDF */}

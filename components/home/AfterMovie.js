@@ -1,5 +1,6 @@
 "use client";
 
+import { FestData } from "@/data/FestData";
 import React, { useState } from "react";
 
 const afterMovies = [
@@ -18,7 +19,7 @@ function AfterMovie() {
           Fest Aftermovies 🎥
         </h2>
         <p className="text-base sm:text-lg text-[color:var(--secondary)]">
-          Relive the memories of {afterMovies.length} years of {/** you can add FestData.name here */}!
+          Relive the memories of {afterMovies.length} years of {FestData.name}!
         </p>
 
         {/* Year Buttons */}
