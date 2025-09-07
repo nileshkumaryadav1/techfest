@@ -11,16 +11,15 @@ export async function GET() {
       .populate("participants", "name email")
       .populate("registeredBy", "name email");
 
-    return NextResponse.json({ success: true, data: enrollments });
+    return NextResponse.json(enrollments);
   } catch (error) {
     console.error("Error fetching enrollments:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to fetch enrollments" },
+      { error: "Failed to fetch enrollments" },
       { status: 500 }
     );
   }
 }
-
 
 export async function DELETE(req) {
   await connectDB();
