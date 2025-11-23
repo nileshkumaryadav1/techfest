@@ -1,6 +1,6 @@
 export const FestData = {
   name: "CentreFest'25",
-  month: "09",
+  month: "12",
   year: "2025",
   theme: "TechYug",
   tagline: "The Era of HUM∆N + M∆CHINE",
@@ -8,9 +8,9 @@ export const FestData = {
   ogImage: "/logo.png",
   description:
     "Welcome to TechYug — where tradition meets transformation, and imagination merges with innovation. In this new era, the synergy between human intelligence and artificial intelligence is redefining the boundaries of possibility.",
-  date: "18th - 20th September, 2025",
-  startDate: "18-09-2025",
-  endDate: "20-09-2025",
+  date: "18th - 24th December, 2025",
+  startDate: "18-12-2025",
+  endDate: "24-17-2025",
   venue: "H2, Katihar Engineering College, Katihar, Bihar",
   brochure: "https://centreorg.vercel.app/",
   brochureUrl: "https://centreorg.vercel.app/",

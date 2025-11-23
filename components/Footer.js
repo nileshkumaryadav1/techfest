@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Facebook, Github, Instagram, Twitter, Linkedin, Youtube, Phone } from "lucide-react";
  import { FaWhatsapp } from 'react-icons/fa';
 import { FestData, developersData, footerNavItems } from "@/data/FestData";
+import VisitorCounter from "./custom/myself/VisiterCounter";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -72,6 +73,7 @@ const Footer = () => {
       {/* 🚀 Copyright */}
       <div className="pb-8">
         <p className="text-sm md:flex justify-center items-center gap-2" style={{ color: "var(--secondary)" }}>
+          <div className="w-20 h-20 py-1 hidden md:block"><VisitorCounter /></div>          
           <img src="/logo.png" alt="Logo" className="w-5 h-5 inline-block border rounded-full" />{" "}
           &copy; {currentYear} {FestData.name} ·
           <p className="py-1"> Built with ❤️ by{" "}
