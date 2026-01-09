@@ -40,7 +40,7 @@ export default function Contact() {
   const faqs = [
     {
       q: "When is the fest happening?",
-      a: "The fest is scheduled from 10th - 13th January 2025 at the main campus.",
+      a: "The fest is scheduled from 13th - 16th March 2026 at the main campus.",
     },
     {
       q: "How can I register for events?",

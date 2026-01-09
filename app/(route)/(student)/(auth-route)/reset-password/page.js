@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -66,7 +67,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="max-w-md mt-16 p-8 m-4 border border-[color:var(--border)] rounded-xl shadow-lg bg-[var(--background)]">
+    <div className="max-w-md my-32 p-8 m-4 border border-[color:var(--border)] rounded-xl shadow-lg bg-[var(--background)]">
       <h1 className="text-3xl font-bold mb-6 text-center text-[color:var(--foreground)]">
         Reset Password
       </h1>
@@ -151,6 +152,12 @@ export default function ResetPasswordPage() {
           </button>
         </>
       )}
+      <p className="mt-4 text-[var(--secondary)] hover:underline text-sm active:text-[var(--accent)]">
+        <Link href="/register">Don&apos;t have an account? Register here.</Link>
+      </p>
+      <p className="my-2 text-[var(--secondary)] hover:underline text-sm active:text-[var(--accent)]">
+        <Link href="/login">Already registered? Login here →</Link>
+      </p>
     </div>
   );
 }

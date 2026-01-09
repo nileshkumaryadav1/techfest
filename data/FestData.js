@@ -1,16 +1,16 @@
 export const FestData = {
-  name: "CentreFest'25",
-  month: "12",
-  year: "2025",
+  name: "CentreFest'26",
+  month: "03",
+  year: "2026",
   theme: "TechYug",
   tagline: "The Era of HUM∆N + M∆CHINE",
   url: "https://centrefest.vercel.app/",
   ogImage: "/logo.png",
   description:
     "Welcome to TechYug — where tradition meets transformation, and imagination merges with innovation. In this new era, the synergy between human intelligence and artificial intelligence is redefining the boundaries of possibility.",
-  date: "18th - 24th December, 2025",
-  startDate: "18-12-2025",
-  endDate: "24-17-2025",
+  date: "13th - 16th March, 2026",
+  startDate: "13-03-2026",
+  endDate: "16-03-2026",
   venue: "H2, Katihar Engineering College, Katihar, Bihar",
   brochure: "https://centreorg.vercel.app/",
   brochureUrl: "https://centreorg.vercel.app/",
@@ -19,8 +19,8 @@ export const FestData = {
   sponsors: "KEC Katihar, Centre Organization",
   totalEventCount: 13,
   totalWorkshopCount: 0,
-  totalNumberOfDays: 3,
-  totalParticipantCount: 24,
+  totalNumberOfDays: 4,
+  totalParticipantCount: 25,
   socialMedia: {
     whatsapp: "https://chat.whatsapp.com/JSrqwbsqGz3BnB7zUNrfOE",
     facebook: "",
@@ -31,8 +31,8 @@ export const FestData = {
     youtube: "https://www.youtube.com/@CentreOrganization",
   },
   contact: {
-    email: "contact@centrefest.org.in",
-    phone: "123-456-7890",
+    email: "keccetreorg@gmail.com",
+    phone: "6205530252",
   },
   college: {
     name: "Katihar Engineering College",
@@ -61,6 +61,12 @@ export const FestData = {
       companyUrl: "https://centreorg.vercel.app/",
       tier: "Gold",
     },
+    {
+      name: "College Finder",
+      image: "https://collegefinder.site/logo.png",
+      companyUrl: "https://collegefinder.site/",
+      tier: "Gold",
+    },
   ],
   developers: [
     {
@@ -87,6 +93,12 @@ export const sponsorsData = [
     name: "Centre Organization",
     image: "/sponsors/centre-logo.png",
     companyUrl: "https://centreorg.vercel.app/",
+    tier: "Gold",
+  },
+  {
+    name: "College Finder",
+    image: "https://collegefinder.site/logo.png",
+    companyUrl: "https://collegefinder.site/",
     tier: "Gold",
   },
 ];
