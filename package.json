@@ -24,7 +24,7 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.479.0",
     "mongoose": "^8.17.1",
-    "next": "^15.3.4",
+    "next": "15.3.8",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",
     "ogl": "^1.0.11",
