@@ -67,97 +67,106 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="max-w-md my-32 p-8 m-4 border border-[color:var(--border)] rounded-xl shadow-lg bg-[var(--background)]">
-      <h1 className="text-3xl font-bold mb-6 text-center text-[color:var(--foreground)]">
-        Reset Password
-      </h1>
+    <section className="md:min-h-screen flex items-center justify-center">
+      <div className="max-w-md md:my-16 p-8 m-4 border border-[color:var(--border)] rounded-xl shadow-lg bg-[var(--background)]">
+        <h1 className="text-3xl font-bold mb-6 text-center text-[color:var(--foreground)]">
+          Reset Password
+        </h1>
 
-      {/* Step guide */}
-      <ol className="mb-6 list-decimal list-inside text-[color:var(--secondary)]">
+        {/* Step guide */}
+        <ol className="mb-6 list-decimal list-inside text-[color:var(--secondary)]">
+          {step === 1 && (
+            <>
+              <li>Enter your registered email.</li>
+              <li>Click (Get OTP) to receive a one-time code in your email.</li>
+            </>
+          )}
+          {step === 2 && (
+            <>
+              <li>Enter the OTP you received.</li>
+              <li>Set your new password and confirm it.</li>
+              <li>Click - Reset Password - to complete the process.</li>
+            </>
+          )}
+        </ol>
+
+        {message && (
+          <p
+            className={`mb-4 p-2 rounded ${
+              message.startsWith("✅")
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {message}
+          </p>
+        )}
+
         {step === 1 && (
           <>
-            <li>Enter your registered email.</li>
-            <li>Click (Get OTP) to receive a one-time code in your email.</li>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <button
+              onClick={handleGetOTP}
+              disabled={loading}
+              className="w-full p-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors"
+            >
+              {loading ? "Sending OTP..." : "Get OTP"}
+            </button>
           </>
         )}
+
         {step === 2 && (
           <>
-            <li>Enter the OTP you received.</li>
-            <li>Set your new password and confirm it.</li>
-            <li>Click - Reset Password - to complete the process.</li>
+            <input
+              type="text"
+              name="otp"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="password"
+              name="newPassword"
+              placeholder="New Password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm New Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={handleResetPassword}
+              disabled={loading}
+              className="w-full p-3 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition-colors"
+            >
+              {loading ? "Resetting..." : "Reset Password"}
+            </button>
           </>
         )}
-      </ol>
-
-      {message && (
-        <p
-          className={`mb-4 p-2 rounded ${
-            message.startsWith("✅")
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {message}
+        <p className="mt-4 text-[var(--secondary)] hover:underline text-sm active:text-[var(--accent)]">
+          <Link href="/register">
+            Don&apos;t have an account? Register here.
+          </Link>
         </p>
-      )}
-
-      {step === 1 && (
-        <>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={handleGetOTP}
-            disabled={loading}
-            className="w-full p-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors"
-          >
-            {loading ? "Sending OTP..." : "Get OTP"}
-          </button>
-        </>
-      )}
-
-      {step === 2 && (
-        <>
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            className="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            placeholder="Confirm New Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={handleResetPassword}
-            disabled={loading}
-            className="w-full p-3 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition-colors"
-          >
-            {loading ? "Resetting..." : "Reset Password"}
-          </button>
-        </>
-      )}
-      <p className="mt-4 text-[var(--secondary)] hover:underline text-sm active:text-[var(--accent)]">
-        <Link href="/register">Don&apos;t have an account? Register here.</Link>
-      </p>
-      <p className="my-2 text-[var(--secondary)] hover:underline text-sm active:text-[var(--accent)]">
-        <Link href="/login">Already registered? Login here →</Link>
-      </p>
-    </div>
+        <p className="my-2 text-[var(--secondary)] hover:underline text-sm active:text-[var(--accent)]">
+          <Link href="/login">Already registered? Login here →</Link>
+        </p>
+      </div>
+    </section>
   );
 }

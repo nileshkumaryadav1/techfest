@@ -6,6 +6,7 @@ import { LogOut, Pencil, Trash2 } from "lucide-react";
 import EnrolledEvents from "@/components/fest/EnrolledEvent";
 import StudentInfo from "@/components/dashboard/StudentInfo";
 import EnrolledInTeam from "@/components/dashboard/EnrolledInTeam";
+import toast from "react-hot-toast";
 
 export default function DashboardPage() {
   const [student, setStudent] = useState(null);
@@ -40,6 +41,7 @@ export default function DashboardPage() {
   const handleLogout = () => {
     if (!confirm("🔒 Are you sure you want to logout?")) return;
     localStorage.removeItem("student");
+    toast("Logout successful!");
     router.replace("/login");
   };
 
@@ -53,15 +55,18 @@ export default function DashboardPage() {
         method: "DELETE",
       });
       if (res.ok) {
-        alert("Account deleted.");
         localStorage.removeItem("student");
+        toast.error("Account deleted.");
+        alert("Account deleted.");
         router.push("/register");
       } else {
-        alert("Failed to delete account.");
+        // alert("Failed to delete account.");
+        toast.error("An error occurred.");
       }
     } catch (err) {
       console.error("Delete failed:", err);
-      alert("An error occurred.");
+      // alert("An error occurred.");
+      toast.error("An error occurred.");
     }
   };
 
@@ -81,6 +86,7 @@ export default function DashboardPage() {
           <h1 className="text-xl sm:text-2xl font-bold text-[color:var(--foreground)] break-words">
             Welcome, {student.name || student.email}
           </h1>
+
           <div className="flex flex-wrap w-full md:w-auto gap-2 sm:gap-3 text-sm">
             <button
               onClick={() => router.push("/edit-profile")}
@@ -109,9 +115,7 @@ export default function DashboardPage() {
         </section>
 
         {/* Enrolled Events */}
-        <section>
-          {/* <EnrolledEvents studentId={student._id} /> */}
-        </section>
+        <section>{/* <EnrolledEvents studentId={student._id} /> */}</section>
 
         {/* Teams */}
         <section className="p-5 sm:p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-lg space-y-4">

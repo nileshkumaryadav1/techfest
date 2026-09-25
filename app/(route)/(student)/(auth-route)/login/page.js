@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -44,6 +45,7 @@ export default function LoginPage() {
 
       // Optional success toast (replace with real toast lib in production)
       // alert("Login successful!");
+      toast.success("Login successful!");
 
       router.push("/dashboard");
     } catch (err) {
@@ -81,7 +83,9 @@ export default function LoginPage() {
         />
 
         {error && (
-          <p className="text-red-500 text-sm text-center animate-pulse">{error}</p>
+          <p className="text-red-500 text-sm text-center animate-pulse">
+            {error}
+          </p>
         )}
 
         <button
